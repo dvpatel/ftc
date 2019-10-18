@@ -12,7 +12,7 @@ SKYSTONE/build.common.gradle
 SKYSTONE/local.properties
 SKYSTONE/settings.gradle
 
-**/build/
+SKYSTONE/build/
 
 build.gradle
 gradle*
