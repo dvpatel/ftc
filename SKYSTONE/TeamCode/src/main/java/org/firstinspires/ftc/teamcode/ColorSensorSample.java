@@ -4,24 +4,14 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Gyroscope;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 import java.util.Locale;
 
 
 /**
+ * DP
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
  * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
  * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
@@ -72,7 +62,7 @@ public class ColorSensorSample extends BaseLinearOpMode {
         // convert the RGB values to HSV values.
         // multiply by the SCALE_FACTOR.
         // then cast it back to int (SCALE_FACTOR is a double)
-        final float hsvValues[] = this.colorSensor.RGBToHSV() ;
+        final float[] hsvValues = this.colorSensor.RGBToHSV();
         int[] argb = this.colorSensor.argb() ;
 
         // send the info back to driver station using telemetry function.
@@ -109,7 +99,7 @@ public class ColorSensorSample extends BaseLinearOpMode {
 
     }
 
-    public boolean isTargetColor(float hsvValues[]) {
+    private boolean isTargetColor(float... hsvValues) {
 
         //  Hue:  Red:  340 - 20 ;
         //  Saturation >= 0.6
@@ -127,7 +117,7 @@ public class ColorSensorSample extends BaseLinearOpMode {
         //  return (sat > 0.6 && (hue > 340 && hue < 20)) ? true : false ; // red
         //  return (sat > 0.6 && (hue > 200 && hue < 275)) ? true : false ; //  blue
 
-        return (sat > Constants.TARGET_COLOR_SATURATION &&
-                (hue > Constants.TARGET_COLOR_HUE_LOW && hue < Constants.TARGET_COLOR_HUE_HIGH)) ? true : false ;
+        return sat > Constants.TARGET_COLOR_SATURATION &&
+                (hue > Constants.TARGET_COLOR_HUE_LOW && hue < Constants.TARGET_COLOR_HUE_HIGH);
     }
 }
