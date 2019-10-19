@@ -19,6 +19,7 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
     }
 
     // called when init button is  pressed.
+    // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
     @Override
     public void runOpMode() throws InterruptedException
     {

@@ -16,10 +16,14 @@ public final class Constants {
     public static final int COLOR_BLUE=3 ;
 
 
-    //  Hue:  340 <  20; sat: 0.6 -->  Blue
+    //  Hue:  340 <  20; sat: 0.6 -->  RED
     //  Hue:  200 - 275; sat: 0.6 -->  Blue
-    public static final float TARGET_COLOR_HUE_LOW = 200 ;
-    public static final float TARGET_COLOR_HUE_HIGH = 275 ;
+    public static final float TARGET_COLOR_BLUE_HUE_LOW = 200;
+    public static final float TARGET_COLOR_BLUE_HUE_HIGH = 275;
+
+    public static final float TARGET_COLOR_RED_HUE_LOW = 340;
+    public static final float TARGET_COLOR_RED_HUE_HIGH = 20;
+
     public static final float TARGET_COLOR_SATURATION=0.6f ;
 
     // sometimes it helps to multiply the raw RGB values with a scale factor

@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import java.util.Locale;
 
@@ -28,14 +29,22 @@ import java.util.Locale;
 @Disabled
 public class ColorSensorSample extends BaseLinearOpMode {
 
+    //  My pushbotrobot ;
+    private Rosie rosie;
+
     private ColorSensorController colorSensor ;
 
     private View relativeLayout ;
 
     @Override
     public void initRobot() {
-        // get a reference to the color sensor.
-        this.colorSensor = new ColorSensorController(hardwareMap) ;
+
+        this.rosie = new Rosie();
+        this.rosie.init(hardwareMap);
+
+        //  ColorSensor detector ;
+        this.colorSensor = this.rosie.getColorSensorController();
+
 
         // get a reference to the RelativeLayout so we can change the background
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
@@ -54,33 +63,26 @@ public class ColorSensorSample extends BaseLinearOpMode {
         });
     }
 
+    // loop and read the RGB and distance data.
     @Override
     public void runRobot() {
-        // loop and read the RGB and distance data.
-        // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
-
-        // convert the RGB values to HSV values.
-        // multiply by the SCALE_FACTOR.
-        // then cast it back to int (SCALE_FACTOR is a double)
-        final float[] hsvValues = this.colorSensor.RGBToHSV();
-        int[] argb = this.colorSensor.argb() ;
 
         // send the info back to driver station using telemetry function.
         //  telemetry.clearAll();
         telemetry.addData("Distance (cm)",
                 String.format(Locale.US, "%.02f", this.colorSensor.getDistance()));
-        telemetry.addData("Alpha", argb[Constants.COLOR_ALPHA]);
 
 
-        if (this.isTargetColor(hsvValues))
-        {
+        if (colorSensor.isTargetBlue() || colorSensor.isTargetRed()) {
+
+            int[] argb = this.colorSensor.argb();
+
+            telemetry.addData("Alpha", argb[Constants.COLOR_ALPHA]);
             telemetry.addData("TargetColor.Red ", argb[Constants.COLOR_RED]);
             telemetry.addData("TargetColor.Green ", argb[Constants.COLOR_GREEN]);
             telemetry.addData("TargetColor.Blue ", argb[Constants.COLOR_BLUE]);
         }
 
-        telemetry.addData("Hue", hsvValues[0]);
-        telemetry.addData("Saturation", hsvValues[1]);
         telemetry.update();
 
         // change the background color to match the color detected by the RGB sensor.
@@ -88,7 +90,7 @@ public class ColorSensorSample extends BaseLinearOpMode {
         // to the HSVToColor method.
         relativeLayout.post(new Runnable() {
             public void run() {
-                relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, hsvValues));
+                relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, colorSensor.getHSV()));
             }
         });
 
@@ -97,27 +99,5 @@ public class ColorSensorSample extends BaseLinearOpMode {
         // Drive Forward
         //}
 
-    }
-
-    private boolean isTargetColor(float... hsvValues) {
-
-        //  Hue:  Red:  340 - 20 ;
-        //  Saturation >= 0.6
-
-        // Hue: Blue:  210 - 275;
-        //  Saturation >= 0.6
-
-        //  H:  0 - 360;  Color range
-        //  S:  0 - 1;  Color Intensity;  0
-        //  V:  0 - 1; brightness of color ;
-
-        float hue = hsvValues[0] ;
-        float sat = hsvValues[1] ;
-
-        //  return (sat > 0.6 && (hue > 340 && hue < 20)) ? true : false ; // red
-        //  return (sat > 0.6 && (hue > 200 && hue < 275)) ? true : false ; //  blue
-
-        return sat > Constants.TARGET_COLOR_SATURATION &&
-                (hue > Constants.TARGET_COLOR_HUE_LOW && hue < Constants.TARGET_COLOR_HUE_HIGH);
     }
 }

@@ -14,7 +14,7 @@ public class ColorSensorController {
     private DistanceSensor sensorColorRange;
     private ColorSensor colorSensor;
 
-    private float hsvValues[] = {0F, 0F, 0F};
+    private float[] hsvValues = {0F, 0F, 0F};
 
     public ColorSensorController(HardwareMap hardwareMap) {
 
@@ -25,10 +25,10 @@ public class ColorSensorController {
         this.sensorColorRange = hardwareMap.get(DistanceSensor.class, Constants.COLOR_SENSOR_NAME);
 
         // values is a reference to the hsvValues array.
-        final float values[] = this.hsvValues;
+        final float[] values = this.hsvValues;
     }
 
-    public float[] RGBToHSV() {
+    private float[] RGBToHSV() {
         Color.RGBToHSV((int) (colorSensor.red() * Constants.SCALE_FACTOR),
                 (int) (colorSensor.green() * Constants.SCALE_FACTOR),
                 (int) (colorSensor.blue() * Constants.SCALE_FACTOR),
@@ -37,14 +37,71 @@ public class ColorSensorController {
         return this.hsvValues ;
     }
 
+    public float[] getHSV() {
+        return this.RGBToHSV();
+    }
+
     //  Return Alpha-Red-Green-Blue as int array ;
     public int[] argb(){
-        int[] argb = {this.colorSensor.alpha(), this.colorSensor.red(), this.colorSensor.green(), this.colorSensor.blue() } ;
-        return argb ;
+        return new int[]{this.colorSensor.alpha(), this.colorSensor.red(), this.colorSensor.green(), this.colorSensor.blue()};
     }
+
+    public boolean isTargetBlue() {
+
+        // convert the RGB values to HSV values.
+        // multiply by the SCALE_FACTOR.
+        // then cast it back to int (SCALE_FACTOR is a double)
+        float[] hsvValues = this.RGBToHSV();
+
+        //  Hue:  Red:  340 - 20 ;
+        //  Saturation >= 0.6
+
+        // Hue: Blue:  210 - 275;
+        //  Saturation >= 0.6
+
+        //  H:  0 - 360;  Color range
+        //  S:  0 - 1;  Color Intensity;  0
+        //  V:  0 - 1; brightness of color ;
+
+        float hue = hsvValues[0];
+        float sat = hsvValues[1];
+
+        //  return (sat > 0.6 && (hue > 340 && hue < 20)) ? true : false ; // red
+        //  return (sat > 0.6 && (hue > 200 && hue < 275)) ? true : false ; //  blue
+
+        return sat > Constants.TARGET_COLOR_SATURATION &&
+                (hue > Constants.TARGET_COLOR_BLUE_HUE_LOW && hue < Constants.TARGET_COLOR_BLUE_HUE_HIGH);
+    }
+
+    public boolean isTargetRed() {
+
+        // convert the RGB values to HSV values.
+        // multiply by the SCALE_FACTOR.
+        // then cast it back to int (SCALE_FACTOR is a double)
+        float[] hsvValues = this.RGBToHSV();
+
+        //  Hue:  Red:  340 - 20 ;
+        //  Saturation >= 0.6
+
+        //  H:  0 - 360;  Color range
+        //  S:  0 - 1;  Color Intensity;  0
+        //  V:  0 - 1; brightness of color ;
+
+        float hue = hsvValues[0];
+        float sat = hsvValues[1];
+
+        //  return (sat > 0.6 && (hue > 340 && hue < 20)) ? true : false ; // red
+        //  return (sat > 0.6 && (hue > 200 && hue < 275)) ? true : false ; //  blue
+
+        return sat > Constants.TARGET_COLOR_SATURATION &&
+                (hue > Constants.TARGET_COLOR_RED_HUE_LOW && hue < Constants.TARGET_COLOR_RED_HUE_HIGH);
+    }
+
+
 
     public double getDistance() {
         return this.sensorColorRange.getDistance(DistanceUnit.CM) ;
     }
+
 
 }
