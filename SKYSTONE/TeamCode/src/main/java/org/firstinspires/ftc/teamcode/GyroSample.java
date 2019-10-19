@@ -7,56 +7,40 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "BasicGyroTest", group = "Linear Opmode")
 //  @Disabled
-public class GyroSample extends LinearOpMode {
-
-    private MotorControllerEx motor;
-    private IMUController imu;
+public class GyroSample extends BaseLinearOpMode {
 
     private double angleCorrection;
 
     double power = 0.30;
 
-
-    private void initDevices() {
-
-        this.motor = new MotorControllerEx();
-        this.motor.enableDrivePID(power);
-
-        this.imu = new IMUController(hardwareMap);
-        this.waitForCalibration();
-    }
-
+    //  Delete in future ;
     private void waitForCalibration() {
         // make sure the imu gyro is calibrated before continuing.
-        while (!isStopRequested() && !imu.isCalibrated()) {
+        while (!isStopRequested() && !this.rosie.getIMUController().isCalibrated()) {
             sleep(50);
             idle();
         }
 
-        telemetry.addData("imu calibration status", this.imu.getCalibrationStatus());
-    }
-
-    private void waitToPressStart() {
-        // wait for start button.
-        waitForStart();
-
-        //  why is this needed?
-        sleep(1000);
     }
 
     @Override
-    public void runOpMode() throws InterruptedException
+    void initRobot() {
+        telemetry.addData("Calibration Status:  ", this.rosie.getIMUController().getCalibrationStatus());
+    }
+
+    @Override
+    void stopRobot() {
+
+    }
+
+    @Override
+    public void runRobot()
     {
-        this.initDevices();
-
-        // wait for start button.
-        this.waitForStart();
-
         while (opModeIsActive()) {
             this.driveStraight(power);
 
-            telemetry.addData("imu heading", this.imu.getFirstAngle());
-            telemetry.addData("global heading", this.imu.getGlobalAngle());
+            telemetry.addData("imu heading", this.rosie.getIMUController().getFirstAngle());
+            telemetry.addData("global heading", this.rosie.getIMUController().getGlobalAngle());
 
             // We record the sensor values because we will test them in more than
             // one place with time passing between those places. See the lesson on
@@ -77,9 +61,9 @@ public class GyroSample extends LinearOpMode {
         //  index 2:  correction value ;
 
         telemetry.addData("power", power);
-        telemetry.addData("turn rotation", this.imu.getAngle());
+        telemetry.addData("turn rotation", this.rosie.getIMUController().getAngle());
 
-        double[] correction = this.motor.calculateDriveCorrection(power, this.imu.getAngle());
+        double[] correction = this.rosie.getMotorPID().calculateDriveCorrection(power, this.rosie.getIMUController().getAngle());
         telemetry.addData("correction", correction[2]);
 
         angleCorrection = correction[2];
@@ -94,7 +78,7 @@ public class GyroSample extends LinearOpMode {
      */
     private void rotate(int degrees, double power, double targetAngle) {
         // restart imu angle tracking.
-        this.imu.resetAngle();
+        this.rosie.getIMUController().resetAngle();
 
         // if degrees > 359 we cap at 359 with same sign as original degrees.
         if (Math.abs(degrees) > 359)
@@ -108,27 +92,27 @@ public class GyroSample extends LinearOpMode {
 
         if (degrees < 0) {
             // On right turn we have to get off zero first.
-            while (opModeIsActive() && this.imu.getAngle() == targetAngle) {
-                telemetry.addData("Going straight", this.imu.getAngle());
+            while (opModeIsActive() && this.rosie.getIMUController().getAngle() == targetAngle) {
+                telemetry.addData("Going straight", this.rosie.getIMUController().getAngle());
                 sleep(100);
             }
 
             do {
-                double powerCorrection = this.motor.calculateRotateCorrection(degrees, this.imu.getAngle(), power);
+                double powerCorrection = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
                 telemetry.addData("-PowerAdjustment", powerCorrection);
 
-            } while (opModeIsActive() && !this.motor.angleOnTarget());
+            } while (opModeIsActive() && !this.rosie.getMotorPID().angleOnTarget());
         } else    // left turn.
             do {
-                double powerCorrection = this.motor.calculateRotateCorrection(degrees, this.imu.getAngle(), power);
+                double powerCorrection = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
                 telemetry.addData("+PowerAdjustment", powerCorrection);
-            } while (opModeIsActive() && !this.motor.angleOnTarget());
+            } while (opModeIsActive() && !this.rosie.getMotorPID().angleOnTarget());
 
 
         // wait for rotation to stop.
         sleep(500);
 
         // reset angle tracking on new heading.
-        this.imu.resetAngle();
+        this.rosie.getIMUController().resetAngle();
     }
 }

@@ -6,7 +6,6 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 
 import java.util.Locale;
 
@@ -30,27 +29,19 @@ import java.util.Locale;
 public class ColorSensorSample extends BaseLinearOpMode {
 
     //  My pushbotrobot ;
-    private Rosie rosie;
-
     private ColorSensorController colorSensor ;
 
     private View relativeLayout ;
 
     @Override
     public void initRobot() {
-
-        this.rosie = new Rosie();
-        this.rosie.init(hardwareMap);
-
         //  ColorSensor detector ;
-        this.colorSensor = this.rosie.getColorSensorController();
-
+        this.colorSensor = this.getColorSensorController();
 
         // get a reference to the RelativeLayout so we can change the background
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         this.relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
-
     }
 
     @Override
@@ -73,7 +64,7 @@ public class ColorSensorSample extends BaseLinearOpMode {
                 String.format(Locale.US, "%.02f", this.colorSensor.getDistance()));
 
 
-        if (colorSensor.isTargetBlue() || colorSensor.isTargetRed()) {
+        while (colorSensor.isTargetBlue() || colorSensor.isTargetRed()) {
 
             int[] argb = this.colorSensor.argb();
 

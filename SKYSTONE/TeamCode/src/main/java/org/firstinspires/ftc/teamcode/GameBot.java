@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import android.graphics.Color;
+import android.text.method.Touch;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -23,15 +24,24 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Servo channel:  Servo to open left claw:  "left_hand"
  * Servo channel:  Servo to open right claw: "right_hand"
  */
-public class Rosie {
+public class GameBot {
+
+    /* local OpMode members. */
+    private HardwareMap hardwareMap;
 
     private ColorSensorController colorSensor;
+    private IMUController imu;
+
+    //  Motor PID logic ;
+    private MotorControllerEx motorPID;
+
+    //  DC Motor driver ;
+    private Driver driver;
+
+    private TouchSensorController touch;
 
 
     /* Public OpMode members. */
-    private DcMotor leftDrive = null;
-    private DcMotor rightDrive = null;
-    private DcMotor leftArm = null;
     private Servo leftClaw = null;
     private Servo rightClaw = null;
 
@@ -39,52 +49,70 @@ public class Rosie {
     private static final double ARM_UP_POWER = 0.45;
     private static final double ARM_DOWN_POWER = -0.45;
 
-    /* local OpMode members. */
-    private HardwareMap hardwareMap = null;
-
     private ElapsedTime period = new ElapsedTime();
 
     /* Constructor */
-    public Rosie() {
+    public GameBot() {
 
     }
 
     /* Initialize standard Hardware interfaces */
-    public void init(HardwareMap hardwareMap) {
+    public void init(HardwareMap hardwareMap) throws InterruptedException {
         // Save reference to Hardware map
         this.hardwareMap = hardwareMap;
 
         // get a reference to the color sensor.
         this.colorSensor = new ColorSensorController(hardwareMap);
 
+        //  Build driver ;
+        this.driver = new Driver(hardwareMap);
 
-        // Define and Initialize Motors
-        leftDrive = hardwareMap.get(DcMotor.class, "left_drive");
-        rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-        leftArm = hardwareMap.get(DcMotor.class, "left_arm");
-        leftDrive.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        rightDrive.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        //  IMU ;  Calibrate Gyro ;
+        this.imu = new IMUController(hardwareMap);
+        this.waitForCalibration();
 
-        // Set all motors to zero power
-        leftDrive.setPower(0);
-        rightDrive.setPower(0);
-        leftArm.setPower(0);
+        //   PID Logic for DC Motors;  Default 0.30 power ;
+        this.motorPID = new MotorControllerEx();
+        this.motorPID.enableDrivePID(Constants.DEFAULT_POWER);
+
+        //  TouchSensor ;
+        this.touch = new TouchSensorController(hardwareMap);
+
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
-        leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        // Define and initialize ALL installed servos.
-        leftClaw = hardwareMap.get(Servo.class, "left_hand");
-        rightClaw = hardwareMap.get(Servo.class, "right_hand");
-        leftClaw.setPosition(MID_SERVO);
-        rightClaw.setPosition(MID_SERVO);
+        //  leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //  rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //  leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
+
+    private void waitForCalibration() throws InterruptedException {
+        // make sure the imu gyro is calibrated before continuing.
+        while (!imu.isCalibrated()) {
+            Thread.yield();
+            Thread.sleep(50);
+        }
+    }
+
 
     public ColorSensorController getColorSensorController() {
         return this.colorSensor;
+    }
+
+    public IMUController getIMUController() {
+        return this.imu;
+    }
+
+    public TouchSensorController getTouchSensorController() {
+        return this.touch;
+    }
+
+    public MotorControllerEx getMotorPID() {
+        return this.motorPID;
+    }
+
+    public Driver getDriver() {
+        return this.driver;
     }
 
 }

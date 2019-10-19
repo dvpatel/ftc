@@ -20,104 +20,73 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name="Drive Avoid PID", group="Exercises")
+@Autonomous(name = "Drive Avoid PID", group = "Exercises")
 @Disabled
-public class DriveAvoidPid extends LinearOpMode
-{
+public class DriveAvoidPid extends BaseLinearOpMode {
 
-    private MotorControllerEx motor ;
-    private Driver driver ;
-
-    private TouchSensorController touchSensor ;
-    private IMUController imu ;
+    private MotorControllerEx motor;
+    private Driver driver;
+    private TouchSensorController touchSensor;
+    private IMUController imu;
 
     //  private double rotation ;
     private boolean aButton, bButton, touched;
 
-    private double angleCorrection ;
+    private double angleCorrection;
 
-    private void initDevices() {
+    private double power = 0.30;
 
-        this.driver = new Driver(hardwareMap);
-        this.motor = new MotorControllerEx() ;
+    @Override
+    void initRobot() {
 
-        this.imu = new IMUController(hardwareMap) ;
+        this.imu = this.rosie.getIMUController();
+        this.motor = this.rosie.getMotorPID();
+        this.driver = this.rosie.getDriver();
+        this.touchSensor = this.rosie.getTouchSensorController();
 
-        this.waitForCalibration();
+        //  Enable PID Controller to track state
+        //  this.motor.enablePID();
+        //this.motor.enableDrivePID(power);
 
-        telemetry.addData("Mode", "init complete");
+        telemetry.addData("Mode", "init complete;  Running");
         telemetry.update();
     }
 
-    private void waitForCalibration() {
-        // make sure the imu gyro is calibrated before continuing.
-        while (!isStopRequested() && !imu.isCalibrated())
-        {
-            sleep(50);
-            idle();
-        }
-
-        telemetry.addData("imu calibration status", this.imu.getCalibrationStatus());
-        telemetry.update();
-    }
-
-    private void waitToPressStart() {
-        // wait for start button.
-        waitForStart();
-
-        //  why is this needed?
-        sleep(1000);
+    @Override
+    void stopRobot() {
+        driver.stop();
     }
 
     // called when init button is  pressed.
     @Override
-    public void runOpMode() throws InterruptedException
-    {
-        this.initDevices();
-        this.waitToPressStart();
+    public void runRobot() {
+        // drive until end of period.
+        this.driveStraight(power);
 
-        telemetry.addData("Mode", "running");
+        telemetry.addData("1 imu heading", this.imu.getFirstAngle());
+        telemetry.addData("2 global heading", this.imu.getGlobalAngle());
+        telemetry.addData("3 correction", angleCorrection);
+        telemetry.addData("4 turn rotation", this.imu.getAngle());
         telemetry.update();
 
-        double power = 0.30;
+        // We record the sensor values because we will test them in more than
+        // one place with time passing between those places. See the lesson on
+        // Timing Considerations to know why.
 
-        //  Enable PID Controller to track state
-        //  this.motor.enablePID();
-        this.motor.enableDrivePID(power);
+        aButton = gamepad1.a;
+        bButton = gamepad1.b;
+        touched = this.touchSensor.pressed();
 
-        // drive until end of period.
-        while (opModeIsActive())
-        {
-            this.driveStraight(power);
+        if (touched || aButton || bButton) {
 
-            telemetry.addData("1 imu heading", this.imu.getFirstAngle());
-            telemetry.addData("2 global heading", this.imu.getGlobalAngle());
-            telemetry.addData("3 correction", angleCorrection);
-            telemetry.addData("4 turn rotation", this.imu.getAngle());
-            telemetry.update();
+            this.driveReverse(power);
 
-            // We record the sensor values because we will test them in more than
-            // one place with time passing between those places. See the lesson on
-            // Timing Considerations to know why.
+            // turn 90 degrees right.
+            if (touched || aButton) rotate(-90, power, 0);
 
-            aButton = gamepad1.a;
-            bButton = gamepad1.b;
-            touched = this.touchSensor.pressed();
-
-            if (touched || aButton || bButton)
-            {
-
-                this.driveReverse(power);
-
-                // turn 90 degrees right.
-                if (touched || aButton) rotate(-90, power, 0);
-
-                // turn 90 degrees left.
-                if (bButton) rotate(90, power, 0);
-            }
+            // turn 90 degrees left.
+            if (bButton) rotate(90, power, 0);
         }
-
-        driver.stop();
     }
 
     private void driveReverse(double power) {
@@ -143,15 +112,15 @@ public class DriveAvoidPid extends LinearOpMode
 
         double[] correction = this.motor.calculateDriveCorrection(power, this.imu.getAngle());
         driver.driveDifferential(correction[0], correction[1]);
-        angleCorrection = correction[2] ;
+        angleCorrection = correction[2];
     }
 
     /**
      * Rotate left or right the number of degrees. Does not support turning more than 359 degrees.
+     *
      * @param degrees Degrees to turn, + is left - is right
      */
-    private void rotate(int degrees, double power, double targetAngle)
-    {
+    private void rotate(int degrees, double power, double targetAngle) {
         // restart imu angle tracking.
         this.imu.resetAngle();
 
@@ -165,25 +134,20 @@ public class DriveAvoidPid extends LinearOpMode
 
         // rotate until turn is completed.
 
-        if (degrees < 0)
-        {
+        if (degrees < 0) {
             // On right turn we have to get off zero first.
-            while (opModeIsActive() && this.imu.getAngle() == targetAngle)
-            {
+            while (opModeIsActive() && this.imu.getAngle() == targetAngle) {
                 driver.driveDifferential(power, -power);
                 sleep(100);
             }
 
-            do
-            {
-                double powerCorrection = this.motor.calculateRotateCorrection(degrees, this.imu.getAngle(), power) ;
+            do {
+                double powerCorrection = this.motor.calculateRotateCorrection(degrees, this.imu.getAngle(), power);
                 driver.driveDifferential(powerCorrection, -powerCorrection);
             } while (opModeIsActive() && !this.motor.angleOnTarget());
-        }
-        else    // left turn.
-            do
-            {
-                double powerCorrection = this.motor.calculateRotateCorrection(degrees, this.imu.getAngle(), power) ;
+        } else    // left turn.
+            do {
+                double powerCorrection = this.motor.calculateRotateCorrection(degrees, this.imu.getAngle(), power);
                 driver.driveDifferential(-powerCorrection, powerCorrection);
             } while (opModeIsActive() && !this.motor.angleOnTarget());
 

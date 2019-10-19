@@ -8,6 +8,13 @@ public final class Constants {
     public static final String TOUCH_SENSOR_NAME = "touch_sensor" ;
     public static final String IMU_NAME = "imu" ;
 
+    public static final double DEFAULT_POWER = 0.30;
+
+    //  For AndyMark motor;  1 rev = 1120 ticks ;
+    public static final int MOTOR_TICK_COUNT = 1120;
+    public static final int WHEEL_DIAMETER = 4; // inches ;
+    public static final double TICK_DISTANCE_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
+
 
     public static final String COLOR_SENSOR_NAME = "colorSensor" ;
     public static final int COLOR_ALPHA=0 ;

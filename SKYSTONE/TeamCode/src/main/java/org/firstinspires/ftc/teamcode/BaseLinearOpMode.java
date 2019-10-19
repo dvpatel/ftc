@@ -1,21 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-public abstract class BaseLinearOpMode extends LinearOpMode {
+public abstract class BaseLinearOpMode extends AbstractBaseLinearOpMode {
 
     abstract void initRobot() ;
     abstract void runRobot() ;
     abstract void stopRobot() ;
 
-    protected void waitToPressStart() {
-        // wait for start button.
-        waitForStart();
-
-        //  why is this needed?
-        sleep(1000);
+    public ColorSensorController getColorSensorController() {
+        return this.rosie.getColorSensorController();
     }
 
     // called when init button is  pressed.
@@ -23,6 +17,9 @@ public abstract class BaseLinearOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException
     {
+        //  Put common init logic here
+        this.initRosie();
+
         this.initRobot();
 
         this.waitToPressStart();
