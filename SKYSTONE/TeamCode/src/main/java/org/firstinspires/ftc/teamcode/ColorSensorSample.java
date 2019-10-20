@@ -5,9 +5,6 @@ import android.graphics.Color;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-
-import java.util.Locale;
 
 
 /**
@@ -26,7 +23,7 @@ import java.util.Locale;
 
 @TeleOp(name = "BasicColorTest", group = "Linear Opmode")
 //  @Disabled
-public class ColorSensorSample extends BaseLinearOpMode {
+public class ColorSensorSample extends AbstractLinearOpMode {
 
     //  My pushbotrobot ;
     private ColorSensorController colorSensor;
@@ -36,7 +33,12 @@ public class ColorSensorSample extends BaseLinearOpMode {
     double power = this.normalizePower(0.3);
 
     @Override
-    public void initRobot() {
+    public void initOpMode() throws InterruptedException {
+
+        //  Make sure Rosie is initialized ;
+        this.initRosie();
+
+
         //  ColorSensor detector ;
         this.colorSensor = this.rosie.getColorSensorController();
 
@@ -44,16 +46,12 @@ public class ColorSensorSample extends BaseLinearOpMode {
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
         int relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
         this.relativeLayout = ((Activity) hardwareMap.appContext).findViewById(relativeLayoutId);
-
-
-        //  Start driving ;
-        this.drive(power);
     }
 
     @Override
-    public void stopRobot() {
+    public void stopOpMode() {
 
-        //
+        //  Stop driving ;
         this.stopDriving();
 
         // Set the panel back to the default color
@@ -64,23 +62,33 @@ public class ColorSensorSample extends BaseLinearOpMode {
         });
     }
 
-    // loop and read the RGB and distance data while opmode is active
     @Override
-    public void runRobot() {
-        //  NOTE:  started to drive at initRobot ;
+    public void runOpMode() throws InterruptedException {
+        //  Put common init logic here
+        this.initOpMode();
 
-        // change the background color to match the color detected by the RGB sensor.
-        // pass a reference to the hue, saturation, and value array as an argument
-        // to the HSVToColor method.
-        relativeLayout.post(new Runnable() {
-            public void run() {
-                relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, colorSensor.getHSV()));
-            }
-        });
+        //  Wait for start button ;
+        this.waitToPressStart();
 
-        // send the info back to driver station using telemetry function.
-        //  telemetry.clearAll();
-        //  telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", this.colorSensor.getDistance()));
+        while (opModeIsActive() && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())) {
+            //  NOTE:  started to drive at initRobot ;
+            this.drive(power);
+
+            // change the background color to match the color detected by the RGB sensor.
+            // pass a reference to the hue, saturation, and value array as an argument
+            // to the HSVToColor method.
+            relativeLayout.post(new Runnable() {
+                public void run() {
+                    relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, colorSensor.getHSV()));
+                }
+            });
+
+            // send the info back to driver station using telemetry function.
+            //  telemetry.clearAll();
+            //  telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", this.colorSensor.getDistance()));
+        }
+
+        this.stopOpMode();
 
         int[] argb = this.colorSensor.argb();
         telemetry.addData("Alpha", argb[Constants.COLOR_ALPHA]);
@@ -88,13 +96,5 @@ public class ColorSensorSample extends BaseLinearOpMode {
         telemetry.addData("TargetColor.Green ", argb[Constants.COLOR_GREEN]);
         telemetry.addData("TargetColor.Blue ", argb[Constants.COLOR_BLUE]);
         telemetry.update();
-
-        //  Keep driving until blue or red ;
-        if (colorSensor.isTargetBlue() || colorSensor.isTargetRed()) {
-            this.stopDriving();
-
-            //  Break out of active mode.
-            this.stop();
-        }
     }
 }

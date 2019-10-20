@@ -1,18 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name = "Target Drive")
 //  @Disabled
-public class TargetDrive extends AbstractBaseLinearOpMode {
+public class TargetDrive extends AbstractLinearOpMode {
 
     private MotorControllerEx motor;
     private Driver driver;
     private IMUController imu;
 
     @Override
-    void initRobot() {
+    void initOpMode() throws InterruptedException {
+
+        this.initRosie();
 
         this.imu = this.rosie.getIMUController();
         this.motor = this.rosie.getMotorPID();
@@ -24,18 +25,19 @@ public class TargetDrive extends AbstractBaseLinearOpMode {
 
         telemetry.addData("Mode", "init complete;  Running");
         telemetry.update();
+
+
     }
 
     @Override
-    void stopRobot() {
+    void stopOpMode() {
         driver.stop();
     }
 
     @Override
     public void runOpMode() throws InterruptedException {
         //  Put common init logic here
-        this.initRosie();
-        this.initRobot();
+        this.initOpMode();
 
         //  Activate opmode
         this.waitToPressStart();

@@ -18,11 +18,10 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "Drive Avoid PID", group = "Exercises")
 @Disabled
-public class DriveAvoidPid extends BaseLinearOpMode {
+public class DriveAvoidPid extends AbstractLinearOpMode {
 
     private MotorControllerEx motor;
     private Driver driver;
@@ -37,7 +36,9 @@ public class DriveAvoidPid extends BaseLinearOpMode {
     private double power = 0.30;
 
     @Override
-    void initRobot() {
+    void initOpMode() throws InterruptedException {
+
+        this.initRosie();
 
         this.imu = this.rosie.getIMUController();
         this.motor = this.rosie.getMotorPID();
@@ -53,39 +54,47 @@ public class DriveAvoidPid extends BaseLinearOpMode {
     }
 
     @Override
-    void stopRobot() {
+    void stopOpMode() {
         driver.stop();
     }
 
     // called when init button is  pressed.
     @Override
-    public void runRobot() {
-        // drive until end of period.
-        this.driveStraight(power);
+    public void runOpMode() throws InterruptedException {
 
-        telemetry.addData("1 imu heading", this.imu.getFirstAngle());
-        telemetry.addData("2 global heading", this.imu.getGlobalAngle());
-        telemetry.addData("3 correction", angleCorrection);
-        telemetry.addData("4 turn rotation", this.imu.getAngle());
-        telemetry.update();
+        this.initOpMode();
 
-        // We record the sensor values because we will test them in more than
-        // one place with time passing between those places. See the lesson on
-        // Timing Considerations to know why.
+        //  Wait for start button ;
+        this.waitToPressStart();
 
-        aButton = gamepad1.a;
-        bButton = gamepad1.b;
-        touched = this.touchSensor.pressed();
+        while (opModeIsActive()) {
+            // drive until end of period.
+            this.driveStraight(power);
 
-        if (touched || aButton || bButton) {
+            telemetry.addData("1 imu heading", this.imu.getFirstAngle());
+            telemetry.addData("2 global heading", this.imu.getGlobalAngle());
+            telemetry.addData("3 correction", angleCorrection);
+            telemetry.addData("4 turn rotation", this.imu.getAngle());
+            telemetry.update();
 
-            this.driveReverse(power);
+            // We record the sensor values because we will test them in more than
+            // one place with time passing between those places. See the lesson on
+            // Timing Considerations to know why.
 
-            // turn 90 degrees right.
-            if (touched || aButton) rotate(-90, power, 0);
+            aButton = gamepad1.a;
+            bButton = gamepad1.b;
+            touched = this.touchSensor.pressed();
 
-            // turn 90 degrees left.
-            if (bButton) rotate(90, power, 0);
+            if (touched || aButton || bButton) {
+
+                this.driveReverse(power);
+
+                // turn 90 degrees right.
+                if (touched || aButton) rotate(-90, power, 0);
+
+                // turn 90 degrees left.
+                if (bButton) rotate(90, power, 0);
+            }
         }
     }
 

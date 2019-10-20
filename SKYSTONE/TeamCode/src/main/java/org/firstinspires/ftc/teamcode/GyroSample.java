@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "BasicGyroTest", group = "Linear Opmode")
 @Disabled
-public class GyroSample extends BaseLinearOpMode {
+public class GyroSample extends AbstractLinearOpMode {
 
     private double angleCorrection;
 
@@ -24,18 +24,26 @@ public class GyroSample extends BaseLinearOpMode {
     }
 
     @Override
-    void initRobot() {
+    void initOpMode() throws InterruptedException {
+
+        this.initRosie();
+        this.waitForCalibration();
+
         telemetry.addData("Calibration Status:  ", this.rosie.getIMUController().getCalibrationStatus());
-    }
-
-    @Override
-    void stopRobot() {
 
     }
 
     @Override
-    public void runRobot()
-    {
+    void stopOpMode() {
+
+    }
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+        this.initOpMode();
+        this.waitForStart();
+
         while (opModeIsActive()) {
             this.driveStraight(power);
 

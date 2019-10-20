@@ -3,10 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.Range;
 
-public abstract class AbstractBaseLinearOpMode extends LinearOpMode {
+public abstract class AbstractLinearOpMode extends LinearOpMode {
 
-    abstract void initRobot();
-    abstract void stopRobot();
+    abstract void initOpMode() throws InterruptedException;
+
+    abstract void stopOpMode();
 
     protected GameBot rosie;
 
@@ -68,9 +69,9 @@ public abstract class AbstractBaseLinearOpMode extends LinearOpMode {
             double[] p = motor.calculateRotateCorrection(degrees, imu.getAngle(), power);
 
             if (degrees < 0) {
-                driver.driveDifferential(p[0], -p[1]);
+                driver.rotateDifferential(p[0], -p[1]);
             } else {
-                driver.driveDifferential(-p[0], p[1]);
+                driver.rotateDifferential(-p[0], p[1]);
             }
 
             telemetry.update();
