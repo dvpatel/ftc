@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-import android.text.method.Touch;
-
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -40,6 +36,7 @@ public class GameBot {
 
     private TouchSensorController touch;
 
+    private SkystoneDetector skystonDetector;
 
     /* Public OpMode members. */
     private Servo leftClaw = null;
@@ -78,6 +75,8 @@ public class GameBot {
         //  TouchSensor ;
         this.touch = new TouchSensorController(hardwareMap);
 
+        //  Skystone detector, not activated ;
+        this.skystonDetector = new SkystoneDetector(hardwareMap);
 
         // Set all motors to run without encoders.
         // May want to use RUN_USING_ENCODERS if encoders are installed.
@@ -113,6 +112,10 @@ public class GameBot {
 
     public Driver getDriver() {
         return this.driver;
+    }
+
+    public SkystoneDetector getSkystoneDetector() {
+        return this.skystonDetector;
     }
 
 }

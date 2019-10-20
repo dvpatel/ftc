@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
+
+import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
+
 public final class Constants {
     public static final String LEFT_FRONT_MOTOR_NAME = "left_front_motor" ;
     public static final String RIGHT_FRONT_MOTOR_NAME = "right_front_motor" ;
@@ -47,6 +51,12 @@ public final class Constants {
     public static double PID_ROTATE_KP = 0.003 ;
     public static double PID_ROTATE_KI = 0.00003 ;
     public static double PID_ROTATE_KD = 0 ;
+
+
+    public static final String VUFORIA_KEY =
+            "ARBNGpP/////AAABmbLvzx0Qekiui2o+DSSa3YJIIuD7Q0UL6sLKYRh6/OCm/uvQLlRLPNs/o72itb3SXgG71435htgeXTLgMciuPUca8vG5BbLoR5k9K5L6pbe8XLD9VFAG4Llh55ETmOQzz+S7yyjN69HtY34ahSjsi4bzZzwrfeTrTsCPfa1ZTAdf6MxWbZ5yn6LKmanzxLbnmBiftmRbgVVtxeMbOdxPv/f2uxXWqnKEHz5/LDvoacDFVQwu07AnvUXk0cDRSKEObQs5lE+IjdxSbYMOHPYbJy9jWf+2tZURyVZF1atz0nHaW1yra8YXg0HYQvWDzkt9+2S831dsB25sJElDK4xLGFFb/GVCSFGfnjvRHgbvD1AP";
+    public static final boolean PHONE_IS_PORTRAIT = false;
+    public static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
 
 
     // These constants define the desired driving/control characteristics
