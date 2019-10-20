@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Const;
 
@@ -41,20 +42,19 @@ public class Driver {
         this.rightFrontMotor = hardwareMap.dcMotor.get(rightFrontDeviceName);
         this.rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-
         this.rightBackMotor = hardwareMap.dcMotor.get(rightBackDeviceName);
         this.rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    //  Calculate ticks;   ;
+    //  Calculate ticks for given inches ;
     public int calculateTicks(double distanceInInches) {
-        return (int) (distanceInInches * Constants.TICK_DISTANCE_RATIO);
+        return (int) (distanceInInches * Constants.TICK_DIAMETER_RATIO);
     }
 
     //  Sample:  Drive to Target in inches ;
-    private void driveToTarget(double distance, double leftPower, double rightPower) {
+    private void driveToTargetExample(double distanceInInches, double leftPower, double rightPower) {
 
-        this.setTargetPositionInInches(distance);
+        this.setTargetPosition(distanceInInches);
 
         //  Now drive ;
         this.driveDifferential(leftPower, rightPower);
@@ -70,8 +70,8 @@ public class Driver {
         this.stop();
     }
 
-    public void setTargetPositionInInches(double distance) {
-        int ticks = this.calculateTicks(distance);
+    public void setTargetPosition(double distanceInInches) {
+        int ticks = this.calculateTicks(distanceInInches);
 
         //  Always reset;  starts at zero;
         this.setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -85,6 +85,7 @@ public class Driver {
         this.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
+    //  Revisit;  Are all encoders needed?
     public boolean motorsBusy() {
         return this.leftFrontMotor.isBusy() &&
                 this.rightFrontMotor.isBusy() &&
@@ -100,6 +101,11 @@ public class Driver {
 
     }
 
+    //  Drive forward or backward
+    public void drive(double power) {
+        this.driveDifferential(power, power);
+    }
+
     public void driveDifferential(double leftPower, double rightPower) {
         this.leftFrontMotor.setPower(leftPower);
         this.leftBackMotor.setPower(leftPower);
@@ -108,22 +114,19 @@ public class Driver {
         this.rightBackMotor.setPower(rightPower);
     }
 
-    //  Drive forward or backward
-    public void drive(double power) {
-        this.leftFrontMotor.setPower(power);
-        this.leftBackMotor.setPower(power);
 
-        this.rightFrontMotor.setPower(power);
-        this.rightBackMotor.setPower(power);
+    //  Default:  positive power strafe left
+    public void strafe(double power) {
+        this.strafeDifferential(power, power);
     }
 
-    //  Default:  positive power strifes left
-    public void strife(double power) {
-        this.leftFrontMotor.setPower(-power);
-        this.rightFrontMotor.setPower(power);
+    //  Default:  positive power strafes left
+    public void strafeDifferential(double p1, double p2) {
+        this.leftFrontMotor.setPower(-p1);
+        this.rightFrontMotor.setPower(p2);
 
-        this.leftBackMotor.setPower(power);
-        this.rightBackMotor.setPower(-power);
+        this.leftBackMotor.setPower(p2);
+        this.rightBackMotor.setPower(-p1);
     }
 
     //  positive power rotates left ;
@@ -136,7 +139,7 @@ public class Driver {
     }
 
 
-    private void diagonalStrife(double p1, double p2) {
+    private void diagonalStrafe(double p1, double p2) {
         this.leftFrontMotor.setPower(p1);
         this.rightFrontMotor.setPower(p2);
 
@@ -144,12 +147,12 @@ public class Driver {
         this.rightBackMotor.setPower(p1);
     }
 
-    public void leftDiagonalStrife(double power) {
-        this.diagonalStrife(0, power);
+    public void leftDiagonalStrafe(double power) {
+        this.diagonalStrafe(0, power);
     }
 
-    public void rightDiagonalStrife(double power) {
-        this.diagonalStrife(power, 0);
+    public void rightDiagonalStrafe(double power) {
+        this.diagonalStrafe(power, 0);
     }
 
 

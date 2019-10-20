@@ -13,7 +13,7 @@ public final class Constants {
     //  For AndyMark motor;  1 rev = 1120 ticks ;
     public static final int MOTOR_TICK_COUNT = 1120;
     public static final int WHEEL_DIAMETER = 4; // inches ;
-    public static final double TICK_DISTANCE_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
+    public static final double TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
 
 
     public static final String COLOR_SENSOR_NAME = "colorSensor" ;

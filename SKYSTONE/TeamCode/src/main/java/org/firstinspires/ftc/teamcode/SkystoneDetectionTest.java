@@ -155,6 +155,16 @@ public class SkystoneDetectionTest extends LinearOpMode {
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
+        //  Page 14:  https://www.firstinspires.org/sites/default/files/uploads/resource_library/ftc/field-setup-guide.pdf
+        //  image1:  Front Wall (audience); Red Alliance Side;  Silver standing robot
+        //  image2:  Front Wall (audience); Blue Alliance Side; R2D2 and BB8
+        //  image3:  Red Alliance Wall, Front Zone (audience); Yellow Standing Robot
+        //  image4:  Blue Alliance Wall, Front Zone (audience); BB8
+        //  image5:  Red Alliance Wall; Back Zone; CP30
+        //  image6:  Blue Alliance Wall; Back Zone; Robot pointing somewhere
+        //  image7:  Back Wall; Red Side;  Orange Head R2D2 like droid
+        //  image8:  Back Wall; Blue Side; Computer room
+
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
         VuforiaTrackables targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");

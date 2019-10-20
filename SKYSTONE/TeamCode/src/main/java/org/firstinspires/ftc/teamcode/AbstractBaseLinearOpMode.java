@@ -1,15 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.Range;
 
 public abstract class AbstractBaseLinearOpMode extends LinearOpMode {
 
     abstract void initRobot();
-
     abstract void stopRobot();
 
     protected GameBot rosie;
-
 
     protected void waitToPressStart() {
         // wait for start button.
@@ -27,6 +26,80 @@ public abstract class AbstractBaseLinearOpMode extends LinearOpMode {
     public ColorSensorController getColorSensorController() {
         return this.rosie.getColorSensorController();
     }
+
+    protected double normalizePower(double power) {
+        return Range.clip(power, -1.0, 1.0);
+    }
+
+    protected void drive(double distanceInInches, double power) {
+
+        Driver driver = this.rosie.getDriver();
+
+        driver.setTargetPosition(distanceInInches);
+        this.gyroDrive(power);
+        while (opModeIsActive() && this.rosie.getDriver().motorsBusy()) {
+            telemetry.addData("GyroDrive:  ", "driving...");
+            this.gyroDrive(power);
+            telemetry.update();
+        }
+        this.stop();
+    }
+
+    protected void strafe(double distanceInInches, double power) {
+
+        Driver driver = this.rosie.getDriver();
+        driver.setTargetPosition(distanceInInches);
+        this.gyroStrafe(power);
+        while (opModeIsActive() && driver.motorsBusy()) {
+            telemetry.addData("GyroStrafe:  ", "strafing...");
+            this.gyroStrafe(power);
+            telemetry.update();
+        }
+        this.stop();
+    }
+
+    protected void gyroDrive(double power) {
+
+        Driver driver = this.rosie.getDriver();
+        MotorControllerEx motor = this.rosie.getMotorPID();
+        IMUController imu = this.rosie.getIMUController();
+
+        //  index 0:  leftPowerCorrection
+        //  index 1:  rightPowerCorrection
+        //  index 2:  correction value ;
+        double[] correction = motor.calculateDriveCorrection(power, imu.getAngle());
+        boolean showDebug = correction[0] != 0 || correction[1] != 0;
+
+        driver.driveDifferential(correction[0], correction[1]);
+
+        if (showDebug) {
+            telemetry.addData("Non-Zero Angle.  Adjust power.", imu.getAngle());
+            telemetry.update();
+        }
+    }
+
+    //  positive power strafe left; negative strafe right
+    protected void gyroStrafe(double power) {
+
+        Driver driver = this.rosie.getDriver();
+        MotorControllerEx motor = this.rosie.getMotorPID();
+        IMUController imu = this.rosie.getIMUController();
+
+        //  index 0:  leftPowerCorrection
+        //  index 1:  rightPowerCorrection
+        //  index 2:  correction value ;
+        double[] correction = motor.calculateDriveCorrection(power, imu.getAngle());
+        boolean showDebug = correction[0] != 0 || correction[1] != 0;
+
+        driver.strafeDifferential(correction[0], correction[1]);
+
+        if (showDebug) {
+            telemetry.addData("Non-Zero Angle.  Adjust power.", imu.getAngle());
+            telemetry.update();
+        }
+    }
+
+
 
 }
 

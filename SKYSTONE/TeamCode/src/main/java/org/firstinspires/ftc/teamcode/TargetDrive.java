@@ -11,9 +11,6 @@ public class TargetDrive extends AbstractBaseLinearOpMode {
     private Driver driver;
     private IMUController imu;
 
-    private double angleCorrection;
-    private double power = 0.30;
-
     @Override
     void initRobot() {
 
@@ -43,59 +40,45 @@ public class TargetDrive extends AbstractBaseLinearOpMode {
         //  Activate opmode
         this.waitToPressStart();
 
+        //  make sure power is between -1 and 1 ;
+        double power = this.normalizePower(0.3);
+
         //  Drive forward 3 inches ;
-        telemetry.addData("GyroDrive:  ", "forward 3 inches");
+        double distance = 3;
+        telemetry.addData("GyroDrive:  ", "drive...");
         telemetry.update();
-
-        this.driver.setTargetPositionInInches(3);
-        this.gyroDrive(power);
-        while (opModeIsActive() && this.driver.motorsBusy()) {
-            telemetry.addData("GyroDrive:  ", "driving...");
-            this.gyroDrive(power);
-            telemetry.update();
-        }
-
-        this.stop();
-
+        this.drive(distance, power);
         telemetry.addData("GyroDrive:  ", "Done..");
         telemetry.update();
-
-        //  Sleep.
         sleep(5000);
 
-        //  drive backward 3 inches ;
-        //  Drive forward 3 inches ;
-        telemetry.addData("GyroDrive:  ", "forward -3 inches");
+        //  Strafe 3 inches left ;
+        telemetry.addData("GyroStrafe:  ", "strafe left");
         telemetry.update();
+        distance = 3;
+        this.strafe(distance, power);
+        telemetry.addData("GyroStrafe:  ", "Done..");
+        telemetry.update();
+        sleep(5000);
 
-        this.driver.setTargetPositionInInches(-3);
-        this.gyroDrive(-power);
-        while (opModeIsActive() && this.driver.motorsBusy()) {
-            telemetry.addData("GyroDrive:  ", "driving...");
-            this.gyroDrive(-power);
-            telemetry.update();
-        }
-        this.stop();
 
+        //  drive backward 3 inches ;
+        telemetry.addData("GyroDrive:  ", "back 3 inches");
+        telemetry.update();
+        distance = -3;
+        this.drive(distance, -power);
         telemetry.addData("GyroDrive:  ", "Done..");
         telemetry.update();
+        sleep(5000);
 
+
+        //  Strafe 3 inches right ;
+        telemetry.addData("GyroStrafe:  ", "strafe 3 inches right");
+        telemetry.update();
+        distance = -3;
+        this.strafe(distance, -power);
+        telemetry.addData("GyroDrive:  ", "Done..");
+        telemetry.update();
+        sleep(5000);
     }
-
-    private void gyroDrive(double power) {
-        //  index 0:  leftPowerCorrection
-        //  index 1:  rightPowerCorrection
-        //  index 2:  correction value ;
-        double[] correction = this.motor.calculateDriveCorrection(power, this.imu.getAngle());
-        boolean showDebug = correction[0] != 0 || correction[1] != 0;
-
-        driver.driveDifferential(correction[0], correction[1]);
-        angleCorrection = correction[2];
-
-        if (showDebug) {
-            telemetry.addData("Non-Zero Angle.  Adjust power.", this.imu.getAngle());
-            telemetry.update();
-        }
-    }
-
 }
