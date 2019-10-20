@@ -12,7 +12,7 @@ public class TouchSensorController {
     }
 
     public TouchSensorController(HardwareMap hardwareMap, String deviceName) {
-        this.touch = hardwareMap.touchSensor.get("touch_sensor");
+        this.touch = hardwareMap.touchSensor.get(deviceName);
     }
 
     public TouchSensor getSensor() {

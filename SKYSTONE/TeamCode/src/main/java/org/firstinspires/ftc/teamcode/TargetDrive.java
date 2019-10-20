@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 @Autonomous(name = "Target Drive")
-@Disabled
+//  @Disabled
 public class TargetDrive extends AbstractBaseLinearOpMode {
 
     private MotorControllerEx motor;

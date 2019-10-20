@@ -25,7 +25,7 @@ import java.util.Locale;
  */
 
 @TeleOp(name = "BasicColorTest", group = "Linear Opmode")
-@Disabled
+//  @Disabled
 public class ColorSensorSample extends BaseLinearOpMode {
 
     //  My pushbotrobot ;
