@@ -38,7 +38,7 @@ public class ColorSensorSample extends BaseLinearOpMode {
     @Override
     public void initRobot() {
         //  ColorSensor detector ;
-        this.colorSensor = this.getColorSensorController();
+        this.colorSensor = this.rosie.getColorSensorController();
 
         // get a reference to the RelativeLayout so we can change the background
         // color of the Robot Controller app to match the hue detected by the RGB sensor.
@@ -94,7 +94,7 @@ public class ColorSensorSample extends BaseLinearOpMode {
             this.stopDriving();
 
             //  Break out of active mode.
-            //  this.stop();
+            this.stop();
         }
     }
 }

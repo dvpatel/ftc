@@ -23,10 +23,6 @@ public abstract class AbstractBaseLinearOpMode extends LinearOpMode {
         this.rosie.init(hardwareMap);
     }
 
-    public ColorSensorController getColorSensorController() {
-        return this.rosie.getColorSensorController();
-    }
-
     protected double normalizePower(double power) {
         return Range.clip(power, -1.0, 1.0);
     }

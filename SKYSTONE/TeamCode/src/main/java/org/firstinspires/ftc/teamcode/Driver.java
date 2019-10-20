@@ -139,8 +139,8 @@ public class Driver {
         this.leftFrontMotor.setPower(p1);
         this.rightFrontMotor.setPower(-p2);
 
-        this.rightBackMotor.setPower(-p1);
         this.leftBackMotor.setPower(p2);
+        this.rightBackMotor.setPower(-p1);
     }
 
     //  Wide turn?
