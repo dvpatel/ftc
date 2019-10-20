@@ -104,6 +104,6 @@ public class TargetDrive extends AbstractLinearOpMode {
             sleep(5000);
         }
 
-        this.stop();
+        this.stopOpMode();
     }
 }

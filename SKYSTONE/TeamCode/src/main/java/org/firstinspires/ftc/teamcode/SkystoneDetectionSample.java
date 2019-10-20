@@ -87,14 +87,21 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
 @Disabled
 public class SkystoneDetectionSample extends AbstractLinearOpMode {
 
+    private SkystoneDetector skystoneDetector;
+    private float mmPerInch;
+
     @Override
     void initOpMode() throws InterruptedException {
         this.initRosie();
+
+        this.skystoneDetector = this.rosie.getSkystoneDetector();
+        mmPerInch = skystoneDetector.mmPerInch;
     }
 
     @Override
     void stopOpMode() {
-
+        // Disable Tracking when we are done;
+        this.skystoneDetector.getVuforiaTrackables().deactivate();
     }
 
 
@@ -114,15 +121,15 @@ public class SkystoneDetectionSample extends AbstractLinearOpMode {
         // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
         // Tap the preview window to receive a fresh image.
 
-        SkystoneDetector skystoneDetector = this.rosie.getSkystoneDetector();
-        float mmPerInch = skystoneDetector.mmPerInch;
-        VuforiaTrackables targetsSkyStone = skystoneDetector.getVuforiaTrackables();
-
+        VuforiaTrackables targetsSkyStone = this.skystoneDetector.getVuforiaTrackables();
         targetsSkyStone.activate();
         while (opModeIsActive()) {
 
             // Provide feedback as to where the robot is located (if we know).
             if (skystoneDetector.isTargetVisible()) {
+
+                telemetry.addData("Visible Target", skystoneDetector.getTargetName());
+
                 OpenGLMatrix lastLocation = skystoneDetector.getLastLocation();
 
                 // express position (translation) of robot in inches.
@@ -144,7 +151,6 @@ public class SkystoneDetectionSample extends AbstractLinearOpMode {
             telemetry.update();
         }
 
-        // Disable Tracking when we are done;
-        targetsSkyStone.deactivate();
+        this.stopOpMode();
     }
 }

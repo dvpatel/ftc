@@ -96,6 +96,8 @@ public class DriveAvoidPid extends AbstractLinearOpMode {
                 if (bButton) rotate(90, power, 0);
             }
         }
+
+        this.stopOpMode();
     }
 
     private void driveReverse(double power) {
