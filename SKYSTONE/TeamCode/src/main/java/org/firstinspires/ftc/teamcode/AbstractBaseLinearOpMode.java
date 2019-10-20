@@ -31,18 +31,32 @@ public abstract class AbstractBaseLinearOpMode extends LinearOpMode {
         return Range.clip(power, -1.0, 1.0);
     }
 
+    protected void stopDriving() {
+        this.rosie.getDriver().stop();
+    }
+
+    protected void drive(double power) {
+        Driver driver = this.rosie.getDriver();
+        this.gyroDrive(power);
+    }
+
     protected void drive(double distanceInInches, double power) {
 
         Driver driver = this.rosie.getDriver();
 
         driver.setTargetPosition(distanceInInches);
         this.gyroDrive(power);
-        while (opModeIsActive() && this.rosie.getDriver().motorsBusy()) {
+        while (opModeIsActive() && driver.motorsBusy()) {
             telemetry.addData("GyroDrive:  ", "driving...");
             this.gyroDrive(power);
             telemetry.update();
         }
-        this.stop();
+        driver.stop();
+    }
+
+    protected void strafe(double power) {
+        Driver driver = this.rosie.getDriver();
+        this.gyroStrafe(power);
     }
 
     protected void strafe(double distanceInInches, double power) {
@@ -55,7 +69,7 @@ public abstract class AbstractBaseLinearOpMode extends LinearOpMode {
             this.gyroStrafe(power);
             telemetry.update();
         }
-        this.stop();
+        driver.stop();
     }
 
     protected void gyroDrive(double power) {
@@ -70,7 +84,7 @@ public abstract class AbstractBaseLinearOpMode extends LinearOpMode {
         double[] correction = motor.calculateDriveCorrection(power, imu.getAngle());
         boolean showDebug = correction[0] != 0 || correction[1] != 0;
 
-        driver.driveDifferential(correction[0], correction[1]);
+        driver.driveDifferential(this.normalizePower(correction[0]), this.normalizePower(correction[1]));
 
         if (showDebug) {
             telemetry.addData("Non-Zero Angle.  Adjust power.", imu.getAngle());
@@ -91,15 +105,12 @@ public abstract class AbstractBaseLinearOpMode extends LinearOpMode {
         double[] correction = motor.calculateDriveCorrection(power, imu.getAngle());
         boolean showDebug = correction[0] != 0 || correction[1] != 0;
 
-        driver.strafeDifferential(correction[0], correction[1]);
+        driver.strafeDifferential(this.normalizePower(correction[0]), this.normalizePower(correction[1]));
 
         if (showDebug) {
             telemetry.addData("Non-Zero Angle.  Adjust power.", imu.getAngle());
             telemetry.update();
         }
     }
-
-
-
 }
 

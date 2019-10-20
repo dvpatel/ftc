@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "BasicGyroTest", group = "Linear Opmode")
-//  @Disabled
+@Disabled
 public class GyroSample extends BaseLinearOpMode {
 
     private double angleCorrection;
