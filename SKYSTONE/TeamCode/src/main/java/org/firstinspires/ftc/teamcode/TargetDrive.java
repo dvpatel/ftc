@@ -43,42 +43,65 @@ public class TargetDrive extends AbstractBaseLinearOpMode {
         //  make sure power is between -1 and 1 ;
         double power = this.normalizePower(0.3);
 
-        //  Drive forward 3 inches ;
-        double distance = 3;
-        telemetry.addData("GyroDrive:  ", "drive...");
-        telemetry.update();
-        this.drive(distance, power);
-        telemetry.addData("GyroDrive:  ", "Done..");
-        telemetry.update();
-        sleep(5000);
+        while (opModeIsActive()) {
 
-        //  Strafe 3 inches left ;
-        telemetry.addData("GyroStrafe:  ", "strafe left");
-        telemetry.update();
-        distance = 3;
-        this.strafe(distance, power);
-        telemetry.addData("GyroStrafe:  ", "Done..");
-        telemetry.update();
-        sleep(5000);
+            //  Drive forward 3 inches ;
+            double distance = 3;
+            telemetry.addData("GyroDrive:  ", "drive...");
+            telemetry.update();
+            this.drive(distance, power);
+            telemetry.addData("GyroDrive:  ", "Done..");
+            telemetry.update();
+            sleep(5000);
 
-
-        //  drive backward 3 inches ;
-        telemetry.addData("GyroDrive:  ", "back 3 inches");
-        telemetry.update();
-        distance = -3;
-        this.drive(distance, -power);
-        telemetry.addData("GyroDrive:  ", "Done..");
-        telemetry.update();
-        sleep(5000);
+            //  Strafe 3 inches left ;
+            telemetry.addData("GyroStrafe:  ", "strafe left");
+            telemetry.update();
+            distance = -3;
+            this.strafe(distance, -power);
+            telemetry.addData("GyroStrafe:  ", "Done..");
+            telemetry.update();
+            sleep(5000);
 
 
-        //  Strafe 3 inches right ;
-        telemetry.addData("GyroStrafe:  ", "strafe 3 inches right");
-        telemetry.update();
-        distance = -3;
-        this.strafe(distance, -power);
-        telemetry.addData("GyroDrive:  ", "Done..");
-        telemetry.update();
-        sleep(5000);
+            //  drive backward 3 inches ;
+            telemetry.addData("GyroDrive:  ", "back 3 inches");
+            telemetry.update();
+            distance = -3;
+            this.drive(distance, -power);
+            telemetry.addData("GyroDrive:  ", "Done..");
+            telemetry.update();
+            sleep(5000);
+
+
+            //  Strafe 3 inches right ;
+            telemetry.addData("GyroStrafe:  ", "strafe 3 inches right");
+            telemetry.update();
+            distance = 3;
+            this.strafe(distance, power);
+            telemetry.addData("GyroDrive:  ", "Done..");
+            telemetry.update();
+            sleep(5000);
+
+            //  Turn 90 degrees to the right
+            telemetry.addData("GyroTurn:  right ", "180 degrees");
+            telemetry.update();
+            double degrees = 180;
+            this.turn(degrees, power);
+            telemetry.addData("GyroTurn:  Done, ", imu.getAngle());
+            telemetry.update();
+            sleep(5000);
+
+
+            telemetry.addData("GyroTurn: left  ", "180 degrees??");
+            telemetry.update();
+            degrees = -180;
+            this.turn(degrees, -power);
+            telemetry.addData("GyroTurn:  Done, ", imu.getAngle());
+            telemetry.update();
+            sleep(5000);
+        }
+
+        this.stop();
     }
 }

@@ -98,14 +98,14 @@ public class GyroSample extends BaseLinearOpMode {
             }
 
             do {
-                double powerCorrection = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
-                telemetry.addData("-PowerAdjustment", powerCorrection);
+                double[] p = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
+                telemetry.addData("-PowerAdjustment", p);
 
             } while (opModeIsActive() && !this.rosie.getMotorPID().angleOnTarget());
         } else    // left turn.
             do {
-                double powerCorrection = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
-                telemetry.addData("+PowerAdjustment", powerCorrection);
+                double[] p = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
+                telemetry.addData("+PowerAdjustment", p);
             } while (opModeIsActive() && !this.rosie.getMotorPID().angleOnTarget());
 
 

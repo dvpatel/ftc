@@ -59,6 +59,30 @@ public abstract class AbstractBaseLinearOpMode extends LinearOpMode {
         this.gyroStrafe(power);
     }
 
+    protected void turn(double degrees, double power) {
+
+        Driver driver = this.rosie.getDriver();
+        MotorControllerEx motor = this.rosie.getMotorPID();
+        IMUController imu = this.rosie.getIMUController();
+
+        imu.resetAngle();
+
+        do {
+            telemetry.addData("GyroTurn:  ", "turning...");
+            double[] p = motor.calculateRotateCorrection(degrees, imu.getAngle(), power);
+
+            if (degrees < 0) {
+                driver.driveDifferential(p[0], -p[1]);
+            } else {
+                driver.driveDifferential(-p[0], p[1]);
+            }
+
+            telemetry.update();
+        } while (opModeIsActive() && !motor.angleOnTarget());
+
+        driver.stop();
+    }
+
     protected void strafe(double distanceInInches, double power) {
 
         Driver driver = this.rosie.getDriver();

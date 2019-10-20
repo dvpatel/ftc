@@ -115,29 +115,38 @@ public class Driver {
     }
 
 
-    //  Default:  positive power strafe left
+    //  Default:  positive power strafe right
     public void strafe(double power) {
         this.strafeDifferential(power, power);
     }
 
-    //  Default:  positive power strafes left
+    //  Default:  positive power strafes right
     public void strafeDifferential(double p1, double p2) {
-        this.leftFrontMotor.setPower(-p1);
-        this.rightFrontMotor.setPower(p2);
+        this.leftFrontMotor.setPower(p1);
+        this.rightFrontMotor.setPower(-p2);
 
-        this.leftBackMotor.setPower(p2);
-        this.rightBackMotor.setPower(-p1);
+        this.leftBackMotor.setPower(-p2);
+        this.rightBackMotor.setPower(p1);
     }
 
-    //  positive power rotates left ;
+
     public void rotate(double power) {
-        this.leftFrontMotor.setPower(-power);
-        this.rightFrontMotor.setPower(power);
-
-        this.leftBackMotor.setPower(-power);
-        this.rightBackMotor.setPower(power);
+        this.rotateDifferential(power, power);
     }
 
+    //  positive power rotates right ;
+    public void rotateDifferential(double p1, double p2) {
+        this.leftFrontMotor.setPower(p1);
+        this.rightFrontMotor.setPower(-p2);
+
+        this.rightBackMotor.setPower(-p1);
+        this.leftBackMotor.setPower(p2);
+    }
+
+    //  Wide turn?
+    private void wideTurn(double power) {
+        throw new RuntimeException("Not implemented.  Really needed?");
+    }
 
     private void diagonalStrafe(double p1, double p2) {
         this.leftFrontMotor.setPower(p1);

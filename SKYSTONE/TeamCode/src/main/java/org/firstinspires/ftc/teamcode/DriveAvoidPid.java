@@ -142,13 +142,13 @@ public class DriveAvoidPid extends BaseLinearOpMode {
             }
 
             do {
-                double powerCorrection = this.motor.calculateRotateCorrection(degrees, this.imu.getAngle(), power);
-                driver.driveDifferential(powerCorrection, -powerCorrection);
+                double[] p = this.motor.calculateRotateCorrection(degrees, this.imu.getAngle(), power);
+                driver.driveDifferential(p[0], -p[1]);
             } while (opModeIsActive() && !this.motor.angleOnTarget());
         } else    // left turn.
             do {
-                double powerCorrection = this.motor.calculateRotateCorrection(degrees, this.imu.getAngle(), power);
-                driver.driveDifferential(-powerCorrection, powerCorrection);
+                double[] p = this.motor.calculateRotateCorrection(degrees, this.imu.getAngle(), power);
+                driver.driveDifferential(-p[0], p[1]);
             } while (opModeIsActive() && !this.motor.angleOnTarget());
 
         // turn the motors off.

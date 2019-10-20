@@ -59,9 +59,13 @@ public class MotorControllerEx {
     }
 
 
-    public double calculateRotateCorrection(double degrees, double angle, double power) {
+    public double[] calculateRotateCorrection(double degrees, double angle, double power) {
         this.enableRotatePID(degrees, power) ;
-        return this.pidRotate.performPID(angle);
+        double powerCorrection = this.pidRotate.performPID(angle);
+
+        double[] corrections = {(power - powerCorrection), (power + powerCorrection), powerCorrection};
+
+        return corrections;
     }
 
     public boolean angleOnTarget() {
