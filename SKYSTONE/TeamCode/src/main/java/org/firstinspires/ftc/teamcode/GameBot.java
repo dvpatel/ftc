@@ -27,14 +27,11 @@ public class GameBot {
 
     private ColorSensorController colorSensor;
     private IMUController imu;
-
-    //  Motor PID logic ;
     private MotorControllerEx motorPID;
-
-    //  DC Motor driver ;
     private Driver driver;
-
     private TouchSensorController touch;
+    private GamepadDriver gamepadDriver;
+
 
     private SkystoneDetector skystonDetector;
 
@@ -78,11 +75,11 @@ public class GameBot {
         //  Skystone detector, not activated ;
         this.skystonDetector = new SkystoneDetector(hardwareMap);
 
-        // Set all motors to run without encoders.
-        // May want to use RUN_USING_ENCODERS if encoders are installed.
-        //  leftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //  rightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //  leftArm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //  Drive using gamepad ;
+        this.gamepadDriver = new GamepadDriver(this.driver);
+
+
+        //  Something with Servo ;
     }
 
     private void waitForCalibration() throws InterruptedException {
@@ -117,6 +114,11 @@ public class GameBot {
     public SkystoneDetector getSkystoneDetector() {
         return this.skystonDetector;
     }
+
+    public GamepadDriver getGamepadDriver() {
+        return this.gamepadDriver;
+    }
+
 
 }
 

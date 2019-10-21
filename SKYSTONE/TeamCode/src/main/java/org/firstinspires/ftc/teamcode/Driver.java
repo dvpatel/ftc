@@ -101,7 +101,7 @@ public class Driver {
 
     }
 
-    private void powerDifferential(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
+    public void powerDifferential(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
         this.leftFrontMotor.setPower(leftFrontPower);
         this.rightFrontMotor.setPower(rightFrontPower);
 
