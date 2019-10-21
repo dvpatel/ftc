@@ -51,6 +51,11 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.stop();
     }
 
+    protected void rotate(double power) {
+        Driver driver = this.rosie.getDriver();
+        driver.rotate(power);
+    }
+
     protected void strafe(double power) {
         Driver driver = this.rosie.getDriver();
         this.gyroStrafe(power);

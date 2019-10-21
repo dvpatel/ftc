@@ -33,12 +33,15 @@ public class DriveAvoidPid extends AbstractLinearOpMode {
 
     private double angleCorrection;
 
-    private double power = 0.30;
+    private double power;
 
     @Override
     void initOpMode() throws InterruptedException {
 
         this.initRosie();
+
+        //  Set default power ;
+        this.power = this.normalizePower(0.3);
 
         this.imu = this.rosie.getIMUController();
         this.motor = this.rosie.getMotorPID();
