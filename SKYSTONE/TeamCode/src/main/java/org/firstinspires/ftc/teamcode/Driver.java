@@ -101,19 +101,23 @@ public class Driver {
 
     }
 
+    private void powerDifferential(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
+        this.leftFrontMotor.setPower(leftFrontPower);
+        this.rightFrontMotor.setPower(rightFrontPower);
+
+        this.leftBackMotor.setPower(leftBackPower);
+        this.rightBackMotor.setPower(rightBackPower);
+    }
+
+
     //  Drive forward or backward
     public void drive(double power) {
         this.driveDifferential(power, power);
     }
 
     public void driveDifferential(double leftPower, double rightPower) {
-        this.leftFrontMotor.setPower(leftPower);
-        this.leftBackMotor.setPower(leftPower);
-
-        this.rightFrontMotor.setPower(rightPower);
-        this.rightBackMotor.setPower(rightPower);
+        this.powerDifferential(leftPower, rightPower, leftPower, rightPower);
     }
-
 
     //  Default:  positive power strafe right
     public void strafe(double power) {
@@ -122,13 +126,8 @@ public class Driver {
 
     //  Default:  positive power strafes right
     public void strafeDifferential(double p1, double p2) {
-        this.leftFrontMotor.setPower(p1);
-        this.rightFrontMotor.setPower(-p2);
-
-        this.leftBackMotor.setPower(-p2);
-        this.rightBackMotor.setPower(p1);
+        this.powerDifferential(p1, -p2, -p2, p1);
     }
-
 
     public void rotate(double power) {
         this.rotateDifferential(power, power);
@@ -136,11 +135,7 @@ public class Driver {
 
     //  positive power rotates right ;
     public void rotateDifferential(double p1, double p2) {
-        this.leftFrontMotor.setPower(p1);
-        this.rightFrontMotor.setPower(-p2);
-
-        this.leftBackMotor.setPower(p2);
-        this.rightBackMotor.setPower(-p1);
+        this.powerDifferential(p1, -p2, p2, -p1);
     }
 
     //  Wide turn?
@@ -148,25 +143,19 @@ public class Driver {
         throw new RuntimeException("Not implemented.  Really needed?");
     }
 
-    private void diagonalStrafe(double p1, double p2) {
-        this.leftFrontMotor.setPower(p1);
-        this.rightFrontMotor.setPower(p2);
-
-        this.leftBackMotor.setPower(p2);
-        this.rightBackMotor.setPower(p1);
-    }
-
+    //  positive power:  left forwrae diagnol; negative power:  reverse right diagnoal
     public void leftDiagonalStrafe(double power) {
-        this.diagonalStrafe(0, power);
+        this.powerDifferential(0, power, power, 0);
     }
 
+    //  power power:  right forward diagnol; negative power:  reverse left diagnoal
     public void rightDiagonalStrafe(double power) {
-        this.diagonalStrafe(power, 0);
+        this.powerDifferential(power, 0, 0, power);
     }
 
 
     public void stop() {
-        this.driveDifferential(0, 0);
+        this.powerDifferential(0, 0, 0, 0);
     }
 
 }
