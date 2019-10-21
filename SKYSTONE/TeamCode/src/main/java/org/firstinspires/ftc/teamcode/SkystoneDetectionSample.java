@@ -95,7 +95,7 @@ public class SkystoneDetectionSample extends AbstractLinearOpMode {
         this.initRosie();
 
         this.skystoneDetector = this.rosie.getSkystoneDetector();
-        mmPerInch = skystoneDetector.mmPerInch;
+        mmPerInch = Constants.MM_PER_INCHES;
     }
 
     @Override
