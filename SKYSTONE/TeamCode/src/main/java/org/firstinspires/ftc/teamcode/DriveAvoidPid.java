@@ -19,6 +19,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+//  https://stemrobotics.cs.pdx.edu/node/7268
+
 @Autonomous(name = "Drive Avoid PID", group = "Exercises")
 @Disabled
 public class DriveAvoidPid extends AbstractLinearOpMode {

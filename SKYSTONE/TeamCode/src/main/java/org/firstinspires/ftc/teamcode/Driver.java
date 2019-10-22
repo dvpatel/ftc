@@ -75,6 +75,7 @@ public class Driver {
 
         //  Always reset;  starts at zero;
         this.setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         this.leftFrontMotor.setTargetPosition(ticks);
         this.leftBackMotor.setTargetPosition(ticks);
@@ -130,12 +131,7 @@ public class Driver {
     }
 
     public void rotate(double power) {
-        this.rotateDifferential(power, power);
-    }
-
-    //  positive power rotates right ;
-    public void rotateDifferential(double p1, double p2) {
-        this.powerDifferential(p1, -p2, p2, -p1);
+        this.powerDifferential(power, -power, power, -power);
     }
 
     //  Wide turn?

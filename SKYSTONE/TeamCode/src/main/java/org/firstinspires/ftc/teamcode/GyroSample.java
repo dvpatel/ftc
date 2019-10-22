@@ -27,7 +27,7 @@ public class GyroSample extends AbstractLinearOpMode {
     void initOpMode() throws InterruptedException {
 
         this.initRosie();
-        this.waitForCalibration();
+        //  this.waitForCalibration(); //  Rosie takes care of calibration ;
 
         telemetry.addData("Calibration Status:  ", this.rosie.getIMUController().getCalibrationStatus());
 
@@ -44,6 +44,12 @@ public class GyroSample extends AbstractLinearOpMode {
         this.initOpMode();
         this.waitForStart();
 
+
+        while (!isStarted() && !isStopRequested()) {
+            telemetry.addData("Wait for play", this.rosie.getTimer().toString());
+        }
+
+        this.rosie.getTimer().reset();
         while (opModeIsActive()) {
             this.driveStraight(power);
 

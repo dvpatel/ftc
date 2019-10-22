@@ -90,6 +90,9 @@ public class GameBot {
         }
     }
 
+    public ElapsedTime getTimer() {
+        return this.period;
+    }
 
     public ColorSensorController getColorSensorController() {
         return this.colorSensor;

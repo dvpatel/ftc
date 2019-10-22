@@ -38,16 +38,15 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     }
 
     protected void drive(double distanceInInches, double power) {
-
         Driver driver = this.rosie.getDriver();
-
         driver.setTargetPosition(distanceInInches);
-        this.gyroDrive(power);
-        while (opModeIsActive() && driver.motorsBusy()) {
+
+        do {
             telemetry.addData("GyroDrive:  ", "driving...");
-            this.gyroDrive(power);
             telemetry.update();
-        }
+            this.gyroDrive(power);
+        } while (opModeIsActive() && driver.motorsBusy());
+
         driver.stop();
     }
 
@@ -74,9 +73,10 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
             double[] p = motor.calculateRotateCorrection(degrees, imu.getAngle(), power);
 
             if (degrees < 0) {
-                driver.rotateDifferential(p[0], -p[1]);
+                driver.powerDifferential(p[0], -p[1], p[0], -p[1]);
+
             } else {
-                driver.rotateDifferential(-p[0], p[1]);
+                driver.powerDifferential(-p[0], p[1], -p[0], p[1]);
             }
 
             telemetry.update();
@@ -89,12 +89,13 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
 
         Driver driver = this.rosie.getDriver();
         driver.setTargetPosition(distanceInInches);
-        this.gyroStrafe(power);
-        while (opModeIsActive() && driver.motorsBusy()) {
+
+        do {
             telemetry.addData("GyroStrafe:  ", "strafing...");
-            this.gyroStrafe(power);
             telemetry.update();
-        }
+            this.gyroStrafe(power);
+        } while (opModeIsActive() && driver.motorsBusy());
+
         driver.stop();
     }
 
