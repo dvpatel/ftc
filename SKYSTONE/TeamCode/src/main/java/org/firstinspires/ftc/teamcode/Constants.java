@@ -10,6 +10,7 @@ public final class Constants {
     public static final String LEFT_BACK_MOTOR_NAME = "left_back_motor" ;
     public static final String RIGHT_BACK_MOTOR_NAME = "right_back_motor" ;
     public static final String TOUCH_SENSOR_NAME = "touch_sensor" ;
+    public static final String COLOR_SENSOR_NAME = "colorSensor";
     public static final String IMU_NAME = "imu" ;
 
     public static final double DEFAULT_POWER = 0.30;
@@ -20,7 +21,6 @@ public final class Constants {
     public static final double TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
 
 
-    public static final String COLOR_SENSOR_NAME = "colorSensor" ;
     public static final int COLOR_ALPHA=0 ;
     public static final int COLOR_RED=1 ;
     public static final int COLOR_GREEN=2 ;
