@@ -32,7 +32,7 @@ public class GamepadDriver {
 
         leftF += left_stick_x;
         rightF += -left_stick_x;
-        ;
+
         leftB += -left_stick_x;
         rightB += left_stick_x;
 
