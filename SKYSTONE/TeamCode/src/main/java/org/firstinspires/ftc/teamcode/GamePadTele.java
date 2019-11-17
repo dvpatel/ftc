@@ -5,9 +5,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "GamePadSample", group = "Linear Opmode")
+@TeleOp(name = "GamePad", group = "Tele")
 //  @Disabled
-public class GamePadSample extends AbstractLinearOpMode {
+public class GamePadTele extends AbstractLinearOpMode {
 
     private MotorControllerEx motor;
     private Driver driver;
@@ -20,6 +20,9 @@ public class GamePadSample extends AbstractLinearOpMode {
 
     @Override
     void initOpMode() throws InterruptedException {
+
+        telemetry.addData("Mode", "init Rosie");
+        telemetry.update();
 
         this.initRosie();
 
@@ -40,17 +43,25 @@ public class GamePadSample extends AbstractLinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
+        telemetry.addData("Mode", "Start.INit");
+        telemetry.update();
+
         this.initOpMode();
+
+        telemetry.addData("Mode", "InitMode.Done");
+
 
         //  Wait for start button ;
         this.waitToPressStart();
+
+        telemetry.addData("Mode", "Started");
 
         GamepadDriver gpd = this.rosie.getGamepadDriver();
         while (opModeIsActive()) {
 
             //  Uncomment when real motors attached ; Direction correct?
             double[] p = gpd.calculatePowerDifferential(gamepad1);
-            //  gpd.drive(gamepad1) ;
+            gpd.drive(gamepad1);
 
             //  Controls direction
             telemetry.addData("LeftF", p[0]);
