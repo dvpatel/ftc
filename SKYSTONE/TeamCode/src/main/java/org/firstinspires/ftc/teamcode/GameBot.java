@@ -61,19 +61,20 @@ public class GameBot {
         //  Build driver ;
         this.driver = new Driver(hardwareMap);
 
+        //  DP:  Causing init to fail;
         //  IMU ;  Calibrate Gyro ;
-        this.imu = new IMUController(hardwareMap);
-        this.waitForCalibration();
+        //  this.imu = new IMUController(hardwareMap);
+        //  this.waitForCalibration();
 
         //   PID Logic for DC Motors;  Default 0.30 power ;
         this.motorPID = new MotorControllerEx();
         this.motorPID.enableDrivePID(Constants.DEFAULT_POWER);
 
-        //  TouchSensor ;
-        this.touch = new TouchSensorController(hardwareMap);
+        //  Uncomment when TouchSensor is attached;
+        //  this.touch = new TouchSensorController(hardwareMap);
 
-        //  Skystone detector, not activated ;
-        this.skystonDetector = new SkystoneDetector(hardwareMap);
+        //  Skystone detector, activate when ready ;
+        //  this.skystonDetector = new SkystoneDetector(hardwareMap);
 
         //  Drive using gamepad ;
         this.gamepadDriver = new GamepadDriver(this.driver);
@@ -84,7 +85,7 @@ public class GameBot {
 
     private void waitForCalibration() throws InterruptedException {
         // make sure the imu gyro is calibrated before continuing.
-        while (!imu.isCalibrated()) {
+        while (!this.imu.isCalibrated()) {
             Thread.yield();
             Thread.sleep(50);
         }
