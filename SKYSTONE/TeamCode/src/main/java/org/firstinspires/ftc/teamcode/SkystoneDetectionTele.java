@@ -83,9 +83,9 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  */
 
 
-@TeleOp(name = "SKYSTONE Vuforia Nav", group = "Concept")
+@TeleOp(name = "Skystone", group = "Tele")
 @Disabled
-public class SkystoneDetectionSample extends AbstractLinearOpMode {
+public class SkystoneDetectionTele extends AbstractLinearOpMode {
 
     private SkystoneDetector skystoneDetector;
     private float mmPerInch;
