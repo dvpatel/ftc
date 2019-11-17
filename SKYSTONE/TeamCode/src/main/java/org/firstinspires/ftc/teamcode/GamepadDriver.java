@@ -2,13 +2,15 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+//  left_stick_y:  -1.0 to 1.0 float;
+//  left_stick_x:  -1.0 to 1.0 float;
 //  Alg based on http://controls.coderedrobotics.com/programminglessons/11.html
 //  Drive using Gamepad ;
 public class GamepadDriver {
 
     private Driver driver;
 
-    double leftF, leftB, rightF, rightB;
+    double leftFront, leftBack, rightFront, rightBack;
 
     public GamepadDriver(Driver driver) {
         this.driver = driver;
@@ -25,33 +27,35 @@ public class GamepadDriver {
 
     private double[] calculatePowerDifferential(float left_stick_y, float left_stick_x, float right_stick_x) {
 
-        leftF = left_stick_y;
-        rightF = left_stick_y;
-        leftB = left_stick_y;
-        rightB = left_stick_y;
+        //  left_stick_y, left_stick_x:  Up = -1.0;  Down = 1.0;
+        //               right_stick_x:  Up = -1.0;  Down: 1.0;
 
-        leftF += left_stick_x;
-        rightF += -left_stick_x;
+        leftFront = left_stick_y;
+        rightFront = left_stick_y;
+        leftBack = left_stick_y;
+        rightBack = left_stick_y;
 
-        leftB += -left_stick_x;
-        rightB += left_stick_x;
+        leftFront += left_stick_x;
+        rightFront += -left_stick_x;
+        leftBack += left_stick_x;
+        rightBack += -left_stick_x;
 
-        leftF += right_stick_x;
-        rightF += -right_stick_x;
-        leftB += right_stick_x;
-        rightB += -right_stick_x;
+        leftFront += right_stick_x;
+        rightFront += -right_stick_x;
+        leftBack += right_stick_x;
+        rightBack += -right_stick_x;
 
-        double max = Math.max(Math.max(Math.abs(leftF), Math.abs(rightF)), Math.max(Math.abs(leftB), Math.abs(rightB)));
+        double max = Math.max(Math.max(Math.abs(leftFront), Math.abs(rightFront)), Math.max(Math.abs(leftBack), Math.abs(rightBack)));
 
         if (max > 1) {
-            leftF = leftF / max;
-            rightF = rightF / max;
-            leftB = leftB / max;
-            rightB = rightB / max;
+            leftFront = leftFront / max;
+            rightFront = rightFront / max;
+            leftBack = leftBack / max;
+            rightBack = rightBack / max;
         }
 
         //  Double check direction ;
-        double[] result = {-leftF, -rightF, -leftB, -rightB};
+        double[] result = {leftFront, rightFront, leftBack, rightBack};
         return result;
     }
 
