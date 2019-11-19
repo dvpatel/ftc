@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "Target Drive", group = "Auto")
+@Autonomous(name = "TargetDrive", group = "Auto")
 //  @Disabled
 public class TargetDriveAuto extends AbstractLinearOpMode {
 
@@ -25,8 +25,6 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
 
         telemetry.addData("Mode", "init complete;  Running");
         telemetry.update();
-
-
     }
 
     @Override
@@ -48,7 +46,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
         while (opModeIsActive()) {
 
             //  Drive forward 3 inches ;
-            double distance = 3;
+            double distance = 12;
             telemetry.addData("GyroDrive:  ", "drive...");
             telemetry.update();
             this.drive(distance, power);
@@ -56,10 +54,11 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
             telemetry.update();
             sleep(5000);
 
+
 //            //  Strafe 3 inches left ;
 //            telemetry.addData("GyroStrafe:  ", "strafe left");
 //            telemetry.update();
-//            distance = -3;
+//            distance = -6;
 //            this.strafe(distance, -power);
 //            telemetry.addData("GyroStrafe:  ", "Done..");
 //            telemetry.update();
@@ -69,7 +68,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
 //            //  drive backward 3 inches ;
 //            telemetry.addData("GyroDrive:  ", "back 3 inches");
 //            telemetry.update();
-//            distance = -3;
+//            distance = -6;
 //            this.drive(distance, -power);
 //            telemetry.addData("GyroDrive:  ", "Done..");
 //            telemetry.update();
@@ -79,7 +78,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
 //            //  Strafe 3 inches right ;
 //            telemetry.addData("GyroStrafe:  ", "strafe 3 inches right");
 //            telemetry.update();
-//            distance = 3;
+//            distance = 6;
 //            this.strafe(distance, power);
 //            telemetry.addData("GyroDrive:  ", "Done..");
 //            telemetry.update();
