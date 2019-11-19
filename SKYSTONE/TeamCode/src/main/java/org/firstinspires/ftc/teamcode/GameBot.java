@@ -31,13 +31,9 @@ public class GameBot {
     private Driver driver;
     private TouchSensorController touch;
     private GamepadDriver gamepadDriver;
-
+    private ServoController shortArmServo;
 
     private SkystoneDetector skystonDetector;
-
-    /* Public OpMode members. */
-    private Servo leftClaw = null;
-    private Servo rightClaw = null;
 
     private static final double MID_SERVO = 0.5;
     private static final double ARM_UP_POWER = 0.45;
@@ -63,12 +59,15 @@ public class GameBot {
 
         //  DP:  Causing init to fail;
         //  IMU ;  Calibrate Gyro ;
-        //  this.imu = new IMUController(hardwareMap);
+        this.imu = new IMUController(hardwareMap);
         //  this.waitForCalibration();
 
         //   PID Logic for DC Motors;  Default 0.30 power ;
         this.motorPID = new MotorControllerEx();
         this.motorPID.enableDrivePID(Constants.DEFAULT_POWER);
+
+        //  Setup short arm servo;
+        this.shortArmServo = new ServoController(this.hardwareMap);
 
         //  Uncomment when TouchSensor is attached;
         //  this.touch = new TouchSensorController(hardwareMap);
@@ -80,7 +79,6 @@ public class GameBot {
         this.gamepadDriver = new GamepadDriver(this.driver);
 
 
-        //  Something with Servo ;
     }
 
     private void waitForCalibration() throws InterruptedException {
@@ -121,6 +119,10 @@ public class GameBot {
 
     public GamepadDriver getGamepadDriver() {
         return this.gamepadDriver;
+    }
+
+    public ServoController getShortArmServo() {
+        return this.shortArmServo;
     }
 
 
