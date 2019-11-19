@@ -21,7 +21,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 //  https://stemrobotics.cs.pdx.edu/node/7268
 
-@Autonomous(name = "Drive Avoid PID", group = "Exercises")
+@Autonomous(name = "DriveAvoid PID", group = "Exercises")
 @Disabled
 public class DriveAvoidPid extends AbstractLinearOpMode {
 
