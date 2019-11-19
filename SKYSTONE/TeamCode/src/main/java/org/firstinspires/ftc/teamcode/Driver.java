@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.Const;
 
 /**
  * Robot driver
@@ -31,18 +28,19 @@ public class Driver {
     private void setRightMotor(HardwareMap hardwareMap, String rightFrontDeviceName, String rightBackDeviceName) {
         this.rightFrontMotor = hardwareMap.dcMotor.get(rightFrontDeviceName);
         this.rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
 
         this.rightBackMotor = hardwareMap.dcMotor.get(rightBackDeviceName);
         this.rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
+
     }
 
     private void setLeftMotor(HardwareMap hardwareMap, String leftFrontDeviceName, String leftBackDeviceName) {
         this.leftFrontMotor = hardwareMap.dcMotor.get(leftFrontDeviceName);
-        this.leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
         this.leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         this.leftBackMotor = hardwareMap.dcMotor.get(leftBackDeviceName);
-        this.leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
         this.leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -52,7 +50,7 @@ public class Driver {
     }
 
     //  Sample:  Drive to Target in inches ;
-    private void driveToTargetExample(double distanceInInches, double leftPower, double rightPower) {
+    public void driveToTargetExample(double distanceInInches, double leftPower, double rightPower) {
 
         this.setTargetPosition(distanceInInches);
 
@@ -82,6 +80,8 @@ public class Driver {
 
         //  Tells motor to run to target ;
         this.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        //  Apply power, somewhere ;
     }
 
     //  Revisit;  Are all encoders needed?
@@ -93,32 +93,28 @@ public class Driver {
     }
 
 
-    //  Anish:  Where are the encoders attached?
     private void setDriveMode(DcMotor.RunMode mode) {
         this.leftFrontMotor.setMode(mode);
-        //  this.leftBackMotor.setMode(mode);
         this.rightFrontMotor.setMode(mode);
+
+        //  this.leftBackMotor.setMode(mode);
         //  this.rightBackMotor.setMode(mode);
     }
 
-    //  Anish:  where are the encoders attached?
     private void setTicksToTargets(int ticks) {
-
         this.leftFrontMotor.setTargetPosition(ticks);
-        //  this.leftBackMotor.setTargetPosition(ticks);
         this.rightFrontMotor.setTargetPosition(ticks);
-        //  this.rightBackMotor.setTargetPosition(ticks);
 
+        //  this.leftBackMotor.setTargetPosition(ticks);
+        //  this.rightBackMotor.setTargetPosition(ticks);
     }
 
     public void powerDifferential(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
         this.leftFrontMotor.setPower(leftFrontPower);
         this.rightFrontMotor.setPower(rightFrontPower);
-
         this.leftBackMotor.setPower(leftBackPower);
         this.rightBackMotor.setPower(rightBackPower);
     }
-
 
     //  Drive forward or backward
     public void drive(double power) {
@@ -157,7 +153,6 @@ public class Driver {
     public void rightDiagonalStrafe(double power) {
         this.powerDifferential(power, 0, 0, power);
     }
-
 
     public void stop() {
         this.powerDifferential(0, 0, 0, 0);
