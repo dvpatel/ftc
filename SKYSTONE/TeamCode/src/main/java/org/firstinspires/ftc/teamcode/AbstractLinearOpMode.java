@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 public abstract class AbstractLinearOpMode extends LinearOpMode {
@@ -37,13 +38,14 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         this.gyroDrive(power);
     }
 
+    //  GyroDrive
     protected void drive(double distanceInInches, double power) {
         Driver driver = this.rosie.getDriver();
         driver.setTargetPosition(distanceInInches);
 
+        this.rosie.getIMUController().resetAngle();
+
         do {
-            telemetry.addData("GyroDrive:  ", "driving...");
-            telemetry.update();
             this.gyroDrive(power);
         } while (opModeIsActive() && driver.motorsBusy());
 
@@ -90,6 +92,8 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         Driver driver = this.rosie.getDriver();
         driver.setTargetPosition(distanceInInches);
 
+        this.rosie.getIMUController().resetAngle();
+
         do {
             telemetry.addData("GyroStrafe:  ", "strafing...");
             telemetry.update();
@@ -109,8 +113,8 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         //  index 1:  rightPowerCorrection
         //  index 2:  correction value ;
         double[] correction = motor.calculateDriveCorrection(power, imu.getAngle());
-        boolean showDebug = correction[0] != 0 || correction[1] != 0;
 
+        boolean showDebug = correction[0] != 0 || correction[1] != 0;
         driver.driveDifferential(this.normalizePower(correction[0]), this.normalizePower(correction[1]));
 
         if (showDebug) {
