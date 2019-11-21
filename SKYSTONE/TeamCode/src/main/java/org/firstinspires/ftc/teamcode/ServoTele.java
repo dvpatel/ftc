@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp(name = "ServoTest", group = "Tele")
-@Disabled
+// @Disabled
 public class ServoTele extends AbstractLinearOpMode {
 
     private ServoController servo;
@@ -19,8 +19,9 @@ public class ServoTele extends AbstractLinearOpMode {
 
         this.initRosie();
 
+        //  Anish:  Start at 180 or down position;
         this.servo = this.rosie.getShortArmServo();
-        this.servo.setPositionByDegrees(0);
+        this.servo.setPositionByDegrees(180);
 
         telemetry.addData("Mode", "init complete;  Running");
         telemetry.update();
@@ -37,6 +38,9 @@ public class ServoTele extends AbstractLinearOpMode {
 
         this.initOpMode();
 
+        telemetry.addData("ServoPos: ", this.servo.getPosition());
+        telemetry.update();
+
         //  Wait for start button ;
         this.waitToPressStart();
 
@@ -48,14 +52,15 @@ public class ServoTele extends AbstractLinearOpMode {
 
             //  "Y" button --> 0 degrees;  X or B button 90 degrees; and A for 180 degrees;
             if (gamepad1.y) {
-                this.servo.setPositionByDegrees(0);
+                //  Drop on stop at 10 degrees ;
+                this.servo.setPositionByDegrees(10);
             } else if (gamepad1.x || gamepad1.b) {
                 this.servo.setPositionByDegrees(90);
             } else if (gamepad1.a) {
                 this.servo.setPositionByDegrees(180);
             }
 
-            telemetry.addData("Servo Position", this.servo.getPosition());
+            telemetry.addData("ServoPos", this.servo.getPosition());
             telemetry.update();
         }
 
