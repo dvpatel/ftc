@@ -69,14 +69,13 @@ public class Driver {
     }
 
     public void setTargetPosition(double distanceInInches) {
-        int ticks = this.calculateTicks(distanceInInches);
 
         //  Always reset;  starts at zero;
         this.setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //  set target
-        this.setTicksToTargets(ticks);
+        this.setTicksToTargets(distanceInInches);
 
         //  Tells motor to run to target ;
         this.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -87,33 +86,26 @@ public class Driver {
     //  Revisit;  Are all encoders needed?
     public boolean motorsBusy() {
         return this.leftFrontMotor.isBusy() &&
-                this.rightFrontMotor.isBusy() &&
-                this.leftBackMotor.isBusy() &&
-                this.rightBackMotor.isBusy();
+                this.rightFrontMotor.isBusy();
     }
 
 
     private void setDriveMode(DcMotor.RunMode mode) {
         this.leftFrontMotor.setMode(mode);
         this.rightFrontMotor.setMode(mode);
-
-        //  this.leftBackMotor.setMode(mode);
-        //  this.rightBackMotor.setMode(mode);
     }
 
-    private void setTicksToTargets(int ticks) {
+    private void setTicksToTargets(double distanceInInches) {
+        int ticks = this.calculateTicks(distanceInInches);
         this.leftFrontMotor.setTargetPosition(ticks);
         this.rightFrontMotor.setTargetPosition(ticks);
-
-        //  this.leftBackMotor.setTargetPosition(ticks);
-        //  this.rightBackMotor.setTargetPosition(ticks);
     }
 
     public void powerDifferential(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
-        this.leftFrontMotor.setPower(leftFrontPower);
-        this.rightFrontMotor.setPower(rightFrontPower);
         this.leftBackMotor.setPower(leftBackPower);
         this.rightBackMotor.setPower(rightBackPower);
+        this.leftFrontMotor.setPower(leftFrontPower);
+        this.rightFrontMotor.setPower(rightFrontPower);
     }
 
     //  Drive forward or backward
