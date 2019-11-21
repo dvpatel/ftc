@@ -10,6 +10,10 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
     private Driver driver;
     private IMUController imu;
 
+    private static final int DISTANCE_IN_INCHES = 12;
+    private static final int TURN_ANGLE = 90;
+    private static final int SLEEP_TIME = 3000;
+
     @Override
     void initOpMode() throws InterruptedException {
 
@@ -45,37 +49,37 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
 
         telemetry.addData("Forward:  ", "forward");
         telemetry.update();
-        this.drive(6, power);
-        sleep(1000);
+        this.drive(DISTANCE_IN_INCHES, power);
+        sleep(SLEEP_TIME);
 
         telemetry.addData("GyroStrafe:  ", "strafe left");
         telemetry.update();
-        this.strafe(6, power);
-        sleep(5000);
+        this.strafe(DISTANCE_IN_INCHES, power);
+        sleep(SLEEP_TIME);
 
         //  drive backward 12 inches ;  Both power and distance needs to be negative
         telemetry.addData("GyroDrive:  ", "back 6 inches");
         telemetry.update();
-        this.drive(-6, -power);
-        sleep(1000);
+        this.drive(-DISTANCE_IN_INCHES, -power);
+        sleep(SLEEP_TIME);
 
         //  Strafe 12 inches right ; both values must be negative ;
         telemetry.addData("GyroStrafe:  ", "strafe 6 inches right");
         telemetry.update();
-        this.strafe(-6, -power);
+        this.strafe(-DISTANCE_IN_INCHES, -power);
 
         //  Turn 90 degrees to the right
         telemetry.addData("GyroTurn:  right ", "90 degrees");
         telemetry.update();
-        this.turn(90, power);
+        this.turn(TURN_ANGLE, power);
         telemetry.addData("GyroTurn:  Done, ", imu.getAngle());
         telemetry.update();
-        sleep(5000);
+        sleep(SLEEP_TIME);
 
         //  Turn 90 degrees left;  note degrees direction and power
         telemetry.addData("GyroTurn: left  ", "90 degrees??");
         telemetry.update();
-        this.turn(-90, power);
+        this.turn(-TURN_ANGLE, power);
         telemetry.addData("GyroTurn:  Done, ", imu.getAngle());
         telemetry.update();
 
