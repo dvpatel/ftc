@@ -13,6 +13,7 @@ public class ServoController {
     private Servo servo;
 
     private static final int MAX_POS_DEGREE = 180;
+    private static final int MIN_POS_DEGREE = 10;
 
     public ServoController(HardwareMap hardwareMap) {
         this.servo = hardwareMap.get(Servo.class, Constants.SHORT_ARM_SERVO);
@@ -24,6 +25,20 @@ public class ServoController {
 
     public void setPositionByDegrees(double degrees) {
         this.servo.setPosition(this.calculatePosition(degrees));
+    }
+
+    //  Logic for short arm servo ;
+    public void triggerPosition(float leftTrigger, float rightTrigger) {
+
+        if (rightTrigger > 0.25) {
+            //  Drop on stop at 10 degrees ;
+            this.setPositionByDegrees(MIN_POS_DEGREE);
+            rightTrigger = 0;
+        } else if (leftTrigger > 0.25) {
+            this.setPositionByDegrees(MAX_POS_DEGREE);
+            leftTrigger = 0;
+        }
+
     }
 
     public void setPosition(double inp) {

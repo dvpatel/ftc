@@ -40,7 +40,7 @@ public class GamePadTele extends AbstractLinearOpMode {
     @Override
     void stopOpMode() {
         this.stopDriving();
-        this.servo.setPositionByDegrees(0);
+        this.servo.setPositionByDegrees(180);
     }
 
     // called when init button is  pressed.

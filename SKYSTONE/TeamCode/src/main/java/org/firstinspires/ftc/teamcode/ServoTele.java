@@ -21,7 +21,6 @@ public class ServoTele extends AbstractLinearOpMode {
 
         //  Anish:  Start at 180 or down position;
         this.servo = this.rosie.getShortArmServo();
-        this.servo.setPositionByDegrees(180);
 
         telemetry.addData("Mode", "init complete;  Running");
         telemetry.update();
@@ -29,7 +28,7 @@ public class ServoTele extends AbstractLinearOpMode {
 
     @Override
     void stopOpMode() {
-        this.servo.setPositionByDegrees(0);
+        this.servo.setPositionByDegrees(180);
     }
 
     // called when init button is  pressed.
@@ -38,7 +37,7 @@ public class ServoTele extends AbstractLinearOpMode {
 
         this.initOpMode();
 
-        telemetry.addData("ServoPos: ", this.servo.getPosition());
+        telemetry.addData("ServoPos: ", servo.getPosition());
         telemetry.update();
 
         //  Wait for start button ;
@@ -50,16 +49,7 @@ public class ServoTele extends AbstractLinearOpMode {
         // Scan servo till stop pressed.
         while (opModeIsActive()) {
 
-            //  "Y" button --> 0 degrees;  X or B button 90 degrees; and A for 180 degrees;
-            if (gamepad1.y) {
-                //  Drop on stop at 10 degrees ;
-                this.servo.setPositionByDegrees(10);
-            } else if (gamepad1.x || gamepad1.b) {
-                this.servo.setPositionByDegrees(90);
-            } else if (gamepad1.a) {
-                this.servo.setPositionByDegrees(180);
-            }
-
+            this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
             telemetry.addData("ServoPos", this.servo.getPosition());
             telemetry.update();
         }
