@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 @TeleOp(name = "ServoTest", group = "Tele")
-// @Disabled
+@Disabled
 public class ServoTele extends AbstractLinearOpMode {
 
     private ServoController servo;

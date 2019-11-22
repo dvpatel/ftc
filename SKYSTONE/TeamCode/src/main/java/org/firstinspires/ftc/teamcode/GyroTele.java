@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "BasicGyro", group = "Tele")
-@Disabled
+@TeleOp(name = "GyroCali", group = "Tele")
+//  @Disabled
 public class GyroTele extends AbstractLinearOpMode {
 
     private double angleCorrection;
@@ -16,10 +16,11 @@ public class GyroTele extends AbstractLinearOpMode {
     //  Delete in future ;
     private void waitForCalibration() {
         // make sure the imu gyro is calibrated before continuing.
-        while (!isStopRequested() && !this.rosie.getIMUController().isCalibrated()) {
-            sleep(50);
-            idle();
-        }
+        //  Automatically calibrated, no need to do this for standard mode
+        //  while (!isStopRequested() && !this.rosie.getIMUController().isCalibrated()) {
+        //     sleep(50);
+        //      idle();
+        //  }
 
     }
 
