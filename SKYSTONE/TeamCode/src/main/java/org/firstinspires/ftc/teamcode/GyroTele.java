@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 @TeleOp(name = "GyroCali", group = "Tele")
-//  @Disabled
+@Disabled
 public class GyroTele extends AbstractLinearOpMode {
 
     private double angleCorrection;

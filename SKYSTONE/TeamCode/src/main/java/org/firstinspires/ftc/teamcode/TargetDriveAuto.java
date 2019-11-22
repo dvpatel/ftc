@@ -13,6 +13,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
     private static final int DISTANCE_IN_INCHES = 12;
     private static final int TURN_ANGLE = 90;
     private static final int SLEEP_TIME = 3000;
+    private static final double POWER_LEVEL = 0.3;
 
     @Override
     void initOpMode() throws InterruptedException {
@@ -48,7 +49,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
         this.waitToPressStart();
 
         //  make sure power is between -1 and 1 ;
-        double power = this.normalizePower(0.3);
+        double power = this.normalizePower(POWER_LEVEL);
 
         telemetry.addData("Forward:  ", "forward");
         telemetry.update();
