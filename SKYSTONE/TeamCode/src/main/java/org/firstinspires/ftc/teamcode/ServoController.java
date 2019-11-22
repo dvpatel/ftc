@@ -32,10 +32,10 @@ public class ServoController {
 
         if (rightTrigger > 0.25) {
             //  Drop on stop at 10 degrees ;
-            this.setPositionByDegrees(MIN_POS_DEGREE);
+            this.setPositionByDegrees(MAX_POS_DEGREE);
             rightTrigger = 0;
         } else if (leftTrigger > 0.25) {
-            this.setPositionByDegrees(MAX_POS_DEGREE);
+            this.setPositionByDegrees(MIN_POS_DEGREE);
             leftTrigger = 0;
         }
 
