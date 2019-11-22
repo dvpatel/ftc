@@ -28,6 +28,8 @@ public class GamePadTele extends AbstractLinearOpMode {
         this.initRosie();
 
         this.servo = this.rosie.getShortArmServo();
+        this.imu = this.rosie.getIMUController();
+
 
         //  Enable PID Controller to track state
         //  this.motor.enablePID();
@@ -51,6 +53,7 @@ public class GamePadTele extends AbstractLinearOpMode {
 
         telemetry.addData("Mode", "Init.Done");
         telemetry.addData("ServoPos: ", servo.getPosition());
+        telemetry.addData("Calibration Status:", this.imu.getCalibrationStatus());
         telemetry.update();
 
         //  Wait for start button ;

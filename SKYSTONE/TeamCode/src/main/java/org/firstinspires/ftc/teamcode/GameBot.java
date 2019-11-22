@@ -60,7 +60,6 @@ public class GameBot {
         //  DP:  Causing init to fail;
         //  IMU ;  Calibrate Gyro ;
         this.imu = new IMUController(hardwareMap);
-        //  this.waitForCalibration();
 
         //   PID Logic for DC Motors;  Default 0.30 power ;
         this.motorPID = new MotorControllerEx();
@@ -82,11 +81,6 @@ public class GameBot {
     }
 
     private void waitForCalibration() throws InterruptedException {
-        // make sure the imu gyro is calibrated before continuing.
-        while (!this.imu.isCalibrated()) {
-            Thread.yield();
-            Thread.sleep(50);
-        }
     }
 
     public ElapsedTime getTimer() {

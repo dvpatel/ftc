@@ -39,6 +39,17 @@ public class IMUController {
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
         this.imu.initialize(parameters);
+
+        // make sure the imu gyro is calibrated before continuing.
+        try {
+            while (!this.isCalibrated()) {
+                Thread.sleep(50);
+                Thread.yield();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public BNO055IMU getIMU() {
