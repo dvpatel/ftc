@@ -57,8 +57,7 @@ public class GameBot {
         //  Build driver ;
         this.driver = new Driver(hardwareMap);
 
-        //  DP:  Causing init to fail;
-        //  IMU ;  Calibrate Gyro ;
+        //  IMU ;  DON'T SET MODE.
         this.imu = new IMUController(hardwareMap);
 
         //   PID Logic for DC Motors;  Default 0.30 power ;

@@ -33,6 +33,35 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         this.rosie.getDriver().stop();
     }
 
+
+    protected void driveForward(int distance, double power) {
+        this.drive(distance, power);
+    }
+
+    protected void driveReverse(int distance, double power) {
+        //  Both power and distance needs to be negative to go reverse
+        this.drive(-distance, -power);
+    }
+
+    protected void strafeLeft(int distance, double power) {
+        this.strafe(distance, power);
+    }
+
+    protected void strafeRight(int distance, double power) {
+        //  Note:  both values must be negative ;
+        this.strafe(-distance, -power);
+    }
+
+    protected void turnRight(int angle, double power) {
+        this.turn(angle, power);
+    }
+
+    protected void turnLeft(int angle, double power) {
+        //  note degrees direction and power
+        this.turn(-angle, power);
+    }
+
+
     protected void drive(double power) {
         Driver driver = this.rosie.getDriver();
         this.gyroDrive(power);
@@ -95,8 +124,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         this.rosie.getIMUController().resetAngle();
 
         do {
-            telemetry.addData("GyroStrafe:  ", "strafing...");
-            telemetry.update();
             this.gyroStrafe(power);
         } while (opModeIsActive() && driver.motorsBusy());
 

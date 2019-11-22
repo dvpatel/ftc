@@ -41,15 +41,8 @@ public class IMUController {
         this.imu.initialize(parameters);
 
         // make sure the imu gyro is calibrated before continuing.
-        try {
-            while (!this.isCalibrated()) {
-                Thread.sleep(50);
-                Thread.yield();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+        //  NOTE:  Not needed if mode is not set.  Automatically calibrates sensor;
+        //  Successful, calibrated reading of getCalibrationStatus:  s0 g3 a0 m0;
     }
 
     public BNO055IMU getIMU() {
