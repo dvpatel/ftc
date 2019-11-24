@@ -79,6 +79,9 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         } while (opModeIsActive() && driver.motorsBusy());
 
         driver.stop();
+
+        //  Disable encoders ;
+        driver.turnOffEncoders();
     }
 
     protected void rotate(double power) {
@@ -100,7 +103,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         imu.resetAngle();
 
         do {
-            telemetry.addData("GyroTurn:  ", "turning...");
             double[] p = motor.calculateRotateCorrection(degrees, imu.getAngle(), power);
 
             if (degrees < 0) {
@@ -110,10 +112,10 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
                 driver.powerDifferential(-p[0], p[1], -p[0], p[1]);
             }
 
-            telemetry.update();
         } while (opModeIsActive() && !motor.angleOnTarget());
 
         driver.stop();
+        driver.turnOffEncoders();
     }
 
     protected void strafe(double distanceInInches, double power) {
@@ -128,6 +130,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         } while (opModeIsActive() && driver.motorsBusy());
 
         driver.stop();
+        driver.turnOffEncoders();
     }
 
     protected void gyroDrive(double power) {

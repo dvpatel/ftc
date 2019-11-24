@@ -80,7 +80,7 @@ public class Driver {
         //  Tells motor to run to target ;
         this.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        //  Apply power, somewhere ;
+        //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
     }
 
     //  Revisit;  Are all encoders needed?
@@ -89,6 +89,10 @@ public class Driver {
                 this.rightFrontMotor.isBusy();
     }
 
+    public void turnOffEncoders() {
+        this.setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
     private void setDriveMode(DcMotor.RunMode mode) {
         this.leftFrontMotor.setMode(mode);
@@ -128,6 +132,7 @@ public class Driver {
     }
 
     public void rotate(double power) {
+        //  LF; RF; LB; RB
         this.powerDifferential(power, -power, power, -power);
     }
 

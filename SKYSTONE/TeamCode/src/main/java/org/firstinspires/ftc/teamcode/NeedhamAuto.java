@@ -65,7 +65,7 @@ public class NeedhamAuto extends AbstractLinearOpMode {
         sleep(SLEEP_TIME);
 
         //  Turn 90 degrees right @ 0.2 power ;
-        this.turnRight(TURN_ANGLE, 0.2);
+        this.turnRight(TURN_ANGLE, 0.3);
         sleep(SLEEP_TIME);
 
         //  Reverse:  2.5 tiles or 44.5 + 11.375 = 55.875 = 56;
@@ -79,7 +79,7 @@ public class NeedhamAuto extends AbstractLinearOpMode {
 
         //  Try to get skystone:  leftTrigger, rightTrigger;
         //  TEST
-        this.servo.triggerPosition(0, 0.5f);
+        this.servo.triggerPosition(0.5f, 0);
         sleep(SLEEP_TIME);
 
         //  StrafeRight;
