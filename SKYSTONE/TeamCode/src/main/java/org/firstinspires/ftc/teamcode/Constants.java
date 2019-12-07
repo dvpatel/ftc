@@ -30,11 +30,11 @@ public final class Constants {
 
     //  Hue:  340 <  20; sat: 0.6 -->  RED
     //  Hue:  200 - 275; sat: 0.6 -->  Blue
-    public static final float TARGET_COLOR_BLUE_HUE_LOW = 200;
-    public static final float TARGET_COLOR_BLUE_HUE_HIGH = 275;
+    public static final float TARGET_COLOR_BLUE_HUE_LOW = 165;
+    public static final float TARGET_COLOR_BLUE_HUE_HIGH = 265;
 
-    public static final float TARGET_COLOR_RED_HUE_LOW = 340;
-    public static final float TARGET_COLOR_RED_HUE_HIGH = 20;
+    public static final float TARGET_COLOR_RED_HUE_LOW = 320;
+    public static final float TARGET_COLOR_RED_HUE_HIGH = 15;
 
     public static final float TARGET_COLOR_SATURATION=0.6f ;
 
@@ -48,9 +48,12 @@ public final class Constants {
     public static double PID_DRIVE_KD = 0 ;
 
     //  Will need to tune these;
-    public static double PID_ROTATE_KP = 0.003 ;
-    public static double PID_ROTATE_KI = 0.00003 ;
-    public static double PID_ROTATE_KD = 0 ;
+    // Speed of wheels while slowing down
+    public static double PID_ROTATE_KP = 0.02;       //  0.009
+    // Do not need - once the robot reaches 90°, the angle does not change.
+    public static double PID_ROTATE_KI = 0;           //  0.0000374
+    // How much the robot slows down before it reaches 90°
+    public static double PID_ROTATE_KD = 0.025;
 
     public static final String VUFORIA_KEY =
             "ARBNGpP/////AAABmbLvzx0Qekiui2o+DSSa3YJIIuD7Q0UL6sLKYRh6/OCm/uvQLlRLPNs/o72itb3SXgG71435htgeXTLgMciuPUca8vG5BbLoR5k9K5L6pbe8XLD9VFAG4Llh55ETmOQzz+S7yyjN69HtY34ahSjsi4bzZzwrfeTrTsCPfa1ZTAdf6MxWbZ5yn6LKmanzxLbnmBiftmRbgVVtxeMbOdxPv/f2uxXWqnKEHz5/LDvoacDFVQwu07AnvUXk0cDRSKEObQs5lE+IjdxSbYMOHPYbJy9jWf+2tZURyVZF1atz0nHaW1yra8YXg0HYQvWDzkt9+2S831dsB25sJElDK4xLGFFb/GVCSFGfnjvRHgbvD1AP";
