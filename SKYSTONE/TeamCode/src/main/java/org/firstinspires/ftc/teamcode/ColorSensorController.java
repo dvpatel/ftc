@@ -70,7 +70,7 @@ public class ColorSensorController {
         //  return (sat > 0.6 && (hue > 200 && hue < 275)) ? true : false ; //  blue
 
         return sat > Constants.TARGET_COLOR_SATURATION &&
-                (hue > Constants.TARGET_COLOR_BLUE_HUE_LOW && hue < Constants.TARGET_COLOR_BLUE_HUE_HIGH);
+                (hue >= Constants.TARGET_COLOR_BLUE_HUE_LOW && hue <= Constants.TARGET_COLOR_BLUE_HUE_HIGH);
     }
 
     public boolean isTargetRed() {
@@ -94,7 +94,7 @@ public class ColorSensorController {
         //  return (sat > 0.6 && (hue > 200 && hue < 275)) ? true : false ; //  blue
 
         return sat > Constants.TARGET_COLOR_SATURATION &&
-                (hue > Constants.TARGET_COLOR_RED_HUE_LOW && hue < Constants.TARGET_COLOR_RED_HUE_HIGH);
+                (hue > Constants.TARGET_COLOR_RED_HUE_LOW || hue < Constants.TARGET_COLOR_RED_HUE_HIGH);
     }
 
 
