@@ -94,11 +94,8 @@ public class NeedhamAuto extends AbstractLinearOpMode {
         this.servo.triggerPosition(0.5f, 0);
         sleep(SLEEP_TIME);
 
-        //  Drive back ;  Puts us under bridge ;
-        //  this.driveReverse(20, power);
-        //  sleep(SLEEP_TIME);
-
-        //  Or try color sensor ;  drive reverse with negative poewr ;
+        //  Drive back using color sensor:  red or blue ;  Puts us under bridge ;
+        //  Drive reverse with negative poewr ;
         while (opModeIsActive() && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())) {
             this.drive(-power);
         }
