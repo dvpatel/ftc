@@ -113,13 +113,13 @@ public class GyroTele extends AbstractLinearOpMode {
             }
 
             do {
-                double[] p = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
+                double p = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
                 telemetry.addData("-PowerAdjustment", p);
 
             } while (opModeIsActive() && !this.rosie.getMotorPID().angleOnTarget());
         } else    // left turn.
             do {
-                double[] p = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
+                double p = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
                 telemetry.addData("+PowerAdjustment", p);
             } while (opModeIsActive() && !this.rosie.getMotorPID().angleOnTarget());
 
