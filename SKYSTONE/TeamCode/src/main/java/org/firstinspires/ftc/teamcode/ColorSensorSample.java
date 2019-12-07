@@ -23,7 +23,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  */
 
 @TeleOp(name = "BasicColorTest", group = "Linear Opmode")
-@Disabled
+//@Disabled
 public class ColorSensorSample extends AbstractLinearOpMode {
 
     //  My pushbotrobot ;
@@ -31,7 +31,7 @@ public class ColorSensorSample extends AbstractLinearOpMode {
 
     private View relativeLayout;
 
-    double power = this.normalizePower(0.3);
+    double power = this.normalizePower(0.8);
 
     @Override
     public void initOpMode() throws InterruptedException {
