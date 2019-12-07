@@ -42,16 +42,18 @@ public final class Constants {
     // to amplify/attentuate the measured values.
     public static final double SCALE_FACTOR = 255;
 
-    //  Will need to tune these
+    //  Will need to tune these for driving straight
     public static double PID_DRIVE_KP = 0.05 ;
     public static double PID_DRIVE_KI = 0 ;
-    public static double PID_DRIVE_KD = 0 ;
+    public static double PID_DRIVE_KD = 0.3;
 
-    //  Will need to tune these;
+    //  Will need to tune these for turning;
     // Speed of wheels while slowing down
     public static double PID_ROTATE_KP = 0.02;       //  0.009
+
     // Do not need - once the robot reaches 90°, the angle does not change.
     public static double PID_ROTATE_KI = 0;           //  0.0000374
+
     // How much the robot slows down before it reaches 90°
     public static double PID_ROTATE_KD = 0.025;
 
