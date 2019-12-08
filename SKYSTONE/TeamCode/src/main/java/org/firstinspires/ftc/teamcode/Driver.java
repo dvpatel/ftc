@@ -83,10 +83,9 @@ public class Driver {
         //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
     }
 
-    //  Revisit;  Are all encoders needed?
+    //  Revisit;  Are all encoders needed?  Also should only one motor be used for calc?
     public boolean motorsBusy() {
-        return this.leftFrontMotor.isBusy() &&
-                this.rightFrontMotor.isBusy();
+        return this.leftFrontMotor.isBusy() || this.rightFrontMotor.isBusy();
     }
 
     public void turnOffEncoders() {
@@ -112,6 +111,24 @@ public class Driver {
         this.rightFrontMotor.setPower(rightFrontPower);
     }
 
+    //  Current targets for encoders ;
+    public int[] getTargetPosition() {
+        int[] results = {
+                this.leftFrontMotor.getTargetPosition(),
+                this.rightFrontMotor.getTargetPosition()
+        };
+        return results;
+    }
+
+    public double[] getPowerForEncodedMotors() {
+        double[] results = {
+                this.leftFrontMotor.getController().getMotorPower(this.leftFrontMotor.getPortNumber()),
+                this.rightFrontMotor.getController().getMotorPower(this.rightFrontMotor.getPortNumber())
+        };
+
+        return results;
+    }
+
     //  Drive forward or backward
     public void drive(double power) {
         this.driveDifferential(power, power);
@@ -131,7 +148,7 @@ public class Driver {
         this.powerDifferential(p1, -p2, -p2, p1);
     }
 
-    public void rotate(double power) {
+    public void spin(double power) {
         //  LF; RF; LB; RB
         this.powerDifferential(power, -power, power, -power);
     }
