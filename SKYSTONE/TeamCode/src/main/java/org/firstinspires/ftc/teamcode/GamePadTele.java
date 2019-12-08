@@ -5,7 +5,7 @@ package org.firstinspires.ftc.teamcode;
 //  https://drive.google.com/file/d/0B5ci5zMS_2kZUlRYaHZkMGNuZGc/view
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "GamePadTele", group = "Tele")
+@TeleOp(name = "GamePadDrive", group = "Tele")
 //  @Disabled
 public class GamePadTele extends AbstractLinearOpMode {
 
