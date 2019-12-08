@@ -72,13 +72,16 @@ public class Driver {
 
         //  Always reset;  starts at zero;
         this.setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //  Run based on speed, not power;  OR run to target using position and power;
+        //  this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        //  Tells motor to run to target using position and power ;  Make sure t reset encoder when done!
+        this.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //  set target
         this.setTicksToTargets(distanceInInches);
-
-        //  Tells motor to run to target ;
-        this.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
     }
@@ -111,11 +114,11 @@ public class Driver {
         this.rightFrontMotor.setPower(rightFrontPower);
     }
 
-    //  Current targets for encoders ;
-    public int[] getTargetPosition() {
+    //  Current position in ticks;
+    public int[] getCurrentPosition() {
         int[] results = {
-                this.leftFrontMotor.getTargetPosition(),
-                this.rightFrontMotor.getTargetPosition()
+                this.leftFrontMotor.getCurrentPosition(),
+                this.rightFrontMotor.getCurrentPosition()
         };
         return results;
     }
