@@ -277,10 +277,13 @@ public class SkystoneDetector {
     public boolean isTargetVisible() {
 
         // check all the trackable targets to see which one (if any) is visible.
+        boolean targetVisible = false;
+
         for (VuforiaTrackable trackable : this.allTrackables) {
             if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
 
                 this.targetName = trackable.getName();
+                targetVisible = true;
 
                 // getUpdatedRobotLocation() will return null if no new information is available since
                 // the last time that call was made, or if the trackable is not currently visible.
@@ -288,10 +291,11 @@ public class SkystoneDetector {
                 if (robotLocationTransform != null) {
                     this.lastLocation = robotLocationTransform;
                 }
-                return true;
+
+                break;
             }
         }
 
-        return false;
+        return targetVisible;
     }
 }
