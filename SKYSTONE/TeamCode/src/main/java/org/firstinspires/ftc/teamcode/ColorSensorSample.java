@@ -30,7 +30,7 @@ public class ColorSensorSample extends AbstractLinearOpMode {
 
     private View relativeLayout;
 
-    double power = this.normalizePower(0.8);
+    double power = this.normalizePower(0.50);
 
     @Override
     public void initOpMode() throws InterruptedException {
@@ -68,10 +68,12 @@ public class ColorSensorSample extends AbstractLinearOpMode {
         this.initOpMode();
 
         //  Wait for start button ;
-        waitForStart();
+        this.waitToPressStart();
 
-        this.drive(power);
         while (opModeIsActive() && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())) {
+
+            //  Must be called in loop ;
+            this.drive(power);
 
             int[] argb = this.colorSensor.argb();
             telemetry.addData("Alpha", argb[Constants.COLOR_ALPHA]);
