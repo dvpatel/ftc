@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 
@@ -22,7 +21,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name = "BasicColorTest", group = "Linear Opmode")
+@TeleOp(name = "ColorSensorDrive", group = "Linear Opmode")
 //@Disabled
 public class ColorSensorSample extends AbstractLinearOpMode {
 
@@ -69,11 +68,17 @@ public class ColorSensorSample extends AbstractLinearOpMode {
         this.initOpMode();
 
         //  Wait for start button ;
-        this.waitToPressStart();
+        waitForStart();
 
+        this.drive(power);
         while (opModeIsActive() && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())) {
-            //  NOTE:  started to drive at initRobot ;
-            this.drive(power);
+
+            int[] argb = this.colorSensor.argb();
+            telemetry.addData("Alpha", argb[Constants.COLOR_ALPHA]);
+            telemetry.addData("TargetColor.Red ", argb[Constants.COLOR_RED]);
+            telemetry.addData("TargetColor.Green ", argb[Constants.COLOR_GREEN]);
+            telemetry.addData("TargetColor.Blue ", argb[Constants.COLOR_BLUE]);
+            telemetry.update();
 
             // change the background color to match the color detected by the RGB sensor.
             // pass a reference to the hue, saturation, and value array as an argument
@@ -89,13 +94,7 @@ public class ColorSensorSample extends AbstractLinearOpMode {
             //  telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", this.colorSensor.getDistance()));
         }
 
+        //  Found Red or Blue ;
         this.stopOpMode();
-
-        int[] argb = this.colorSensor.argb();
-        telemetry.addData("Alpha", argb[Constants.COLOR_ALPHA]);
-        telemetry.addData("TargetColor.Red ", argb[Constants.COLOR_RED]);
-        telemetry.addData("TargetColor.Green ", argb[Constants.COLOR_GREEN]);
-        telemetry.addData("TargetColor.Blue ", argb[Constants.COLOR_BLUE]);
-        telemetry.update();
     }
 }
