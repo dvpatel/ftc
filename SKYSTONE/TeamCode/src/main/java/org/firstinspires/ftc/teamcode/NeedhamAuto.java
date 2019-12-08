@@ -1,8 +1,6 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.Color;
-
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name = "NeedhamRedBuilding", group = "Auto")
@@ -51,7 +49,7 @@ public class NeedhamAuto extends AbstractLinearOpMode {
         telemetry.addData("Calibration Status:", this.imu.getCalibrationStatus());
         telemetry.update();
 
-        //  Activate opmode
+        // wait for start button.
         this.waitToPressStart();
 
         //  make sure power is between -1 and 1 ;
@@ -96,8 +94,10 @@ public class NeedhamAuto extends AbstractLinearOpMode {
 
         //  Drive back using color sensor:  red or blue ;  Puts us under bridge ;
         //  Drive reverse with negative poewr ;
+        this.drive(-power);
         while (opModeIsActive() && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())) {
-            this.drive(-power);
+            telemetry.addData("ColorNotFound", "True");
+            telemetry.update();
         }
 
         //  Stop, done
