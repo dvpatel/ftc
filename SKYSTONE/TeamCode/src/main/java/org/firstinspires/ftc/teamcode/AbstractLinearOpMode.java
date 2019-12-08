@@ -9,8 +9,12 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     protected GameBot rosie;
 
     abstract void initOpMode() throws InterruptedException;
-
     abstract void stopOpMode();
+
+    protected void initRosie() throws InterruptedException {
+        this.rosie = new GameBot();
+        this.rosie.init(hardwareMap);
+    }
 
     protected void waitToPressStart() {
         // wait for start button.
@@ -18,11 +22,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
 
         //  why is this needed?
         sleep(1000);
-    }
-
-    protected void initRosie() throws InterruptedException {
-        this.rosie = new GameBot();
-        this.rosie.init(hardwareMap);
     }
 
     protected double normalizePower(double power) {
@@ -75,19 +74,24 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
 
         this.rosie.getIMUController().resetAngle();
 
-        do {
-            this.gyroDrive(power);
-        } while (opModeIsActive() && driver.motorsBusy());
+        this.drive(power);
+        while (opModeIsActive() && driver.motorsBusy()) {
+            //  this.gyroDrive(power);
 
+            int[] cp = driver.getCurrentPosition();
+            telemetry.addData("left-cp", cp[0] + "right-cp", cp[1] + "  busy=" + driver.motorsBusy());
+            telemetry.update();
+            idle();
+        }
         driver.stop();
 
         //  Disable encoders ;
         driver.turnOffEncoders();
     }
 
-    protected void rotate(double power) {
+    protected void spin(double power) {
         Driver driver = this.rosie.getDriver();
-        driver.rotate(power);
+        driver.spin(power);
     }
 
     protected void strafe(double power) {
