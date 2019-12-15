@@ -94,8 +94,9 @@ public class NeedhamAuto extends AbstractLinearOpMode {
 
         //  Drive back using color sensor:  red or blue ;  Puts us under bridge ;
         //  Drive reverse with negative poewr ;
-        this.drive(-power);
         while (opModeIsActive() && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())) {
+            this.drive(-power);
+
             telemetry.addData("ColorNotFound", "True");
             telemetry.update();
         }

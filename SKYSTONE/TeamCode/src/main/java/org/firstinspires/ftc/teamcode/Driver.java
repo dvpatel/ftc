@@ -21,7 +21,8 @@ public class Driver {
         this.setLeftMotor(hardwareMap, leftFrontDeviceName, leftBackDeviceName);
         this.setRightMotor(hardwareMap, rightFrontDeviceName, rightBackDeviceName);
 
-        this.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //  this.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.setRunWithoutEncoderMode();
         this.driveDifferential(0, 0);
     }
 
@@ -49,39 +50,21 @@ public class Driver {
         return (int) (distanceInInches * Constants.TICK_DIAMETER_RATIO);
     }
 
-    //  Sample:  Drive to Target in inches ;
-    public void driveToTargetExample(double distanceInInches, double leftPower, double rightPower) {
-
-        this.setTargetPosition(distanceInInches);
-
-        //  Now drive ;
-        this.driveDifferential(leftPower, rightPower);
-
-        //  while busy, do something ;
-        while (this.motorsBusy()) {
-            //  Something something...
-            System.out.println("Do nothing while driving..");
-        }
-
-        // Done driving; now stop
-        //  stop after done.
-        this.stop();
-    }
-
     public void setTargetPosition(double distanceInInches) {
 
         //  Always reset;  starts at zero;
-        this.setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.setStopAndResetMode();
 
         //  Run based on speed, not power;  OR run to target using position and power;
         //  this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         //  Tells motor to run to target using position and power ;  Make sure t reset encoder when done!
-        this.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.setDriveMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.setRunWithoutEncoderMode();
 
         //  set target
         this.setTicksToTargets(distanceInInches);
+
+        this.setRunToPositionMode();
 
         //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
     }
@@ -92,13 +75,25 @@ public class Driver {
     }
 
     public void turnOffEncoders() {
-        this.setDriveMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.setStopAndResetMode();
+        this.setRunWithoutEncoderMode();
     }
 
-    private void setDriveMode(DcMotor.RunMode mode) {
-        this.leftFrontMotor.setMode(mode);
-        this.rightFrontMotor.setMode(mode);
+    private void setStopAndResetMode() {
+        this.leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    private void setRunWithoutEncoderMode() {
+        this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.leftBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.rightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
+    private void setRunToPositionMode() {
+        this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     private void setTicksToTargets(double distanceInInches) {

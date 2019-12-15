@@ -29,9 +29,17 @@ public class GameBot {
     private IMUController imu;
     private MotorControllerEx motorPID;
     private Driver driver;
-    private TouchSensorController touch;
+
+    //  Motor to power linear slide system
+    private SimpleMotor linearSlideMotor;
+
+    //  private TouchSensorController touch;
+
     private GamepadDriver gamepadDriver;
+
     private ServoController shortArmServo;
+    private ServoController linearSlideServo;
+    private ServoController linearArmServo;
 
     private SkystoneDetector skystonDetector;
 
@@ -55,7 +63,10 @@ public class GameBot {
         this.colorSensor = new ColorSensorController(hardwareMap);
 
         //  Build driver ;
-        this.driver = new Driver(hardwareMap);
+        //  this.driver = new Driver(hardwareMap);
+
+        //  motor to control linear slide system
+        this.linearSlideMotor = new SimpleMotor(hardwareMap, Constants.LINEAR_SLIDE_MOTOR_NAME);
 
         //  IMU ;  DON'T SET MODE.
         this.imu = new IMUController(hardwareMap);
@@ -65,13 +76,19 @@ public class GameBot {
         this.motorPID.enableDrivePID(Constants.DEFAULT_POWER);
 
         //  Setup short arm servo;
-        this.shortArmServo = new ServoController(this.hardwareMap);
+        this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
+
+        //  Servo attached to linear slide system;
+        this.linearSlideServo = new ServoController(this.hardwareMap, Constants.LINEAR_SLIDE_SERVO);
+
+        //  Servo attached to linear arm system;
+        this.linearArmServo = new ServoController(this.hardwareMap, Constants.LINEAR_ARM_SERVO);
 
         //  Uncomment when TouchSensor is attached;
         //  this.touch = new TouchSensorController(hardwareMap);
 
         //  Skystone detector, activate when ready ;
-        //  this.skystonDetector = new SkystoneDetector(hardwareMap);
+        // this.skystonDetector = new SkystoneDetector(hardwareMap);
 
         //  Drive using gamepad ;
         this.gamepadDriver = new GamepadDriver(this.driver);
@@ -94,9 +111,9 @@ public class GameBot {
         return this.imu;
     }
 
-    public TouchSensorController getTouchSensorController() {
-        return this.touch;
-    }
+    //  public TouchSensorController getTouchSensorController() {
+    //     return this.touch;
+    //  }
 
     public MotorControllerEx getMotorPID() {
         return this.motorPID;
@@ -104,6 +121,10 @@ public class GameBot {
 
     public Driver getDriver() {
         return this.driver;
+    }
+
+    public SimpleMotor getLinearSlideMotor() {
+        return this.linearSlideMotor;
     }
 
     public SkystoneDetector getSkystoneDetector() {
@@ -118,6 +139,13 @@ public class GameBot {
         return this.shortArmServo;
     }
 
+    public ServoController getLinearSlideServo() {
+        return this.linearSlideServo;
+    }
+
+    public ServoController getLinearArmServo() {
+        return this.linearArmServo;
+    }
 
 }
 
