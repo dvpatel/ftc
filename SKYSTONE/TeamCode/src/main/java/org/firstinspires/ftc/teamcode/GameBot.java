@@ -29,6 +29,7 @@ public class GameBot {
     private IMUController imu;
     private MotorControllerEx motorPID;
     private Driver driver;
+    private IntakeSystem intake;
 
     //  Motor to power linear slide system
     private SimpleMotor linearSlideMotor;
@@ -64,6 +65,8 @@ public class GameBot {
 
         //  Build driver ;
         //  this.driver = new Driver(hardwareMap);
+
+        this.intake = new IntakeSystem(hardwareMap);
 
         //  motor to control linear slide system
         this.linearSlideMotor = new SimpleMotor(hardwareMap, Constants.LINEAR_SLIDE_MOTOR_NAME);
@@ -125,6 +128,10 @@ public class GameBot {
 
     public SimpleMotor getLinearSlideMotor() {
         return this.linearSlideMotor;
+    }
+
+    public IntakeSystem getIntakeSystem() {
+        return this.intake;
     }
 
     public SkystoneDetector getSkystoneDetector() {
