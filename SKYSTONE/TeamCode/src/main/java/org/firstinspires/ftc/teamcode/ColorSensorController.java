@@ -8,13 +8,20 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-//  Color and Range Sensor Controller ;
+/**
+ * <p>Color and Range Sensor Controller</p>
+ */
 public class ColorSensorController {
 
     private DistanceSensor sensorColorRange;
     private ColorSensor colorSensor;
 
     private float[] hsvValues = {0F, 0F, 0F};
+
+    /**
+     * <p>Sets up the ColorSensor class and ColorRange class</p>
+     * @param hardwareMap - The hardware map for the robot
+     */
 
     public ColorSensorController(HardwareMap hardwareMap) {
 
@@ -28,6 +35,11 @@ public class ColorSensorController {
         final float[] values = this.hsvValues;
     }
 
+    /**
+     * <p>Converts a RGB array to a HSV array</p>
+     * @return the HSV float array
+     */
+
     private float[] RGBToHSV() {
         Color.RGBToHSV((int) (colorSensor.red() * Constants.SCALE_FACTOR),
                 (int) (colorSensor.green() * Constants.SCALE_FACTOR),
@@ -37,14 +49,27 @@ public class ColorSensorController {
         return this.hsvValues ;
     }
 
+    /**
+     * @return the HSV float array
+     */
+
     public float[] getHSV() {
         return this.RGBToHSV();
     }
 
-    //  Return Alpha-Red-Green-Blue as int array ;
+    /**
+     * <p>Moves the values from the color sensor into an array with alpha, red, green, and blue</p>
+     * @return the Alpha-Red-Green-Blue int array from the color sensor
+     */
+
     public int[] argb(){
         return new int[]{this.colorSensor.alpha(), this.colorSensor.red(), this.colorSensor.green(), this.colorSensor.blue()};
     }
+
+    /**
+     * <p>Checks the HSV values against certain values for the blue color</p>
+     * @return a boolean if target is a blue color
+     */
 
     public boolean isTargetBlue() {
 
@@ -73,6 +98,11 @@ public class ColorSensorController {
                 (hue >= Constants.TARGET_COLOR_BLUE_HUE_LOW && hue <= Constants.TARGET_COLOR_BLUE_HUE_HIGH);
     }
 
+    /**
+     * <p>Checks the HSV values against certain values for the blue color</p>
+     * @return a boolean if target is a red color
+     */
+
     public boolean isTargetRed() {
 
         // convert the RGB values to HSV values.
@@ -97,7 +127,10 @@ public class ColorSensorController {
                 (hue > Constants.TARGET_COLOR_RED_HUE_LOW || hue < Constants.TARGET_COLOR_RED_HUE_HIGH);
     }
 
-
+    /**
+     * <p>Gets the distance in centimeters from the color sensor</p>
+     * @return distance in centimeters
+     */
 
     public double getDistance() {
         return this.sensorColorRange.getDistance(DistanceUnit.CM) ;
