@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package org.blueprint.ftc.core;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -63,10 +62,10 @@ public class GameBot {
         this.colorSensor = new ColorSensorController(hardwareMap);
 
         //  Build driver ;
-        //  this.driver = new Driver(hardwareMap);
+        this.driver = new Driver(hardwareMap);
 
         //  motor to control linear slide system
-        this.linearSlideMotor = new SimpleMotor(hardwareMap, Constants.LINEAR_SLIDE_MOTOR_NAME);
+        //  this.linearSlideMotor = new SimpleMotor(hardwareMap, Constants.LINEAR_SLIDE_MOTOR_NAME);
 
         //  IMU ;  DON'T SET MODE.
         this.imu = new IMUController(hardwareMap);
@@ -76,13 +75,13 @@ public class GameBot {
         this.motorPID.enableDrivePID(Constants.DEFAULT_POWER);
 
         //  Setup short arm servo;
-        this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
+        //  this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
 
         //  Servo attached to linear slide system;
-        this.linearSlideServo = new ServoController(this.hardwareMap, Constants.LINEAR_SLIDE_SERVO);
+        //  this.linearSlideServo = new ServoController(this.hardwareMap, Constants.LINEAR_SLIDE_SERVO);
 
         //  Servo attached to linear arm system;
-        this.linearArmServo = new ServoController(this.hardwareMap, Constants.LINEAR_ARM_SERVO);
+        //  this.linearArmServo = new ServoController(this.hardwareMap, Constants.LINEAR_ARM_SERVO);
 
         //  Uncomment when TouchSensor is attached;
         //  this.touch = new TouchSensorController(hardwareMap);
@@ -92,7 +91,6 @@ public class GameBot {
 
         //  Drive using gamepad ;
         this.gamepadDriver = new GamepadDriver(this.driver);
-
 
     }
 
@@ -135,7 +133,7 @@ public class GameBot {
         return this.gamepadDriver;
     }
 
-    public ServoController getShortArmServo() {
+    private ServoController getShortArmServo() {
         return this.shortArmServo;
     }
 

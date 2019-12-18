@@ -6,6 +6,10 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.ColorSensorController;
+import org.blueprint.ftc.core.Constants;
+
 
 /**
  * DP

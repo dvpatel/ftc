@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.app.Activity;
-import android.view.View;
-
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.GamepadDriver;
+import org.blueprint.ftc.core.ServoController;
+import org.blueprint.ftc.core.SimpleMotor;
 
 @TeleOp(name = "LinearSlideTest", group = "Linear Opmode")
 //@Disabled
@@ -34,7 +35,7 @@ public class LinearSlideTele extends AbstractLinearOpMode {
     }
 
     @Override
-    void stopOpMode() {
+    public void stopOpMode() {
         this.linearSlideMotor.stop();
         this.linearArmServo.setPositionByDegrees(180);
         this.linearSlideServo.setPositionByDegrees(180);

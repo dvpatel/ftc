@@ -3,6 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.Driver;
+import org.blueprint.ftc.core.IMUController;
+import org.blueprint.ftc.core.MotorControllerEx;
+
 @Autonomous(name = "TargetDrive", group = "Auto")
 @Disabled
 public class TargetDriveAuto extends AbstractLinearOpMode {
@@ -17,7 +22,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
     private static final double POWER_LEVEL = 0.3;
 
     @Override
-    void initOpMode() throws InterruptedException {
+    public void initOpMode() throws InterruptedException {
 
         this.initRosie();
 
@@ -34,7 +39,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
     }
 
     @Override
-    void stopOpMode() {
+    public void stopOpMode() {
         driver.stop();
     }
 

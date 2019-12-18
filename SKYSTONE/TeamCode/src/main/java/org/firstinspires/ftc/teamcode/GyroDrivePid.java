@@ -16,6 +16,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.Driver;
+import org.blueprint.ftc.core.IMUController;
+import org.blueprint.ftc.core.MotorControllerEx;
+
 @Autonomous(name = "GyroDrivePid", group = "Auto")
 //@Disabled
 public class GyroDrivePid extends AbstractLinearOpMode {
@@ -24,18 +29,17 @@ public class GyroDrivePid extends AbstractLinearOpMode {
     private Driver driver;
     private IMUController imu;
 
-    double power = .30;
+    private static double POWER = 0.50;
+    private static double INCHES = 24;
 
     @Override
-    void initOpMode() throws InterruptedException {
+    public void initOpMode() throws InterruptedException {
         telemetry.addData("Mode", "init Rosie");
-        telemetry.update();
 
         this.initRosie();
 
         this.imu = this.rosie.getIMUController();
         telemetry.addData("Calibration status", imu.getCalibrationStatus().toString());
-        telemetry.update();
 
         this.motor = this.rosie.getMotorPID();  //  Defaut power ;
         this.driver = this.rosie.getDriver();
@@ -45,38 +49,40 @@ public class GyroDrivePid extends AbstractLinearOpMode {
     }
 
     @Override
-    void stopOpMode() {
+    public void stopOpMode() {
         driver.stop();
-        imu.resetAngle();
+        this.imu.resetAngle();
     }
 
     // called when init button is  pressed.
     @Override
     public void runOpMode() throws InterruptedException {
 
-        imu.resetAngle();
+        //  Put common init logic here
+        this.initOpMode();
+
+        this.imu.resetAngle();
 
         // wait for start button.
-        waitForStart();
+        this.waitToPressStart();
         telemetry.addData("Mode", "running");
         telemetry.update();
-        sleep(1000);
 
-        while (opModeIsActive()) {
-            // Use PID with imu input to drive in a straight line.
-            double angle = imu.getAngle();
-            double[] correction = motor.calculateDriveCorrection(power, angle);
+        this.drive(INCHES, POWER);
 
-            if (angle != 0) {
-                telemetry.addData("Angle:  ", angle);
-                telemetry.addData("P0:  ", correction[0]);
-                telemetry.addData("P1:  ", correction[1]);
-                telemetry.update();
-            }
-
-            driver.driveDifferential(correction[0], correction[1]);
-        }
-
-        this.stopOpMode();
+//        while (opModeIsActive()) {
+//            double angle = imu.getAngle();
+//            double[] correction = motor.calculateDriveCorrection(power, angle);
+//
+//            if (angle != 0) {
+//                telemetry.addData("Angle:  ", angle);
+//                telemetry.addData("P0:  ", correction[0]);
+//                telemetry.addData("P1:  ", correction[1]);
+//                telemetry.update();
+//            }
+//
+//            driver.driveDifferential(correction[0], correction[1]);
+//        }
+//
     }
 }

@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode;
+package org.blueprint.ftc.core;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 public abstract class AbstractLinearOpMode extends LinearOpMode {
 
     protected GameBot rosie;
 
-    abstract void initOpMode() throws InterruptedException;
-    abstract void stopOpMode();
+    protected abstract void initOpMode() throws InterruptedException;
+
+    protected abstract void stopOpMode();
 
     protected void initRosie() throws InterruptedException {
         this.rosie = new GameBot();

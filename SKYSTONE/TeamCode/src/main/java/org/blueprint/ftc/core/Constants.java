@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.blueprint.ftc.core;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
