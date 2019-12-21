@@ -8,18 +8,18 @@ import org.blueprint.ftc.core.Driver;
 import org.blueprint.ftc.core.IMUController;
 import org.blueprint.ftc.core.MotorControllerEx;
 
-@Autonomous(name = "TargetDrive", group = "Auto")
-@Disabled
+@Autonomous(name = "TargetDriveAuto", group = "Auto")
+//  @Disabled
 public class TargetDriveAuto extends AbstractLinearOpMode {
 
     private MotorControllerEx motor;
     private Driver driver;
     private IMUController imu;
 
-    private static final int DISTANCE_IN_INCHES = 12;
+    private static final int DISTANCE_IN_INCHES = 36;
     private static final int TURN_ANGLE = 90;
     private static final int SLEEP_TIME = 3000;
-    private static final double POWER_LEVEL = 0.3;
+    private static final double POWER_LEVEL = 1;
 
     @Override
     public void initOpMode() throws InterruptedException {
@@ -64,11 +64,11 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
 
         telemetry.addData("GyroStrafe:  ", "strafe left");
         telemetry.update();
-        this.strafeLeft(DISTANCE_IN_INCHES, power);
+        this.strafeLeft(12, power);
         sleep(SLEEP_TIME);
 
         //  drive backward 12 inches ;
-        telemetry.addData("GyroDrive:  ", "back 6 inches");
+        telemetry.addData("Reverse:  ", "back 6 inches");
         telemetry.update();
         this.driveReverse(DISTANCE_IN_INCHES, power);
         sleep(SLEEP_TIME);
@@ -76,7 +76,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
         //  Strafe 12 inches right ; both values must be negative ;
         telemetry.addData("GyroStrafe:  ", "strafe 6 inches right");
         telemetry.update();
-        this.strafeRight(DISTANCE_IN_INCHES, power);
+        this.strafeRight(12, power);
         sleep(SLEEP_TIME);
 
         //  Turn 90 degrees to the right
