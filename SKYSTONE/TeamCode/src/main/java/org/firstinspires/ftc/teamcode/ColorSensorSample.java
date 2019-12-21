@@ -42,7 +42,6 @@ public class ColorSensorSample extends AbstractLinearOpMode {
         //  Make sure Rosie is initialized ;
         this.initRosie();
 
-
         //  ColorSensor detector ;
         this.colorSensor = this.rosie.getColorSensorController();
 
