@@ -32,7 +32,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         this.rosie.getDriver().stop();
     }
 
-
     protected void driveForward(int distance, double power) {
         this.drive(distance, power);
     }
@@ -113,8 +112,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.stop();
 
         driver.turnOffEncoders();
-        //  imu.resetAngle();
-
+        imu.resetAngle();
     }
 
     protected void strafe(double distanceInInches, double power) {
@@ -131,7 +129,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         } while (opModeIsActive() && driver.motorsBusy());
 
         driver.stop();
-
         driver.turnOffEncoders();
     }
 
