@@ -18,16 +18,16 @@ public class SimpleMotor {
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // this.motor.setDirection(DcMotor.Direction.REVERSE);
 
-        this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.motor.setPower(0);
+        //  this.setRunWithoutEncoderMode() ;
+        this.power(0);
     }
 
     //  Calculate ticks for given inches ;
-    public int calculateTicks(double rotation) {
-        return (int) (rotation * Constants.MOTOR_TICK_COUNT);
+    public int calculateTicks(double distanceInInches) {
+        return (int) (distanceInInches * Constants.SIMPLE_TICK_DIAMETER_RATIO);
     }
 
-    public void setTargetPosition(int ticks) {
+    private void setTargetPosition(double distanceInInches) {
 
         //  Always reset;  starts at zero;
         this.setStopAndResetMode();
@@ -39,7 +39,7 @@ public class SimpleMotor {
         this.setRunWithoutEncoderMode();
 
         //  set target
-        this.setTicks(ticks);
+        this.setTicksToTargets(distanceInInches);
 
         this.setRunToPositionMode();
 
@@ -56,24 +56,20 @@ public class SimpleMotor {
         this.setRunWithoutEncoderMode();
     }
 
-    private void setStopAndResetMode() {
+    public void setStopAndResetMode() {
         this.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    private void setRunWithoutEncoderMode() {
+    public void setRunWithoutEncoderMode() {
         this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    private void setRunToPositionMode() {
+    public void setRunToPositionMode() {
         this.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    private void setTicksToTargets(double rotations) {
-        int ticks = this.calculateTicks(rotations);
-        this.setTicks(ticks);
-    }
-
-    private void setTicks(int ticks) {
+    public void setTicksToTargets(double distanceInInches) {
+        int ticks = this.calculateTicks(distanceInInches);
         this.motor.setTargetPosition(ticks);
     }
 
