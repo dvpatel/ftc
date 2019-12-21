@@ -25,7 +25,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     }
 
     protected double normalizePower(double power) {
-        return Range.clip(power, -1.0, 1.0);
+        return Range.clip(power, Constants.DEFAULT_MIN_POWER, Constants.DEFAULT_MAX_POWER);
     }
 
     protected void stopDriving() {
@@ -61,7 +61,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     }
 
     protected void drive(double power) {
-        Driver driver = this.rosie.getDriver();
         this.gyroDrive(power);
     }
 

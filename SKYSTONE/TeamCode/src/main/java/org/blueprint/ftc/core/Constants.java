@@ -20,6 +20,8 @@ public final class Constants {
     public static final String LINEAR_SLIDE_SERVO = "linear_slide_servo";
     public static final String LINEAR_ARM_SERVO = "linear_arm_servo";
 
+    public static final double DEFAULT_MAX_POWER = 1.0;
+    public static final double DEFAULT_MIN_POWER = -1.0;
     public static final double DEFAULT_POWER = 0.30;
 
     //  For AndyMark motor;  1 rev = 1120 ticks ;
