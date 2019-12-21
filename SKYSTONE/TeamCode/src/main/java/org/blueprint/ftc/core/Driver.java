@@ -77,18 +77,13 @@ public class Driver {
         this.setStopAndResetMode();
 
         //  set target
-        int ticks = this.calculateTicks(distanceInInches);
-        this.leftFrontMotor.setTargetPosition(ticks);
-        this.rightFrontMotor.setTargetPosition(-ticks);
-        this.leftBackMotor.setTargetPosition(-ticks);
-        this.rightBackMotor.setTargetPosition(ticks);
+        this.setTicksToTargetsForStrafe(distanceInInches);
 
         //  Run to target position;
         this.setRunToPositionMode();
 
         //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
     }
-
 
     //  Revisit;  Are all encoders needed?  Also should only one motor be used for calc?
     public boolean motorsBusy() {
@@ -137,6 +132,14 @@ public class Driver {
         this.leftFrontMotor.setTargetPosition(ticks);
         this.rightFrontMotor.setTargetPosition(ticks);
         this.leftBackMotor.setTargetPosition(ticks);
+        this.rightBackMotor.setTargetPosition(ticks);
+    }
+
+    public void setTicksToTargetsForStrafe(double distanceInInches) {
+        int ticks = this.calculateTicks(distanceInInches);
+        this.leftFrontMotor.setTargetPosition(ticks);
+        this.rightFrontMotor.setTargetPosition(-ticks);
+        this.leftBackMotor.setTargetPosition(-ticks);
         this.rightBackMotor.setTargetPosition(ticks);
     }
 
