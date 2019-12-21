@@ -7,7 +7,7 @@ import org.blueprint.ftc.core.AbstractLinearOpMode;
 import org.blueprint.ftc.core.ServoController;
 
 
-@TeleOp(name = "ServoTest", group = "Tele")
+@TeleOp(name = "ShortArmServoTele", group = "Tele")
 @Disabled
 public class ServoTele extends AbstractLinearOpMode {
 

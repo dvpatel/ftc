@@ -15,6 +15,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
 import org.blueprint.ftc.core.Driver;
@@ -22,7 +23,7 @@ import org.blueprint.ftc.core.IMUController;
 import org.blueprint.ftc.core.MotorControllerEx;
 
 @Autonomous(name = "GyroDrivePid", group = "Auto")
-//@Disabled
+@Disabled
 public class GyroDrivePid extends AbstractLinearOpMode {
 
     private MotorControllerEx motor;

@@ -77,8 +77,8 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.
  */
 
 
-@TeleOp(name = "Skystone", group = "Tele")
-@Disabled
+@TeleOp(name = "SkystoneTele", group = "Tele")
+// @Disabled
 public class SkystoneDetectionTele extends AbstractLinearOpMode {
 
     private SkystoneDetector skystoneDetector;
