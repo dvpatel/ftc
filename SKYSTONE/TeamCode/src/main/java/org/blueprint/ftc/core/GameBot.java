@@ -71,8 +71,8 @@ public class GameBot {
         this.imu = new IMUController(hardwareMap);
 
         //   PID Logic for DC Motors;  Default 0.30 power ;
-        this.motorPID = new MotorControllerEx();
-        this.motorPID.enableDrivePID(Constants.DEFAULT_POWER);
+        //  this.motorPID = new MotorControllerEx();
+        //  this.motorPID.enableDrivePID(Constants.DEFAULT_POWER);
 
         //  Setup short arm servo;
         //  this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
@@ -114,7 +114,13 @@ public class GameBot {
     //  }
 
     public MotorControllerEx getMotorPID() {
-        return this.motorPID;
+
+        //  MotorPID cannot be a singleton;  Otherwise internal state is maintained and prevents multiple turns;
+
+        //  return this.motorPID;
+        MotorControllerEx motorPID = new MotorControllerEx();
+        motorPID.enableDrivePID(Constants.DEFAULT_POWER);
+        return motorPID;
     }
 
     public Driver getDriver() {
