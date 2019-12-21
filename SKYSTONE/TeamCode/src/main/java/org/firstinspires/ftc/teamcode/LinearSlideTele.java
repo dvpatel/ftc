@@ -55,6 +55,18 @@ public class LinearSlideTele extends AbstractLinearOpMode {
         //  Tells motor to run to target using position and power ;  Make sure t reset encoder when done!
         //  this.simpleMotor.setTargetPosition(2500);
 
+        this.linearSlideMotor.setRunWithoutEncoderMode();
+        this.linearSlideMotor.setStopAndResetMode();
+        this.linearSlideMotor.setTicksToTargets(2);
+        this.linearSlideMotor.power(power);
+        this.linearSlideMotor.setRunToPositionMode();
+        while (this.linearSlideMotor.motorsBusy()) {
+            telemetry.addData("CurrentPosition", this.linearSlideMotor.getCurrentPosition());
+            telemetry.update();
+        }
+        this.linearSlideMotor.stop();
+        this.linearSlideMotor.setStopAndResetMode();
+
         // motorsBusy / current position only works when using encoder wires;
         while (opModeIsActive()) {
             this.linearSlideMotor.power(-gamepad1.left_stick_y);
