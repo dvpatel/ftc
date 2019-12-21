@@ -23,8 +23,7 @@ public class Driver {
         this.setLeftMotor(hardwareMap, leftFrontDeviceName, leftBackDeviceName);
         this.setRightMotor(hardwareMap, rightFrontDeviceName, rightBackDeviceName);
 
-        //  this.setDriveMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.setRunWithoutEncoderMode();
+        //  this.setRunWithoutEncoderMode();
         this.driveDifferential(0, 0);
     }
 
@@ -54,26 +53,49 @@ public class Driver {
 
     public void setTargetPosition(double distanceInInches) {
 
+        //  run w/o encoders
+        this.setRunWithoutEncoderMode();
+
         //  Always reset;  starts at zero;
         this.setStopAndResetMode();
-
-        //  Run based on speed, not power;  OR run to target using position and power;
-        //  this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //  Tells motor to run to target using position and power ;  Make sure t reset encoder when done!
-        this.setRunWithoutEncoderMode();
 
         //  set target
         this.setTicksToTargets(distanceInInches);
 
+        //  Run to target position;
         this.setRunToPositionMode();
 
         //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
     }
 
+    public void setStrafeTargetPosition(double distanceInInches) {
+
+        //  run w/o encoders
+        this.setRunWithoutEncoderMode();
+
+        //  Always reset;  starts at zero;
+        this.setStopAndResetMode();
+
+        //  set target
+        int ticks = this.calculateTicks(distanceInInches);
+        this.leftFrontMotor.setTargetPosition(ticks);
+        this.rightFrontMotor.setTargetPosition(-ticks);
+        this.leftBackMotor.setTargetPosition(-ticks);
+        this.rightBackMotor.setTargetPosition(ticks);
+
+        //  Run to target position;
+        this.setRunToPositionMode();
+
+        //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
+    }
+
+
     //  Revisit;  Are all encoders needed?  Also should only one motor be used for calc?
     public boolean motorsBusy() {
-        return this.leftFrontMotor.isBusy() || this.rightFrontMotor.isBusy();
+        return this.leftFrontMotor.isBusy() &&
+                this.rightFrontMotor.isBusy() &&
+                this.leftBackMotor.isBusy() &&
+                this.rightBackMotor.isBusy();
     }
 
     public void turnOffEncoders() {
@@ -81,49 +103,69 @@ public class Driver {
         this.setRunWithoutEncoderMode();
     }
 
-    private void setStopAndResetMode() {
+    public void setStopAndResetMode() {
         this.leftFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        this.rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    private void setRunWithoutEncoderMode() {
+    public void setRunWithEncoderMode() {
+        this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void setRunWithoutEncoderMode() {
         this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.leftBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.rightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    private void setRunToPositionMode() {
+    public void setRunToPositionMode() {
         this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         this.rightFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.leftBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        this.rightBackMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    private void setTicksToTargets(double distanceInInches) {
+    public void setTicksToTargets(double distanceInInches) {
         int ticks = this.calculateTicks(distanceInInches);
+
         this.leftFrontMotor.setTargetPosition(ticks);
         this.rightFrontMotor.setTargetPosition(ticks);
+        this.leftBackMotor.setTargetPosition(ticks);
+        this.rightBackMotor.setTargetPosition(ticks);
     }
 
     public void powerDifferential(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
-        this.leftBackMotor.setPower(leftBackPower);
-        this.rightBackMotor.setPower(rightBackPower);
         this.leftFrontMotor.setPower(leftFrontPower);
         this.rightFrontMotor.setPower(rightFrontPower);
+        this.leftBackMotor.setPower(leftBackPower);
+        this.rightBackMotor.setPower(rightBackPower);
     }
 
     //  Current position in ticks;
     public int[] getCurrentPosition() {
         int[] results = {
                 this.leftFrontMotor.getCurrentPosition(),
-                this.rightFrontMotor.getCurrentPosition()
+                this.rightFrontMotor.getCurrentPosition(),
+                this.leftBackMotor.getCurrentPosition(),
+                this.rightBackMotor.getCurrentPosition()
         };
+
+        //  leftFront, rightFront, leftBack, rightBack
         return results;
     }
 
-    public double[] getPowerForEncodedMotors() {
+    private double[] getPowerForEncodedMotors() {
         double[] results = {
                 this.leftFrontMotor.getController().getMotorPower(this.leftFrontMotor.getPortNumber()),
-                this.rightFrontMotor.getController().getMotorPower(this.rightFrontMotor.getPortNumber())
+                this.rightFrontMotor.getController().getMotorPower(this.rightFrontMotor.getPortNumber()),
+                this.leftBackMotor.getController().getMotorPower(this.leftBackMotor.getPortNumber()),
+                this.rightBackMotor.getController().getMotorPower(this.rightBackMotor.getPortNumber())
         };
 
         return results;
