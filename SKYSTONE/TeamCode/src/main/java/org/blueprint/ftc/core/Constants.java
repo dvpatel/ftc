@@ -27,6 +27,11 @@ public final class Constants {
     public static final int WHEEL_DIAMETER = 4; // inches ;
     public static final double TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
 
+
+    //  For AndyMark motor connected to linear slide system
+    public static final int SIMPLE_WHEEL_DIAMETER = 2; // inches ;
+    public static final double SIMPLE_TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.SIMPLE_WHEEL_DIAMETER));
+
     public static final int COLOR_ALPHA=0 ;
     public static final int COLOR_RED=1 ;
     public static final int COLOR_GREEN=2 ;
@@ -53,7 +58,7 @@ public final class Constants {
 
     //  Will need to tune these for turning;
     // Speed of wheels while slowing down
-    public static double PID_ROTATE_KP = 0.02;       //  0.009
+    public static double PID_ROTATE_KP = 0.025;       //  0.009
 
     // Do not need - once the robot reaches 90°, the angle does not change.
     public static double PID_ROTATE_KI = 0;           //  0.0000374
