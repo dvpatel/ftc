@@ -69,6 +69,10 @@ public final class Constants {
     public static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     public static final float MM_PER_INCHES = 25.4f;
 
+    // Robot & Tile Dimensions
+    public static final int TILE_LENGTH = 24;
+    public static final int ROBOT_LENGTH = 81;
+
 
     // Intake system constants
     public static final double INTAKE_MAX_POWER = 0.7;
