@@ -16,10 +16,9 @@ public class SimpleMotor {
 
         this.motor = hardwareMap.dcMotor.get(deviceName);
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // this.motor.setDirection(DcMotor.Direction.REVERSE);
 
-        //  this.setRunWithoutEncoderMode() ;
-        this.power(0);
+        this.setRunWithoutEncoderMode();
+        this.drive(0);
     }
 
     //  Calculate ticks for given inches ;
@@ -27,20 +26,18 @@ public class SimpleMotor {
         return (int) (distanceInInches * Constants.SIMPLE_TICK_DIAMETER_RATIO);
     }
 
-    private void setTargetPosition(double distanceInInches) {
+    public void setTargetPosition(double distanceInInches) {
+
+        //  run w/o encoders
+        this.setRunWithoutEncoderMode();
 
         //  Always reset;  starts at zero;
         this.setStopAndResetMode();
 
-        //  Run based on speed, not power;  OR run to target using position and power;
-        //  this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //  Tells motor to run to target using position and power ;  Make sure t reset encoder when done!
-        this.setRunWithoutEncoderMode();
-
         //  set target
         this.setTicksToTargets(distanceInInches);
 
+        //  Run to target position;
         this.setRunToPositionMode();
 
         //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
@@ -73,7 +70,7 @@ public class SimpleMotor {
         this.motor.setTargetPosition(ticks);
     }
 
-    public void power(double power) {
+    public void drive(double power) {
         this.motor.setPower(power);
     }
 
@@ -83,7 +80,6 @@ public class SimpleMotor {
     }
 
     public void stop() {
-        this.power(0);
+        this.drive(0);
     }
-
 }
