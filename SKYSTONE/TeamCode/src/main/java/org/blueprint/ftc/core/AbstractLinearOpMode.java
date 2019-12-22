@@ -21,7 +21,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         waitForStart();
 
         //  why is this needed?
-        sleep(1000);
+        //  sleep(1000);
     }
 
     protected double normalizePower(double power) {
@@ -63,7 +63,32 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         this.gyroDrive(power);
     }
 
-    //  GyroDrive
+    protected void linearSlideDriveForward(int distance, double power) {
+        this.linearSlideDrive(distance, power);
+    }
+
+    protected void linearSlideDriveReverse(int distance, double power) {
+        this.linearSlideDrive(-distance, -power);
+    }
+
+    //  Reverse:  this.drive(-distance, -power);
+    protected void linearSlideDrive(double distanceInInches, double power) {
+
+        SimpleMotor motor = this.rosie.getLinearSlideMotor();
+        motor.setTargetPosition(distanceInInches);
+        motor.drive(power);
+        while (motor.motorsBusy()) {
+            int cp = motor.getCurrentPosition();
+            telemetry.addData("ticks", cp + ", isBusy=" + motor.motorsBusy());
+            telemetry.update();
+        }
+        motor.stop();
+
+        //  Disable encoders ;
+        motor.turnOffEncoders();
+    }
+
+
     //  Reverse:  this.drive(-distance, -power);
     protected void drive(double distanceInInches, double power) {
 
