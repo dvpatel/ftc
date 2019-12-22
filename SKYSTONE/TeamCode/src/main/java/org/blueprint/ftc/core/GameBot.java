@@ -26,7 +26,7 @@ public class GameBot {
 
     private ColorSensorController colorSensor;
     private IMUController imu;
-    private MotorControllerEx motorPID;
+    //  private MotorControllerEx motorPID;
     private Driver driver;
 
     //  Motor to power linear slide system
@@ -65,7 +65,7 @@ public class GameBot {
         this.driver = new Driver(hardwareMap);
 
         //  motor to control linear slide system
-        //  this.linearSlideMotor = new SimpleMotor(hardwareMap, Constants.LINEAR_SLIDE_MOTOR_NAME);
+        this.linearSlideMotor = new SimpleMotor(hardwareMap, Constants.LINEAR_SLIDE_MOTOR_NAME);
 
         //  IMU ;  DON'T SET MODE.
         this.imu = new IMUController(hardwareMap);
@@ -78,7 +78,7 @@ public class GameBot {
         //  this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
 
         //  Servo attached to linear slide system;
-        //  this.linearSlideServo = new ServoController(this.hardwareMap, Constants.LINEAR_SLIDE_SERVO);
+        this.linearSlideServo = new ServoController(this.hardwareMap, Constants.LINEAR_SLIDE_SERVO);
 
         //  Servo attached to linear arm system;
         //  this.linearArmServo = new ServoController(this.hardwareMap, Constants.LINEAR_ARM_SERVO);
