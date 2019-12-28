@@ -42,6 +42,8 @@ public class GameBot {
 
     private SkystoneDetector skystonDetector;
 
+    private IntakeSystem intakeSystem;
+
     private static final double MID_SERVO = 0.5;
     private static final double ARM_UP_POWER = 0.45;
     private static final double ARM_DOWN_POWER = -0.45;
@@ -81,7 +83,7 @@ public class GameBot {
         this.linearSlideServo = new ServoController(this.hardwareMap, Constants.LINEAR_SLIDE_SERVO);
 
         //  Servo attached to linear arm system;
-        //  this.linearArmServo = new ServoController(this.hardwareMap, Constants.LINEAR_ARM_SERVO);
+        this.linearArmServo = new ServoController(this.hardwareMap, Constants.LINEAR_ARM_SERVO);
 
         //  Uncomment when TouchSensor is attached;
         //  this.touch = new TouchSensorController(hardwareMap);
@@ -91,6 +93,9 @@ public class GameBot {
 
         //  Drive using gamepad ;
         this.gamepadDriver = new GamepadDriver(this.driver);
+
+        //  IntakeSystem ;
+        this.intakeSystem = new IntakeSystem(this.hardwareMap);
 
     }
 
@@ -149,6 +154,10 @@ public class GameBot {
 
     public ServoController getLinearArmServo() {
         return this.linearArmServo;
+    }
+
+    public IntakeSystem getIntakeSystem() {
+        return this.intakeSystem;
     }
 
 }
