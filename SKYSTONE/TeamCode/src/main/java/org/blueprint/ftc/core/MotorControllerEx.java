@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.blueprint.ftc.core;
 
 public class MotorControllerEx {
 
@@ -77,9 +77,7 @@ public class MotorControllerEx {
         // Use PID with imu input to drive in a straight line.
 
         double powerCorrection = this.pidDrive.performPID(angle);
-        double[] corrections = {(power - powerCorrection), (power + powerCorrection), powerCorrection} ;
-
-        return corrections ;
+        return new double[]{(power - powerCorrection), (power + powerCorrection), powerCorrection};
     }
 
 

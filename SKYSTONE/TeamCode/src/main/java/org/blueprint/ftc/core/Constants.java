@@ -19,8 +19,6 @@ public final class Constants {
     public static final String SHORT_ARM_SERVO = "short_arm_servo";
     public static final String LINEAR_SLIDE_SERVO = "linear_slide_servo";
     public static final String LINEAR_ARM_SERVO = "linear_arm_servo";
-    public static final String INTAKE_LEFT_MOTOR = "intake_left_motor";
-    public static final String INTAKE_RIGHT_MOTOR = "intake_right_motor";
 
     public static final double DEFAULT_POWER = 0.30;
 
@@ -68,14 +66,6 @@ public final class Constants {
     public static final boolean PHONE_IS_PORTRAIT = false;
     public static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     public static final float MM_PER_INCHES = 25.4f;
-
-    // Robot & Tile Dimensions
-    public static final int TILE_LENGTH = 24;
-    public static final int ROBOT_LENGTH = 81;
-
-
-    // Intake system constants
-    public static final double INTAKE_MAX_POWER = 0.7;
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.

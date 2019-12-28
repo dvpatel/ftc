@@ -3,6 +3,13 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.ColorSensorController;
+import org.blueprint.ftc.core.Driver;
+import org.blueprint.ftc.core.IMUController;
+import org.blueprint.ftc.core.MotorControllerEx;
+import org.blueprint.ftc.core.ServoController;
+
 @Autonomous(name = "NeedhamRedBuilding", group = "Auto")
 //  @Disabled
 public class NeedhamAuto extends AbstractLinearOpMode {
@@ -21,14 +28,14 @@ public class NeedhamAuto extends AbstractLinearOpMode {
     private static final float TILE_SIZE = 22.75f;  //  22.65 intches;
 
     @Override
-    void initOpMode() throws InterruptedException {
+    public void initOpMode() throws InterruptedException {
 
         this.initRosie();
 
         this.imu = this.rosie.getIMUController();
         this.motor = this.rosie.getMotorPID();
         this.driver = this.rosie.getDriver();
-        this.servo = this.rosie.getShortArmServo();
+        //  this.servo = this.rosie.getShortArmServo();
         this.colorSensor = this.rosie.getColorSensorController();
 
 
@@ -37,7 +44,7 @@ public class NeedhamAuto extends AbstractLinearOpMode {
     }
 
     @Override
-    void stopOpMode() {
+    public void stopOpMode() {
         driver.stop();
     }
 

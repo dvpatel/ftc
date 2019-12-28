@@ -1,15 +1,15 @@
-package org.firstinspires.ftc.teamcode;
+package org.blueprint.ftc.core;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 public abstract class AbstractLinearOpMode extends LinearOpMode {
 
     protected GameBot rosie;
 
-    abstract void initOpMode() throws InterruptedException;
-    abstract void stopOpMode();
+    protected abstract void initOpMode() throws InterruptedException;
+
+    protected abstract void stopOpMode();
 
     protected void initRosie() throws InterruptedException {
         this.rosie = new GameBot();
@@ -21,17 +21,16 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         waitForStart();
 
         //  why is this needed?
-        sleep(1000);
+        //  sleep(1000);
     }
 
     protected double normalizePower(double power) {
-        return Range.clip(power, -1.0, 1.0);
+        return Range.clip(power, Constants.DEFAULT_MIN_POWER, Constants.DEFAULT_MAX_POWER);
     }
 
     protected void stopDriving() {
         this.rosie.getDriver().stop();
     }
-
 
     protected void driveForward(int distance, double power) {
         this.drive(distance, power);
@@ -43,12 +42,12 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     }
 
     protected void strafeLeft(int distance, double power) {
-        this.strafe(distance, power);
+        this.strafe(-distance, -power);
     }
 
     protected void strafeRight(int distance, double power) {
         //  Note:  both values must be negative ;
-        this.strafe(-distance, -power);
+        this.strafe(distance, power);
     }
 
     protected void turnRight(int degrees, double power) {
@@ -60,28 +59,47 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         this.turn(-degrees, power);
     }
 
-
     protected void drive(double power) {
-        Driver driver = this.rosie.getDriver();
         this.gyroDrive(power);
     }
 
-    //  GyroDrive
+    protected void linearSlideDriveForward(int distance, double power) {
+        this.linearSlideDrive(distance, power);
+    }
+
+    protected void linearSlideDriveReverse(int distance, double power) {
+        this.linearSlideDrive(-distance, -power);
+    }
+
+    //  Reverse:  this.drive(-distance, -power);
+    protected void linearSlideDrive(double distanceInInches, double power) {
+
+        SimpleMotor motor = this.rosie.getLinearSlideMotor();
+        motor.setTargetPosition(distanceInInches);
+        motor.drive(power);
+        while (motor.motorsBusy()) {
+            int cp = motor.getCurrentPosition();
+            telemetry.addData("ticks", cp + ", isBusy=" + motor.motorsBusy());
+            telemetry.update();
+        }
+        motor.stop();
+
+        //  Disable encoders ;
+        motor.turnOffEncoders();
+    }
+
+
     //  Reverse:  this.drive(-distance, -power);
     protected void drive(double distanceInInches, double power) {
+
         Driver driver = this.rosie.getDriver();
         driver.setTargetPosition(distanceInInches);
-
-        this.rosie.getIMUController().resetAngle();
-
-        this.drive(power);
-        while (opModeIsActive() && driver.motorsBusy()) {
-            //  this.gyroDrive(power);
-
+        driver.drive(power);
+        while (driver.motorsBusy()) {
+            //  leftFront, rightFront, leftBack, rightBack;
             int[] cp = driver.getCurrentPosition();
-            telemetry.addData("left-cp", cp[0] + "right-cp", cp[1] + "  busy=" + driver.motorsBusy());
+            telemetry.addData("ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] + ", isBusy=" + driver.motorsBusy());
             telemetry.update();
-            idle();
         }
         driver.stop();
 
@@ -106,7 +124,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         IMUController imu = this.rosie.getIMUController();
         imu.resetAngle();
 
-        while (opModeIsActive() && !motor.angleOnTarget()) {
+        while (!motor.angleOnTarget()) {
             //  NOTE:  imu.getAngle returns positive on left turn, negative on right turn
             //  Negative degrees means left turn
             double p = motor.calculateRotateCorrection(-degrees, imu.getAngle(), power);
@@ -117,20 +135,22 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         }
 
         driver.stop();
-        driver.turnOffEncoders();
-        //  imu.resetAngle();
 
+        driver.turnOffEncoders();
+        imu.resetAngle();
     }
 
     protected void strafe(double distanceInInches, double power) {
 
         Driver driver = this.rosie.getDriver();
-        driver.setTargetPosition(distanceInInches);
-
+        driver.setStrafeTargetPosition(distanceInInches);
         this.rosie.getIMUController().resetAngle();
 
+        driver.strafeDifferential(power, power);
         do {
-            this.gyroStrafe(power);
+            int[] cp = driver.getCurrentPosition();
+            telemetry.addData("ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] + ", isBusy=" + driver.motorsBusy());
+            telemetry.update();
         } while (opModeIsActive() && driver.motorsBusy());
 
         driver.stop();

@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.blueprint.ftc.core.AbstractLinearOpMode;
 
 @TeleOp(name = "GyroCali", group = "Tele")
 @Disabled
@@ -25,7 +25,7 @@ public class GyroTele extends AbstractLinearOpMode {
     }
 
     @Override
-    void initOpMode() throws InterruptedException {
+    public void initOpMode() throws InterruptedException {
 
         this.initRosie();
         //  this.waitForCalibration(); //  Rosie takes care of calibration ;
@@ -35,7 +35,7 @@ public class GyroTele extends AbstractLinearOpMode {
     }
 
     @Override
-    void stopOpMode() {
+    public void stopOpMode() {
 
     }
 

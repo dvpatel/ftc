@@ -1,6 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.blueprint.ftc.core;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.blueprint.ftc.core.Driver;
+import org.blueprint.ftc.core.GameBot;
 
 //  left_stick_y:  -1.0 to 1.0 float;
 //  left_stick_x:  -1.0 to 1.0 float;

@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode;
+package org.blueprint.ftc.core;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -27,7 +26,7 @@ public class GameBot {
 
     private ColorSensorController colorSensor;
     private IMUController imu;
-    private MotorControllerEx motorPID;
+    //  private MotorControllerEx motorPID;
     private Driver driver;
     private IntakeSystem intake;
 
@@ -64,7 +63,7 @@ public class GameBot {
         this.colorSensor = new ColorSensorController(hardwareMap);
 
         //  Build driver ;
-        //  this.driver = new Driver(hardwareMap);
+        this.driver = new Driver(hardwareMap);
 
         this.intake = new IntakeSystem(hardwareMap);
 
@@ -75,17 +74,17 @@ public class GameBot {
         this.imu = new IMUController(hardwareMap);
 
         //   PID Logic for DC Motors;  Default 0.30 power ;
-        this.motorPID = new MotorControllerEx();
-        this.motorPID.enableDrivePID(Constants.DEFAULT_POWER);
+        //  this.motorPID = new MotorControllerEx();
+        //  this.motorPID.enableDrivePID(Constants.DEFAULT_POWER);
 
         //  Setup short arm servo;
-        this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
+        //  this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
 
         //  Servo attached to linear slide system;
         this.linearSlideServo = new ServoController(this.hardwareMap, Constants.LINEAR_SLIDE_SERVO);
 
         //  Servo attached to linear arm system;
-        this.linearArmServo = new ServoController(this.hardwareMap, Constants.LINEAR_ARM_SERVO);
+        //  this.linearArmServo = new ServoController(this.hardwareMap, Constants.LINEAR_ARM_SERVO);
 
         //  Uncomment when TouchSensor is attached;
         //  this.touch = new TouchSensorController(hardwareMap);
@@ -95,7 +94,6 @@ public class GameBot {
 
         //  Drive using gamepad ;
         this.gamepadDriver = new GamepadDriver(this.driver);
-
 
     }
 
@@ -119,7 +117,13 @@ public class GameBot {
     //  }
 
     public MotorControllerEx getMotorPID() {
-        return this.motorPID;
+
+        //  MotorPID cannot be a singleton;  Otherwise internal state is maintained and prevents multiple turns;
+
+        //  return this.motorPID;
+        MotorControllerEx motorPID = new MotorControllerEx();
+        motorPID.enableDrivePID(Constants.DEFAULT_POWER);
+        return motorPID;
     }
 
     public Driver getDriver() {
@@ -142,7 +146,7 @@ public class GameBot {
         return this.gamepadDriver;
     }
 
-    public ServoController getShortArmServo() {
+    private ServoController getShortArmServo() {
         return this.shortArmServo;
     }
 

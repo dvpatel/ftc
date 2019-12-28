@@ -6,6 +6,10 @@ import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.ColorSensorController;
+import org.blueprint.ftc.core.Constants;
+
 
 /**
  * DP
@@ -37,7 +41,6 @@ public class ColorSensorSample extends AbstractLinearOpMode {
 
         //  Make sure Rosie is initialized ;
         this.initRosie();
-
 
         //  ColorSensor detector ;
         this.colorSensor = this.rosie.getColorSensorController();

@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.blueprint.ftc.core;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+
+import org.blueprint.ftc.core.Constants;
 
 public class TouchSensorController {
 

@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.blueprint.ftc.core;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.blueprint.ftc.core.Constants;
 
 /**
  * Robot driver
@@ -14,31 +16,28 @@ public class SimpleMotor {
 
         this.motor = hardwareMap.dcMotor.get(deviceName);
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        // this.motor.setDirection(DcMotor.Direction.REVERSE);
 
-        this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.motor.setPower(0);
+        this.setRunWithoutEncoderMode();
+        this.drive(0);
     }
 
     //  Calculate ticks for given inches ;
-    public int calculateTicks(double rotation) {
-        return (int) (rotation * Constants.MOTOR_TICK_COUNT);
+    public int calculateTicks(double distanceInInches) {
+        return (int) (distanceInInches * Constants.SIMPLE_TICK_DIAMETER_RATIO);
     }
 
-    public void setTargetPosition(int ticks) {
+    public void setTargetPosition(double distanceInInches) {
+
+        //  run w/o encoders
+        this.setRunWithoutEncoderMode();
 
         //  Always reset;  starts at zero;
         this.setStopAndResetMode();
 
-        //  Run based on speed, not power;  OR run to target using position and power;
-        //  this.setDriveMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        //  Tells motor to run to target using position and power ;  Make sure t reset encoder when done!
-        this.setRunWithoutEncoderMode();
-
         //  set target
-        this.setTicks(ticks);
+        this.setTicksToTargets(distanceInInches);
 
+        //  Run to target position;
         this.setRunToPositionMode();
 
         //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
@@ -54,28 +53,24 @@ public class SimpleMotor {
         this.setRunWithoutEncoderMode();
     }
 
-    private void setStopAndResetMode() {
+    public void setStopAndResetMode() {
         this.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    private void setRunWithoutEncoderMode() {
+    public void setRunWithoutEncoderMode() {
         this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
-    private void setRunToPositionMode() {
+    public void setRunToPositionMode() {
         this.motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    private void setTicksToTargets(double rotations) {
-        int ticks = this.calculateTicks(rotations);
-        this.setTicks(ticks);
-    }
-
-    private void setTicks(int ticks) {
+    public void setTicksToTargets(double distanceInInches) {
+        int ticks = this.calculateTicks(distanceInInches);
         this.motor.setTargetPosition(ticks);
     }
 
-    public void power(double power) {
+    public void drive(double power) {
         this.motor.setPower(power);
     }
 
@@ -85,7 +80,6 @@ public class SimpleMotor {
     }
 
     public void stop() {
-        this.power(0);
+        this.drive(0);
     }
-
 }

@@ -5,6 +5,12 @@ package org.firstinspires.ftc.teamcode;
 //  https://drive.google.com/file/d/0B5ci5zMS_2kZUlRYaHZkMGNuZGc/view
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.Driver;
+import org.blueprint.ftc.core.GamepadDriver;
+import org.blueprint.ftc.core.IMUController;
+import org.blueprint.ftc.core.MotorControllerEx;
+
 @TeleOp(name = "GamePadDrive", group = "Tele")
 //  @Disabled
 public class GamePadTele extends AbstractLinearOpMode {
@@ -12,7 +18,7 @@ public class GamePadTele extends AbstractLinearOpMode {
     private MotorControllerEx motor;
     private Driver driver;
     private IMUController imu;
-    private ServoController servo;
+    //  private ServoController servo;
 
     //  private double rotation ;
     private boolean aButton, bButton, touched;
@@ -20,14 +26,14 @@ public class GamePadTele extends AbstractLinearOpMode {
     private double power;
 
     @Override
-    void initOpMode() throws InterruptedException {
+    public void initOpMode() throws InterruptedException {
 
         telemetry.addData("Mode", "init Rosie");
         telemetry.update();
 
         this.initRosie();
 
-        this.servo = this.rosie.getShortArmServo();
+        //  this.servo = this.rosie.getShortArmServo();
         this.imu = this.rosie.getIMUController();
 
 
@@ -40,9 +46,9 @@ public class GamePadTele extends AbstractLinearOpMode {
     }
 
     @Override
-    void stopOpMode() {
+    public void stopOpMode() {
         this.stopDriving();
-        this.servo.setPositionByDegrees(180);
+        //  this.servo.setPositionByDegrees(180);
     }
 
     // called when init button is  pressed.
@@ -52,7 +58,7 @@ public class GamePadTele extends AbstractLinearOpMode {
         this.initOpMode();
 
         telemetry.addData("Mode", "Init.Done");
-        telemetry.addData("ServoPos: ", servo.getPosition());
+        // telemetry.addData("ServoPos: ", servo.getPosition());
         telemetry.addData("Calibration Status:", this.imu.getCalibrationStatus());
         telemetry.update();
 
@@ -75,9 +81,9 @@ public class GamePadTele extends AbstractLinearOpMode {
             telemetry.addData("RightB", p[3]);
             telemetry.update();
 
-            this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
-            telemetry.addData("ServoPos", this.servo.getPosition());
-            telemetry.update();
+            //  this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
+            //  telemetry.addData("ServoPos", this.servo.getPosition());
+            //  telemetry.update();
 
             idle();
         }

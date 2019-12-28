@@ -1,33 +1,34 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
+
+import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.ServoController;
 
 
-@TeleOp(name = "ServoTest", group = "Tele")
+@TeleOp(name = "ShortArmServoTele", group = "Tele")
 @Disabled
 public class ServoTele extends AbstractLinearOpMode {
 
     private ServoController servo;
 
     @Override
-    void initOpMode() throws InterruptedException {
+    public void initOpMode() throws InterruptedException {
         telemetry.addData("Mode", "init Rosie");
         telemetry.update();
 
         this.initRosie();
 
         //  Anish:  Start at 180 or down position;
-        this.servo = this.rosie.getShortArmServo();
+        //  this.servo = this.rosie.getShortArmServo();
 
         telemetry.addData("Mode", "init complete;  Running");
         telemetry.update();
     }
 
     @Override
-    void stopOpMode() {
+    public void stopOpMode() {
         this.servo.setPositionByDegrees(180);
     }
 

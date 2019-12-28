@@ -12,19 +12,16 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.Driver;
+import org.blueprint.ftc.core.IMUController;
+import org.blueprint.ftc.core.MotorControllerEx;
 
 @Autonomous(name = "GyroTurnPID", group = "Auto")
-//@Disabled
+@Disabled
 public class GyroTurnPid extends AbstractLinearOpMode {
     private MotorControllerEx motor;
     private Driver driver;
@@ -34,7 +31,7 @@ public class GyroTurnPid extends AbstractLinearOpMode {
     int degrees = 180;
 
     @Override
-    void initOpMode() throws InterruptedException {
+    public void initOpMode() throws InterruptedException {
         this.initRosie();
 
         this.motor = this.rosie.getMotorPID();  //  Defaut power ;
@@ -50,7 +47,7 @@ public class GyroTurnPid extends AbstractLinearOpMode {
     }
 
     @Override
-    void stopOpMode() {
+    public void stopOpMode() {
         // turn the motors off.
         driver.stop();
 
