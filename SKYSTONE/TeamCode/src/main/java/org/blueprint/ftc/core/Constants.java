@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.blueprint.ftc.core;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
@@ -11,21 +11,33 @@ public final class Constants {
     public static final String RIGHT_FRONT_MOTOR_NAME = "right_front_motor" ;
     public static final String LEFT_BACK_MOTOR_NAME = "left_back_motor" ;
     public static final String RIGHT_BACK_MOTOR_NAME = "right_back_motor" ;
-    public static final String LINEAR_SLIDE_MOTOR_NAME = "simple_motor";
+
+    // Left and right motors for intake system
+    public static final String INTAKE_LEFT_MOTOR = "intake_left_motor";
+    public static final String INTAKE_RIGHT_MOTOR = "intake_right_motor";
+
+    public static final String LINEAR_SLIDE_MOTOR_NAME = "linear_slide_motor";
+    public static final String LINEAR_SLIDE_SERVO = "linear_slide_servo";
+    public static final String LINEAR_ARM_SERVO = "linear_arm_servo";
 
     public static final String TOUCH_SENSOR_NAME = "touch_sensor" ;
     public static final String COLOR_SENSOR_NAME = "colorSensor";
     public static final String IMU_NAME = "imu" ;
     public static final String SHORT_ARM_SERVO = "short_arm_servo";
-    public static final String LINEAR_SLIDE_SERVO = "linear_slide_servo";
-    public static final String LINEAR_ARM_SERVO = "linear_arm_servo";
 
+    public static final double DEFAULT_MAX_POWER = 1.0;
+    public static final double DEFAULT_MIN_POWER = -1.0;
     public static final double DEFAULT_POWER = 0.30;
 
     //  For AndyMark motor;  1 rev = 1120 ticks ;
     public static final int MOTOR_TICK_COUNT = 1120;
     public static final int WHEEL_DIAMETER = 4; // inches ;
     public static final double TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
+
+
+    //  For AndyMark motor connected to linear slide system
+    public static final int SIMPLE_WHEEL_DIAMETER = 2; // inches ;
+    public static final double SIMPLE_TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.SIMPLE_WHEEL_DIAMETER));
 
     public static final int COLOR_ALPHA=0 ;
     public static final int COLOR_RED=1 ;
@@ -53,7 +65,7 @@ public final class Constants {
 
     //  Will need to tune these for turning;
     // Speed of wheels while slowing down
-    public static double PID_ROTATE_KP = 0.02;       //  0.009
+    public static double PID_ROTATE_KP = 0.025;       //  0.009
 
     // Do not need - once the robot reaches 90°, the angle does not change.
     public static double PID_ROTATE_KI = 0;           //  0.0000374
@@ -75,5 +87,9 @@ public final class Constants {
     public static final double HEADING_THRESHOLD = 1 ;      // As tight as we can make it with an integer gyro
     public static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
     public static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
+
+    // Robot & Tile Dimensions
+    public static final int TILE_LENGTH = 24;
+    public static final int ROBOT_LENGTH = 81;
 
 }

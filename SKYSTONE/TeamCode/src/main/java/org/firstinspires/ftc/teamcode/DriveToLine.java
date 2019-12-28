@@ -3,8 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.ColorSensorController;
+import org.blueprint.ftc.core.Constants;
+import org.blueprint.ftc.core.Driver;
+
 @Autonomous(name = "DriveToLine", group = "Auto")
-public class DriveToLIne extends AbstractLinearOpMode {
+public class DriveToLine extends AbstractLinearOpMode {
 
 
     private Driver driver;
@@ -17,7 +22,7 @@ public class DriveToLIne extends AbstractLinearOpMode {
     private int distanceToQuadrant;
 
     @Override
-    void initOpMode() throws InterruptedException {
+    public void initOpMode() throws InterruptedException {
 
         this.driver = this.rosie.getDriver();
         this.colorSensor = this.rosie.getColorSensorController();
@@ -78,7 +83,7 @@ public class DriveToLIne extends AbstractLinearOpMode {
     }
 
     @Override
-    void stopOpMode() {
+    public void stopOpMode() {
         driver.stop();
     }
 }

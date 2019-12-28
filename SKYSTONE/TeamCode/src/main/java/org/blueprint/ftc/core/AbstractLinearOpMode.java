@@ -3,6 +3,8 @@ package org.blueprint.ftc.core;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.Range;
 
+import org.blueprint.ftc.core.Constants;
+
 public abstract class AbstractLinearOpMode extends LinearOpMode {
 
     protected GameBot rosie;
