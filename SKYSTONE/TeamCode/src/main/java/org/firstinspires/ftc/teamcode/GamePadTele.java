@@ -9,6 +9,7 @@ import org.blueprint.ftc.core.AbstractLinearOpMode;
 import org.blueprint.ftc.core.Driver;
 import org.blueprint.ftc.core.GamepadDriver;
 import org.blueprint.ftc.core.IMUController;
+import org.blueprint.ftc.core.IntakeSystem;
 import org.blueprint.ftc.core.MotorControllerEx;
 
 @TeleOp(name = "GamePadDrive", group = "Tele")
@@ -20,33 +21,30 @@ public class GamePadTele extends AbstractLinearOpMode {
     private IMUController imu;
     //  private ServoController servo;
 
+    private IntakeSystem intakeSystem;
+
     //  private double rotation ;
     private boolean aButton, bButton, touched;
 
-    private double power;
-
     @Override
     public void initOpMode() throws InterruptedException {
-
-        telemetry.addData("Mode", "init Rosie");
-        telemetry.update();
-
         this.initRosie();
 
         //  this.servo = this.rosie.getShortArmServo();
         this.imu = this.rosie.getIMUController();
 
+        this.intakeSystem = rosie.getIntakeSystem();
 
         //  Enable PID Controller to track state
         //  this.motor.enablePID();
         //this.motor.enableDrivePID(power);
-
-        telemetry.addData("Mode", "init complete;  Running");
-        telemetry.update();
     }
 
     @Override
     public void stopOpMode() {
+
+        this.intakeSystem.stop();
+
         this.stopDriving();
         //  this.servo.setPositionByDegrees(180);
     }
@@ -84,6 +82,8 @@ public class GamePadTele extends AbstractLinearOpMode {
             //  this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
             //  telemetry.addData("ServoPos", this.servo.getPosition());
             //  telemetry.update();
+
+            this.intakeSystem.autoMode(gamepad1);
 
             idle();
         }
