@@ -98,17 +98,17 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
         GameQuadrant gq = null;
 
         boolean isLoadingZone = false;
-        while (!gamepad1.a || !gamepad1.b) {
+        while (!gamepad1.a || !gamepad1.y) {
             // Tell the user what to press
-            telemetry.addData("Instructions", "Press A if in LOADING ZONE; Press B if in building zone");
+            telemetry.addData("Instructions", "Press A if in LOADING ZONE; Press Y if in BUILDING ZONE");
             telemetry.update();
         }
         if (gamepad1.a) {
             isLoadingZone = true;
             telemetry.addData("Selected Zone", "LOADING ZONE");
-        } else if (gamepad1.b) {
+        } else if (gamepad1.y) {
             isLoadingZone = false;
-            telemetry.addData("Instructions", "BUILDING ZONE");
+            telemetry.addData("Selected Zone", "BUILDING ZONE");
         }
         telemetry.update();
 
@@ -116,10 +116,10 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
 
         // Wait until gamepad press a or b is pressed for alliance selection;
         while (!gamepad1.a || !gamepad1.b) {
-            telemetry.addData("Instructions", "Press A if in RED ALLIANCE; Press B if in BLUE ALLIANCE");
+            telemetry.addData("Instructions", "Press B if in RED ALLIANCE; Press X if in BLUE ALLIANCE");
             telemetry.update();
         }
-        if (gamepad1.a) {
+        if (gamepad1.b) {
             //  red alliance
 
             if (isLoadingZone) {
@@ -128,7 +128,7 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
                 gq = GameQuadrant.BUILDING_RED;
             }
 
-        } else if (gamepad1.b) {
+        } else if (gamepad1.x) {
             //  blue alliance;
 
             if (isLoadingZone) {
