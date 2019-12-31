@@ -32,20 +32,20 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         this.rosie.getDriver().stop();
     }
 
-    protected void driveForward(int distance, double power) {
+    protected void driveForward(double distance, double power) {
         this.drive(distance, power);
     }
 
-    protected void driveReverse(int distance, double power) {
+    protected void driveReverse(double distance, double power) {
         //  Both power and distance needs to be negative to go reverse
         this.drive(-distance, -power);
     }
 
-    protected void strafeLeft(int distance, double power) {
+    protected void strafeLeft(double distance, double power) {
         this.strafe(-distance, -power);
     }
 
-    protected void strafeRight(int distance, double power) {
+    protected void strafeRight(double distance, double power) {
         //  Note:  both values must be negative ;
         this.strafe(distance, power);
     }
