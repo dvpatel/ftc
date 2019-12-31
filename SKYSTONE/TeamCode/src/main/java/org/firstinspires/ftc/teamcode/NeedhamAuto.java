@@ -2,6 +2,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
 import org.blueprint.ftc.core.ColorSensorController;
@@ -11,7 +12,7 @@ import org.blueprint.ftc.core.MotorControllerEx;
 import org.blueprint.ftc.core.ServoController;
 
 @Autonomous(name = "NeedhamRedBuilding", group = "Auto")
-//  @Disabled
+@Disabled
 public class NeedhamAuto extends AbstractLinearOpMode {
 
     private MotorControllerEx motor;
