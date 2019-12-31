@@ -11,6 +11,7 @@ import org.blueprint.ftc.core.GamepadDriver;
 import org.blueprint.ftc.core.IMUController;
 import org.blueprint.ftc.core.IntakeSystem;
 import org.blueprint.ftc.core.MotorControllerEx;
+import org.blueprint.ftc.core.ServoController;
 
 @TeleOp(name = "GamePadDrive", group = "Tele")
 //  @Disabled
@@ -19,7 +20,7 @@ public class GamePadTele extends AbstractLinearOpMode {
     private MotorControllerEx motor;
     private Driver driver;
     private IMUController imu;
-    //  private ServoController servo;
+    private ServoController servo;
 
     private IntakeSystem intakeSystem;
 
@@ -30,7 +31,7 @@ public class GamePadTele extends AbstractLinearOpMode {
     public void initOpMode() throws InterruptedException {
         this.initRosie();
 
-        //  this.servo = this.rosie.getShortArmServo();
+        this.servo = this.rosie.getShortArmServo();
         this.imu = this.rosie.getIMUController();
 
         this.intakeSystem = rosie.getIntakeSystem();
@@ -68,22 +69,24 @@ public class GamePadTele extends AbstractLinearOpMode {
         GamepadDriver gpd = this.rosie.getGamepadDriver();
         while (opModeIsActive()) {
 
-            //  Uncomment when real motors attached ; Direction correct?
+            //  Task 1:  Driving
             double[] p = gpd.calculatePowerDifferential(gamepad1);
             gpd.drive(gamepad1);
 
-            //  Controls direction
+            //  Task 2:  ShortArmServo
+            this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
+
+            //  Task 3:  IntakeSystem
+            //  gamepad left / right bumper to turn on and off intake system
+            this.intakeSystem.autoMode(gamepad1);
+
+            //  Telemetry print for debugging;
             telemetry.addData("LeftF", p[0]);
             telemetry.addData("RightF", p[1]);
             telemetry.addData("LeftB", p[2]);
             telemetry.addData("RightB", p[3]);
+            telemetry.addData("ServoPos", this.servo.getPosition());
             telemetry.update();
-
-            //  this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
-            //  telemetry.addData("ServoPos", this.servo.getPosition());
-            //  telemetry.update();
-
-            this.intakeSystem.autoMode(gamepad1);
 
             idle();
         }

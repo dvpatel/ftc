@@ -64,7 +64,7 @@ public class GameBot {
         //  this.motorPID.enableDrivePID(Constants.DEFAULT_POWER);
 
         //  Setup short arm servo;
-        //  this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
+        this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
 
         //  Servo attached to linear slide system;
         this.linearSlideServo = new ServoController(this.hardwareMap, Constants.LINEAR_SLIDE_SERVO);
@@ -131,7 +131,7 @@ public class GameBot {
         return this.gamepadDriver;
     }
 
-    private ServoController getShortArmServo() {
+    public ServoController getShortArmServo() {
         return this.shortArmServo;
     }
 
