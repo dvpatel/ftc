@@ -21,7 +21,7 @@ public class ServoTele extends AbstractLinearOpMode {
         this.initRosie();
 
         //  Anish:  Start at 180 or down position;
-        //  this.servo = this.rosie.getShortArmServo();
+        this.servo = this.rosie.getShortArmServo();
 
         telemetry.addData("Mode", "init complete;  Running");
         telemetry.update();
