@@ -30,8 +30,14 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
         this.driver = this.rosie.getDriver();
         this.colorSensor = this.rosie.getColorSensorController();
 
+        //  Select quadrant;
+        this.quadrant = this.selectGameQuadrant();
+        telemetry.addData("Selected Zone:  ", quadrant.toString());
+        telemetry.addData("Power Direction (- left, + right):  ", GameQuadrant.direction(quadrant));
         telemetry.addData("Mode:  ", "init complete;  Running");
         telemetry.update();
+
+        sleep(1000);
     }
 
     @Override
@@ -44,12 +50,6 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
 
         //  Put common init logic here
         this.initOpMode();
-
-        //  Select quadrant;
-        this.selectGameQuadrant();
-        telemetry.addData("Selected Zone:  ", quadrant.toString());
-        telemetry.addData("Power Direction (- left, + right):  ", GameQuadrant.direction(quadrant));
-        telemetry.update();
 
         //  Activate opmode
         this.waitToPressStart();
@@ -76,7 +76,11 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
         //  Direction will return +1 or -1 based on quadrant selection;
         //  positive power strafe to right; negative strafe to the left;
         this.strafePower = GameQuadrant.direction(quadrant) * DEFAULT_POWER;
-        this.strafe(this.strafePower);
+
+        //  Try with both..
+        //  this.strafe(this.strafePower);  //  uses gyro;
+        this.driver.strafe(strafePower);
+
         while (opModeIsActive() && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())) {
             telemetry.addData("ColorNotFound", "True");
             telemetry.update();
@@ -87,9 +91,11 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
     }
 
     //  method helps to identify location of robot
-    private void selectGameQuadrant() {
+    private GameQuadrant selectGameQuadrant() {
 
         // Wait until gamepad a or b is press for zone selection;
+
+        GameQuadrant gq = null;
 
         boolean isLoadingZone = false;
         while (!gamepad1.a || !gamepad1.b) {
@@ -99,9 +105,14 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
         }
         if (gamepad1.a) {
             isLoadingZone = true;
+            telemetry.addData("Selected Zone", "LOADING ZONE");
         } else if (gamepad1.b) {
             isLoadingZone = false;
+            telemetry.addData("Instructions", "BUILDING ZONE");
         }
+        telemetry.update();
+
+        sleep(1000);
 
         // Wait until gamepad press a or b is pressed for alliance selection;
         while (!gamepad1.a || !gamepad1.b) {
@@ -112,20 +123,21 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
             //  red alliance
 
             if (isLoadingZone) {
-                this.quadrant = GameQuadrant.LOADING_RED;
+                gq = GameQuadrant.LOADING_RED;
             } else {
-                this.quadrant = GameQuadrant.BUILDING_RED;
+                gq = GameQuadrant.BUILDING_RED;
             }
 
         } else if (gamepad1.b) {
             //  blue alliance;
 
             if (isLoadingZone) {
-                this.quadrant = GameQuadrant.LOADING_BLUE;
+                gq = GameQuadrant.LOADING_BLUE;
             } else {
-                this.quadrant = GameQuadrant.BUILDING_BLUE;
+                gq = GameQuadrant.BUILDING_BLUE;
             }
         }
 
+        return gq;
     }
 }
