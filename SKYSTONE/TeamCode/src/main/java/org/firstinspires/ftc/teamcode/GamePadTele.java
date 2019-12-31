@@ -72,20 +72,19 @@ public class GamePadTele extends AbstractLinearOpMode {
             //  Task 1:  Driving
             double[] p = gpd.calculatePowerDifferential(gamepad1);
             gpd.drive(gamepad1);
+            telemetry.addData("PowerDifferential:  ", p[0] + ", " + p[1] + ", " + p[2] + ", " + p[3]);
 
             //  Task 2:  ShortArmServo
             this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
+            telemetry.addData("LeftTrigger", gamepad1.left_trigger);
+            telemetry.addData("RightTrigger", gamepad1.right_trigger);
+            telemetry.addData("ServoPos", this.servo.getPosition());
 
             //  Task 3:  IntakeSystem
             //  gamepad left / right bumper to turn on and off intake system
             this.intakeSystem.autoMode(gamepad1);
 
             //  Telemetry print for debugging;
-            telemetry.addData("LeftF", p[0]);
-            telemetry.addData("RightF", p[1]);
-            telemetry.addData("LeftB", p[2]);
-            telemetry.addData("RightB", p[3]);
-            telemetry.addData("ServoPos", this.servo.getPosition());
             telemetry.update();
 
             idle();
