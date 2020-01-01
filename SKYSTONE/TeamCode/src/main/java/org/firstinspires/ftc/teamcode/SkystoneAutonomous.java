@@ -63,6 +63,11 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
         this.driveForward(Constants.TILE_SIZE + ((Constants.TILE_SIZE - Constants.ROBOT_LENGTH) / 2), DEFAULT_POWER);
         sleep(SLEEP_TIME);
 
+
+        this.locateSkystone();
+        sleep(SLEEP_TIME);
+
+
         //  Put steps here;
         //  Drive to color;  set power directions based on quadrant;
         this.driveToColorLine();
@@ -71,12 +76,19 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
         this.stopOpMode();
     }
 
+    private void locateSkystone() {
+
+        //  this.quadrant;
+
+    }
+
     //  Strafe left or right based on quadrant to red or blue color
     private void driveToColorLine() {
 
         //  Direction will return +1 or -1 based on quadrant selection;
         //  positive power strafe to right; negative strafe to the left;
-        this.strafePower = GameQuadrant.direction(quadrant) * DEFAULT_POWER;
+        //  NOTE:  Do NOT use 1.0 power; skips color sensor detection;
+        this.strafePower = GameQuadrant.direction(quadrant) * Constants.COLOR_SENSOR_DEFAULT_POWER;
 
         //  Try with both..
         //  this.strafe(this.strafePower);  //  uses gyro;
