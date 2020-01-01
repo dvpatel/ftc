@@ -143,6 +143,8 @@ public class SkystoneDetectionTele extends AbstractLinearOpMode {
 
             }
             telemetry.update();
+
+            idle();
         }
 
         this.stopOpMode();
