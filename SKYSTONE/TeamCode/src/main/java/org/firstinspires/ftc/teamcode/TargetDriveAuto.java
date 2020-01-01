@@ -18,7 +18,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
 
     private static final int DISTANCE_IN_INCHES = 36;
     private static final int TURN_ANGLE = 90;
-    private static final int SLEEP_TIME = 3000;
+    private static final int SLEEP_TIME = 500;
     private static final double POWER_LEVEL = 1;
 
     @Override
@@ -64,7 +64,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
 
         telemetry.addData("GyroStrafe:  ", "strafe left");
         telemetry.update();
-        this.strafeLeft(12, power);
+        this.strafeLeft(24, power);
         sleep(SLEEP_TIME);
 
         //  drive backward 12 inches ;
@@ -76,7 +76,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
         //  Strafe 12 inches right ; both values must be negative ;
         telemetry.addData("GyroStrafe:  ", "strafe 6 inches right");
         telemetry.update();
-        this.strafeRight(12, power);
+        this.strafeRight(24, power);
         sleep(SLEEP_TIME);
 
         //  Turn 90 degrees to the right
