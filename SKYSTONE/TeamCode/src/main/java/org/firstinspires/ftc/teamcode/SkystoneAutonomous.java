@@ -81,10 +81,13 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
         //  Try with both..
         //  this.strafe(this.strafePower);  //  uses gyro;
         this.driver.strafe(strafePower);
-
         while (opModeIsActive() && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())) {
+
             telemetry.addData("ColorNotFound", "True");
             telemetry.update();
+
+            //  Required to give other component chance to execute.
+            idle();
         }
 
         this.stopOpMode();
