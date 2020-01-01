@@ -60,7 +60,8 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     }
 
     protected void drive(double power) {
-        this.gyroDrive(power);
+        //  this.gyroDrive(power);
+        this.encoderDrive(power);
     }
 
     protected void linearSlideDriveForward(int distance, double power) {
@@ -114,7 +115,9 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
 
     protected void strafe(double power) {
         Driver driver = this.rosie.getDriver();
-        this.gyroStrafe(power);
+        //  this.gyroStrafe(power);
+
+        this.encoderStrafe(power);
     }
 
     protected void turn(double degrees, double power) {
@@ -157,7 +160,22 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.turnOffEncoders();
     }
 
-    protected void gyroDrive(double power) {
+    protected void encoderDrive(double power) {
+        Driver driver = this.rosie.getDriver();
+        driver.setEncoderDrive();
+        driver.driveDifferential(power, power);
+    }
+
+    protected void encoderStrafe(double power) {
+        Driver driver = this.rosie.getDriver();
+        driver.setEncoderDrive();
+
+        //  positive power strafe left; negative strafe right
+        driver.strafeDifferential(power, power);
+    }
+
+    //  Don't use.
+    private void gyroDrive(double power) {
 
         Driver driver = this.rosie.getDriver();
         MotorControllerEx motor = this.rosie.getMotorPID();
@@ -170,9 +188,9 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.driveDifferential(this.normalizePower(p[0]), this.normalizePower(p[1]));
     }
 
+    //  Don't use.
     //  positive power strafe left; negative strafe right
-    protected void gyroStrafe(double power) {
-
+    private void gyroStrafe(double power) {
         Driver driver = this.rosie.getDriver();
         MotorControllerEx motor = this.rosie.getMotorPID();
         IMUController imu = this.rosie.getIMUController();
