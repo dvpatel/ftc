@@ -15,13 +15,15 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
     private Driver driver;
     private ColorSensorController colorSensor;
 
-    private static final double DEFAULT_POWER = 0.25;
+    private static final double DEFAULT_POWER = 1.0;
     private double strafePower;
 
     private static final int SLEEP_TIME = 100;
 
     //  Game quadrant;
     private GameQuadrant quadrant;
+
+    private boolean quadrantSelected;
 
     @Override
     protected void initOpMode() throws InterruptedException {
@@ -67,7 +69,6 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
 
         //  Stop, done
         this.stopOpMode();
-
     }
 
     //  Strafe left or right based on quadrant to red or blue color
@@ -87,54 +88,65 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
         }
 
         this.stopOpMode();
+    }
 
+    private boolean isQuadrantSelected() {
+        return this.quadrantSelected;
+    }
+
+    private void setQuadrantSelected() {
+        this.quadrantSelected = true;
     }
 
     //  method helps to identify location of robot
     private GameQuadrant selectGameQuadrant() {
 
         // Wait until gamepad a or b is press for zone selection;
-
         GameQuadrant gq = null;
-
         boolean isLoadingZone = false;
-        while (!gamepad1.a || !gamepad1.y) {
-            // Tell the user what to press
-            telemetry.addData("Instructions", "Press A if in LOADING ZONE; Press Y if in BUILDING ZONE");
-            telemetry.update();
-        }
-        if (gamepad1.a) {
-            isLoadingZone = true;
-            telemetry.addData("Selected Zone", "LOADING ZONE");
-        } else if (gamepad1.y) {
-            isLoadingZone = false;
-            telemetry.addData("Selected Zone", "BUILDING ZONE");
-        }
-        telemetry.update();
+        boolean isBuildingZone = false;
 
-        sleep(1000);
+        while (!isQuadrantSelected()) {
 
-        // Wait until gamepad press a or b is pressed for alliance selection;
-        while (!gamepad1.a || !gamepad1.b) {
-            telemetry.addData("Instructions", "Press B if in RED ALLIANCE; Press X if in BLUE ALLIANCE");
-            telemetry.update();
-        }
-        if (gamepad1.b) {
-            //  red alliance
+            if (!isLoadingZone && !isBuildingZone) {
 
-            if (isLoadingZone) {
-                gq = GameQuadrant.LOADING_RED;
-            } else {
-                gq = GameQuadrant.BUILDING_RED;
+                telemetry.addData("Instructions", "Press A for LOADING ZONE; Press Y for BUILDING ZONE");
+
+                if (gamepad1.a) {
+                    isLoadingZone = true;
+                } else if (gamepad1.y) {
+                    isBuildingZone = true;
+                }
             }
 
-        } else if (gamepad1.x) {
-            //  blue alliance;
+            if (isLoadingZone || isBuildingZone && gq == null) {
 
-            if (isLoadingZone) {
-                gq = GameQuadrant.LOADING_BLUE;
-            } else {
-                gq = GameQuadrant.BUILDING_BLUE;
+                telemetry.addData("Instructions", "Press X for BLUE ALLIANCE; Press B for RED ALLIANCE");
+
+                if (gamepad1.b) {
+                    //  red alliance
+
+                    if (isLoadingZone) {
+                        gq = GameQuadrant.LOADING_RED;
+                    } else if (isBuildingZone) {
+                        gq = GameQuadrant.BUILDING_RED;
+                    }
+
+                } else if (gamepad1.x) {
+                    //  blue alliance;
+
+                    if (isLoadingZone) {
+                        gq = GameQuadrant.LOADING_BLUE;
+                    } else if (isBuildingZone) {
+                        gq = GameQuadrant.BUILDING_BLUE;
+                    }
+                }
+            }
+
+            telemetry.update();
+
+            if (gq != null) {
+                this.setQuadrantSelected();
             }
         }
 
