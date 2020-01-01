@@ -71,6 +71,8 @@ public class GyroTurnPid extends AbstractLinearOpMode {
 
         do {
             this.turn(degrees, power);
+
+            idle();
         } while (opModeIsActive() && !this.motor.angleOnTarget());
 
         telemetry.addData("IMU Angle", this.imu.getAngle());
