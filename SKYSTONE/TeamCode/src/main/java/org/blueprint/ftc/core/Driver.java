@@ -51,10 +51,21 @@ public class Driver {
         return (int) (distanceInInches * Constants.TICK_DIAMETER_RATIO);
     }
 
+    public void setEncoderDrive() {
+        //  Always reset;  starts at zero;
+        this.setStopAndResetMode();
+        this.setRunWithEncoderMode();
+
+        //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
+    }
+
     public void setTargetPosition(double distanceInInches) {
 
         //  run w/o encoders
-        this.setRunWithoutEncoderMode();
+        //  this.setRunWithoutEncoderMode();
+
+        //  Test this.
+        this.setRunWithEncoderMode();
 
         //  Always reset;  starts at zero;
         this.setStopAndResetMode();
@@ -71,7 +82,8 @@ public class Driver {
     public void setStrafeTargetPosition(double distanceInInches) {
 
         //  run w/o encoders
-        this.setRunWithoutEncoderMode();
+        //  this.setRunWithoutEncoderMode();
+        this.setRunWithEncoderMode();
 
         //  Always reset;  starts at zero;
         this.setStopAndResetMode();
@@ -95,7 +107,9 @@ public class Driver {
 
     public void turnOffEncoders() {
         this.setStopAndResetMode();
-        this.setRunWithoutEncoderMode();
+
+        //  this.setRunWithoutEncoderMode();
+        this.setRunWithEncoderMode();
     }
 
     public void setStopAndResetMode() {
