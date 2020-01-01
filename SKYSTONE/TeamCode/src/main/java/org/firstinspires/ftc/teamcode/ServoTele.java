@@ -53,6 +53,8 @@ public class ServoTele extends AbstractLinearOpMode {
             this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
             telemetry.addData("ServoPos", this.servo.getPosition());
             telemetry.update();
+
+            idle();
         }
 
         this.stopOpMode();
