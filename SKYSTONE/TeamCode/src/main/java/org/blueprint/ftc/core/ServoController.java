@@ -10,7 +10,8 @@ public class ServoController {
 
     private Servo servo;
 
-    private static final int MAX_POS_DEGREE = 180;
+    //  0.88
+    private static final int MAX_POS_DEGREE = 158;
     private static final int MIN_POS_DEGREE = 10;
 
     private ServoController(HardwareMap hardwareMap) {
