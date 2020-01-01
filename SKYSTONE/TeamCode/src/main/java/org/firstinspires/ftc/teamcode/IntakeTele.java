@@ -40,6 +40,8 @@ public class IntakeTele extends AbstractLinearOpMode {
 
         while (opModeIsActive()) {
             this.intakeSystem.power(-gamepad1.left_stick_y);
+
+            idle();
         }
 
         this.stopOpMode();
