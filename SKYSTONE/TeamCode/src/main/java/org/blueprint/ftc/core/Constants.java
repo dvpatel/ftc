@@ -43,6 +43,7 @@ public final class Constants {
     public static final int COLOR_RED=1 ;
     public static final int COLOR_GREEN=2 ;
     public static final int COLOR_BLUE=3 ;
+    public static final double COLOR_SENSOR_DEFAULT_POWER = 0.50;
 
     //  Hue:  340 <  20; sat: 0.6 -->  RED
     //  Hue:  200 - 275; sat: 0.6 -->  Blue
