@@ -73,10 +73,9 @@ public class ColorSensorSample extends AbstractLinearOpMode {
         //  Wait for start button ;
         this.waitToPressStart();
 
+        //  Must be called in loop ;
+        this.drive(power);
         while (opModeIsActive() && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())) {
-
-            //  Must be called in loop ;
-            this.drive(power);
 
             int[] argb = this.colorSensor.argb();
             telemetry.addData("Alpha", argb[Constants.COLOR_ALPHA]);
@@ -97,6 +96,8 @@ public class ColorSensorSample extends AbstractLinearOpMode {
             // send the info back to driver station using telemetry function.
             //  telemetry.clearAll();
             //  telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", this.colorSensor.getDistance()));
+
+            idle();
         }
 
         //  Found Red or Blue ;
