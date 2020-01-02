@@ -49,7 +49,6 @@ public class GameBot {
 
         // get a reference to the color sensor.
         this.colorSensor = new ColorSensorController(hardwareMap);
-        this.colorSensor.ledOn();
 
         //  Build driver ;
         this.driver = new Driver(hardwareMap);
@@ -95,6 +94,7 @@ public class GameBot {
     }
 
     public ColorSensorController getColorSensorController() {
+        this.colorSensor.ledOn();
         return this.colorSensor;
     }
 
