@@ -32,6 +32,8 @@ public final class Constants {
     //  For AndyMark motor;  1 rev = 1120 ticks ;
     public static final int MOTOR_TICK_COUNT = 1120;
     public static final int WHEEL_DIAMETER = 4; // inches ;
+    public static final int WHEEL_WIDTH = 2; // inches ;
+
     public static final double TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
 
 
@@ -92,8 +94,9 @@ public final class Constants {
     //  tile is 22.75" by 22.75';
     public static final float TILE_SIZE = 22.75f;
 
-    //  Robot size;
-    public static final float ROBOT_LENGTH = 17.75f;
-    public static final float ROBOT_WIDTH = 16.50f;
+    //  DriveTrain size;
+    public static final float DRIVETRAIN_LENGTH = 17.75f;
+    public static final float DRIVETRAIN_WIDTH = 17.10f;
+    public static final float DRIVETRAIN_HEIGHT = 3.50f;
 
 }
