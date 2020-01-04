@@ -20,7 +20,6 @@ public class GamepadDriver {
 
     public GamepadDriver(Driver driver) {
         this.driver = driver;
-        this.driver.resetEncoders();
     }
 
     public double[] calculatePowerDifferential(Gamepad gamepad) {
