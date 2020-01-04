@@ -7,6 +7,8 @@ import org.blueprint.ftc.core.Constants;
 
 /**
  * Robot driver
+ * RUN_WITHOUT_ENCODER:  Power is -1 to 1
+ * RUN_USING_ENCODER:  Velocity in ticks per second of motor;  use setVelocity;
  */
 public class Driver {
 
@@ -35,7 +37,6 @@ public class Driver {
         this.rightBackMotor = hardwareMap.dcMotor.get(rightBackDeviceName);
         this.rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
-
     }
 
     private void setLeftMotor(HardwareMap hardwareMap, String leftFrontDeviceName, String leftBackDeviceName) {
@@ -51,24 +52,11 @@ public class Driver {
         return (int) (distanceInInches * Constants.TICK_DIAMETER_RATIO);
     }
 
-    public void setEncoderDrive() {
-        //  Always reset;  starts at zero;
-        this.setStopAndResetMode();
-        this.setRunWithEncoderMode();
-
-        //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
-    }
-
     public void setTargetPosition(double distanceInInches) {
 
         //  run w/o encoders
-        //  this.setRunWithoutEncoderMode();
-
-        //  Test this.
-        this.setRunWithEncoderMode();
-
         //  Always reset;  starts at zero;
-        this.setStopAndResetMode();
+        this.resetEncoders();
 
         //  set target
         this.setTicksToTargets(distanceInInches);
@@ -82,11 +70,8 @@ public class Driver {
     public void setStrafeTargetPosition(double distanceInInches) {
 
         //  run w/o encoders
-        //  this.setRunWithoutEncoderMode();
-        this.setRunWithEncoderMode();
-
         //  Always reset;  starts at zero;
-        this.setStopAndResetMode();
+        this.resetEncoders();
 
         //  set target
         this.setTicksToTargetsForStrafe(distanceInInches);
@@ -105,11 +90,10 @@ public class Driver {
                 this.rightBackMotor.isBusy();
     }
 
-    public void turnOffEncoders() {
+    public void resetEncoders() {
+        //  run w/o encoders; Always reset;  starts at zero;
         this.setStopAndResetMode();
-
-        //  this.setRunWithoutEncoderMode();
-        this.setRunWithEncoderMode();
+        this.setRunWithoutEncoderMode();
     }
 
     public void setStopAndResetMode() {
@@ -117,13 +101,6 @@ public class Driver {
         this.rightFrontMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.leftBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-    public void setRunWithEncoderMode() {
-        this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void setRunWithoutEncoderMode() {

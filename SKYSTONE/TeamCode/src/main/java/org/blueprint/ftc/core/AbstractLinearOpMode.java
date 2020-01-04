@@ -19,9 +19,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     protected void waitToPressStart() {
         // wait for start button.
         waitForStart();
-
-        //  why is this needed?
-        //  sleep(1000);
     }
 
     protected double normalizePower(double power) {
@@ -60,8 +57,9 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     }
 
     protected void drive(double power) {
-        //  this.gyroDrive(power);
-        this.encoderDrive(power);
+        Driver driver = this.rosie.getDriver();
+        driver.resetEncoders();
+        driver.driveDifferential(power, power);
     }
 
     protected void linearSlideDriveForward(int distance, double power) {
@@ -105,7 +103,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.stop();
 
         //  Disable encoders ;
-        driver.turnOffEncoders();
+        driver.resetEncoders();
     }
 
     protected void spin(double power) {
@@ -114,10 +112,11 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     }
 
     protected void strafe(double power) {
-        Driver driver = this.rosie.getDriver();
-        //  this.gyroStrafe(power);
+        //  positive power strafe left; negative strafe right
 
-        this.encoderStrafe(power);
+        Driver driver = this.rosie.getDriver();
+        driver.resetEncoders();
+        driver.strafeDifferential(power, power);
     }
 
     protected void turn(double degrees, double power) {
@@ -139,7 +138,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
 
         driver.stop();
 
-        driver.turnOffEncoders();
+        driver.resetEncoders();
         imu.resetAngle();
     }
 
@@ -157,21 +156,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         } while (opModeIsActive() && driver.motorsBusy());
 
         driver.stop();
-        driver.turnOffEncoders();
-    }
-
-    protected void encoderDrive(double power) {
-        Driver driver = this.rosie.getDriver();
-        driver.setEncoderDrive();
-        driver.driveDifferential(power, power);
-    }
-
-    protected void encoderStrafe(double power) {
-        Driver driver = this.rosie.getDriver();
-        driver.setEncoderDrive();
-
-        //  positive power strafe left; negative strafe right
-        driver.strafeDifferential(power, power);
+        driver.resetEncoders();
     }
 
     //  Don't use.
