@@ -28,9 +28,6 @@ public class SimpleMotor {
 
     public void setTargetPosition(double distanceInInches) {
 
-        //  run w/o encoders
-        this.setRunWithoutEncoderMode();
-
         //  Always reset;  starts at zero;
         this.setStopAndResetMode();
 
@@ -46,11 +43,6 @@ public class SimpleMotor {
     //  Revisit;  Are all encoders needed?  Also should only one motor be used for calc?
     public boolean motorsBusy() {
         return this.motor.isBusy();
-    }
-
-    public void turnOffEncoders() {
-        this.setStopAndResetMode();
-        this.setRunWithoutEncoderMode();
     }
 
     public void setStopAndResetMode() {

@@ -82,9 +82,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
             telemetry.update();
         }
         motor.stop();
-
-        //  Disable encoders ;
-        motor.turnOffEncoders();
     }
 
 
