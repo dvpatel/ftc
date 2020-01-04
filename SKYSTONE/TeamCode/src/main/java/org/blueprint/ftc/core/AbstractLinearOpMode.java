@@ -58,7 +58,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
 
     protected void drive(double power) {
         Driver driver = this.rosie.getDriver();
-        driver.resetEncoders();
+        driver.setStopAndResetMode();
         driver.driveDifferential(power, power);
     }
 
@@ -101,9 +101,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
             telemetry.update();
         }
         driver.stop();
-
-        //  Disable encoders ;
-        driver.resetEncoders();
     }
 
     protected void spin(double power) {
@@ -115,13 +112,14 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         //  positive power strafe left; negative strafe right
 
         Driver driver = this.rosie.getDriver();
-        driver.resetEncoders();
+        driver.setStopAndResetMode();
         driver.strafeDifferential(power, power);
     }
 
     protected void turn(double degrees, double power) {
 
         Driver driver = this.rosie.getDriver();
+        driver.setStopAndResetMode();
         MotorControllerEx motor = this.rosie.getMotorPID();
         IMUController imu = this.rosie.getIMUController();
         imu.resetAngle();
@@ -137,9 +135,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         }
 
         driver.stop();
-
-        driver.resetEncoders();
-        imu.resetAngle();
     }
 
     protected void strafe(double distanceInInches, double power) {
@@ -156,7 +151,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         } while (opModeIsActive() && driver.motorsBusy());
 
         driver.stop();
-        driver.resetEncoders();
     }
 
     //  Don't use.

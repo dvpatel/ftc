@@ -25,7 +25,7 @@ public class Driver {
         this.setLeftMotor(hardwareMap, leftFrontDeviceName, leftBackDeviceName);
         this.setRightMotor(hardwareMap, rightFrontDeviceName, rightBackDeviceName);
 
-        //  this.setRunWithoutEncoderMode();
+        this.setRunWithoutEncoderMode();
         this.driveDifferential(0, 0);
     }
 
@@ -56,7 +56,7 @@ public class Driver {
 
         //  run w/o encoders
         //  Always reset;  starts at zero;
-        this.resetEncoders();
+        this.setStopAndResetMode();
 
         //  set target
         this.setTicksToTargets(distanceInInches);
@@ -71,7 +71,7 @@ public class Driver {
 
         //  run w/o encoders
         //  Always reset;  starts at zero;
-        this.resetEncoders();
+        this.setStopAndResetMode();
 
         //  set target
         this.setTicksToTargetsForStrafe(distanceInInches);
@@ -88,12 +88,6 @@ public class Driver {
                 this.rightFrontMotor.isBusy() &&
                 this.leftBackMotor.isBusy() &&
                 this.rightBackMotor.isBusy();
-    }
-
-    public void resetEncoders() {
-        //  run w/o encoders; Always reset;  starts at zero;
-        this.setStopAndResetMode();
-        this.setRunWithoutEncoderMode();
     }
 
     public void setStopAndResetMode() {
