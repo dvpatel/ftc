@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.Constants;
 
 @TeleOp(name = "GyroCali", group = "Tele")
 @Disabled
@@ -11,7 +12,7 @@ public class GyroTele extends AbstractLinearOpMode {
 
     private double angleCorrection;
 
-    double power = 0.30;
+    private static final double VELOCITY = 0.30 * Constants.MOTOR_MAX_VELOCITY;
 
     //  Delete in future ;
     private void waitForCalibration() {
@@ -52,7 +53,7 @@ public class GyroTele extends AbstractLinearOpMode {
 
         this.rosie.getTimer().reset();
         while (opModeIsActive()) {
-            this.driveStraight(power);
+            this.driveStraight();
 
             telemetry.addData("imu heading", this.rosie.getIMUController().getFirstAngle());
             telemetry.addData("global heading", this.rosie.getIMUController().getGlobalAngle());
@@ -61,7 +62,7 @@ public class GyroTele extends AbstractLinearOpMode {
             // one place with time passing between those places. See the lesson on
             // Timing Considerations to know why.
 
-            this.rotate(-90, power, 0);
+            this.rotate(-90, 0);
 
             telemetry.update();
         }
@@ -69,16 +70,16 @@ public class GyroTele extends AbstractLinearOpMode {
         //  Stop logic ;
     }
 
-    private void driveStraight(double power) {
+    private void driveStraight() {
 
         //  index 0:  leftPowerCorrection
         //  index 1:  rightPowerCorrection
         //  index 2:  correction value ;
 
-        telemetry.addData("power", power);
+        telemetry.addData("Velocity", VELOCITY);
         telemetry.addData("turn rotation", this.rosie.getIMUController().getAngle());
 
-        double[] correction = this.rosie.getMotorPID().calculateDriveCorrection(power, this.rosie.getIMUController().getAngle());
+        double[] correction = this.rosie.getMotorPID().calculateDriveCorrection(VELOCITY, this.rosie.getIMUController().getAngle());
         telemetry.addData("correction", correction[2]);
 
         angleCorrection = correction[2];
@@ -91,7 +92,7 @@ public class GyroTele extends AbstractLinearOpMode {
      *
      * @param degrees Degrees to turn, + is left - is right
      */
-    private void rotate(int degrees, double power, double targetAngle) {
+    private void rotate(int degrees, double targetAngle) {
         // restart imu angle tracking.
         this.rosie.getIMUController().resetAngle();
 
@@ -113,14 +114,14 @@ public class GyroTele extends AbstractLinearOpMode {
             }
 
             do {
-                double p = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
-                telemetry.addData("-PowerAdjustment", p);
+                double p = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), VELOCITY);
+                telemetry.addData("-VelocityAdjustment", p);
 
             } while (opModeIsActive() && !this.rosie.getMotorPID().angleOnTarget());
         } else    // left turn.
             do {
-                double p = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), power);
-                telemetry.addData("+PowerAdjustment", p);
+                double p = this.rosie.getMotorPID().calculateRotateCorrection(degrees, this.rosie.getIMUController().getAngle(), VELOCITY);
+                telemetry.addData("+VelocityAdjustment", p);
             } while (opModeIsActive() && !this.rosie.getMotorPID().angleOnTarget());
 
 
