@@ -1,21 +1,22 @@
 package org.blueprint.ftc.core;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.blueprint.ftc.core.Constants;
 
 /**
- * Robot driver
- * RUN_WITHOUT_ENCODER:  Power is -1 to 1
- * RUN_USING_ENCODER:  Velocity in ticks per second of motor;  use setVelocity;
+ * Robot driver;  Always uses encoder mode.  PIDF must be reset if weight changes;  See MaxVelocityTest
+ * RUN_USING_ENCODER:  Velocity in ticks per second of motor;  use setVelocity;  Need to determine with Load;
  */
 public class Driver {
 
-    private DcMotor leftFrontMotor;
-    private DcMotor rightFrontMotor;
-    private DcMotor leftBackMotor;
-    private DcMotor rightBackMotor;
+    private DcMotorEx leftFrontMotor;
+    private DcMotorEx rightFrontMotor;
+    private DcMotorEx leftBackMotor;
+    private DcMotorEx rightBackMotor;
 
     public Driver(HardwareMap hardwareMap) {
         this(hardwareMap, Constants.LEFT_FRONT_MOTOR_NAME, Constants.RIGHT_FRONT_MOTOR_NAME, Constants.LEFT_BACK_MOTOR_NAME, Constants.RIGHT_BACK_MOTOR_NAME);
@@ -25,31 +26,48 @@ public class Driver {
         this.setLeftMotor(hardwareMap, leftFrontDeviceName, leftBackDeviceName);
         this.setRightMotor(hardwareMap, rightFrontDeviceName, rightBackDeviceName);
 
-        this.setRunWithoutEncoderMode();
-        this.driveDifferential(0, 0);
+        this.setStopAndResetMode();
+        this.setRunWithEncoderMode();
+        this.stop();
     }
 
     private void setRightMotor(HardwareMap hardwareMap, String rightFrontDeviceName, String rightBackDeviceName) {
-        this.rightFrontMotor = hardwareMap.dcMotor.get(rightFrontDeviceName);
+        this.rightFrontMotor = (DcMotorEx) hardwareMap.dcMotor.get(rightFrontDeviceName);
         this.rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        this.rightBackMotor = hardwareMap.dcMotor.get(rightBackDeviceName);
+        this.rightBackMotor = (DcMotorEx) hardwareMap.dcMotor.get(rightBackDeviceName);
         this.rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     private void setLeftMotor(HardwareMap hardwareMap, String leftFrontDeviceName, String leftBackDeviceName) {
-        this.leftFrontMotor = hardwareMap.dcMotor.get(leftFrontDeviceName);
+        this.leftFrontMotor = (DcMotorEx) hardwareMap.dcMotor.get(leftFrontDeviceName);
         this.leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        this.leftBackMotor = hardwareMap.dcMotor.get(leftBackDeviceName);
+        this.leftBackMotor = (DcMotorEx) hardwareMap.dcMotor.get(leftBackDeviceName);
         this.leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    //  Must set properly;
+    private void setVelocityPID() {
+        //  Set for each motor?
+
+        //  Get values from MaxVelocityTest;
+        this.leftFrontMotor.setVelocityPIDFCoefficients(Constants.PID_DRIVE_KP, Constants.PID_DRIVE_KI, Constants.PID_DRIVE_KD, Constants.PID_DRIVE_KF);
+        this.rightFrontMotor.setVelocityPIDFCoefficients(Constants.PID_DRIVE_KP, Constants.PID_DRIVE_KI, Constants.PID_DRIVE_KD, Constants.PID_DRIVE_KF);
+        this.leftBackMotor.setVelocityPIDFCoefficients(Constants.PID_DRIVE_KP, Constants.PID_DRIVE_KI, Constants.PID_DRIVE_KD, Constants.PID_DRIVE_KF);
+        this.rightBackMotor.setVelocityPIDFCoefficients(Constants.PID_DRIVE_KP, Constants.PID_DRIVE_KI, Constants.PID_DRIVE_KD, Constants.PID_DRIVE_KF);
+
+        this.leftFrontMotor.setPositionPIDFCoefficients(5.0);
+        this.rightFrontMotor.setPositionPIDFCoefficients(5.0);
+        this.leftBackMotor.setPositionPIDFCoefficients(5.0);
+        this.rightBackMotor.setPositionPIDFCoefficients(5.0);
     }
 
     //  Calculate ticks for given inches ;
     public int calculateTicks(double distanceInInches) {
-        return (int) (distanceInInches * Constants.TICK_DIAMETER_RATIO);
+        return (int) (distanceInInches * Constants.TICK_GEAR_RATIO) ;
     }
 
     public void setTargetPosition(double distanceInInches) {
@@ -57,6 +75,7 @@ public class Driver {
         //  run w/o encoders
         //  Always reset;  starts at zero;
         this.setStopAndResetMode();
+        this.setRunWithEncoderMode();
 
         //  set target
         this.setTicksToTargets(distanceInInches);
@@ -64,7 +83,7 @@ public class Driver {
         //  Run to target position;
         this.setRunToPositionMode();
 
-        //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
+        //  Apply velocity, somewhere ;  MAKE sure to turn off encoder when done.
     }
 
     public void setStrafeTargetPosition(double distanceInInches) {
@@ -72,6 +91,7 @@ public class Driver {
         //  run w/o encoders
         //  Always reset;  starts at zero;
         this.setStopAndResetMode();
+        this.setRunWithEncoderMode();
 
         //  set target
         this.setTicksToTargetsForStrafe(distanceInInches);
@@ -79,7 +99,7 @@ public class Driver {
         //  Run to target position;
         this.setRunToPositionMode();
 
-        //  Apply power, somewhere ;  MAKE sure to turn off encoder when done.
+        //  Apply velocity, somewhere ;  MAKE sure to turn off encoder when done.
     }
 
     //  Revisit;  Are all encoders needed?  Also should only one motor be used for calc?
@@ -97,11 +117,13 @@ public class Driver {
         this.rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public void setRunWithoutEncoderMode() {
-        this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.leftBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.rightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    private void setRunWithEncoderMode() {
+        this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        this.rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        this.setVelocityPID();
     }
 
     public void setRunToPositionMode() {
@@ -128,11 +150,16 @@ public class Driver {
         this.rightBackMotor.setTargetPosition(ticks);
     }
 
-    public void powerDifferential(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
-        this.leftFrontMotor.setPower(leftFrontPower);
-        this.rightFrontMotor.setPower(rightFrontPower);
-        this.leftBackMotor.setPower(leftBackPower);
-        this.rightBackMotor.setPower(rightBackPower);
+    private double normalizeVelocity(double velocity) {
+        return Range.clip(velocity, -Constants.MOTOR_MAX_VELOCITY, Constants.MOTOR_MAX_VELOCITY);
+    }
+
+    public void velocityDifferential(double leftFrontVelocity, double rightFrontVelocity, double leftBackVelocity, double rightBackVelocity) {
+
+        this.leftFrontMotor.setVelocity(normalizeVelocity(leftFrontVelocity));
+        this.rightFrontMotor.setVelocity(normalizeVelocity(rightFrontVelocity));
+        this.leftBackMotor.setVelocity(normalizeVelocity(leftBackVelocity));
+        this.rightBackMotor.setVelocity(normalizeVelocity(rightBackVelocity));
     }
 
     //  Current position in ticks;
@@ -148,58 +175,59 @@ public class Driver {
         return results;
     }
 
-    private double[] getPowerForEncodedMotors() {
+    public double[] getVelocity() {
         double[] results = {
-                this.leftFrontMotor.getController().getMotorPower(this.leftFrontMotor.getPortNumber()),
-                this.rightFrontMotor.getController().getMotorPower(this.rightFrontMotor.getPortNumber()),
-                this.leftBackMotor.getController().getMotorPower(this.leftBackMotor.getPortNumber()),
-                this.rightBackMotor.getController().getMotorPower(this.rightBackMotor.getPortNumber())
+                this.leftFrontMotor.getVelocity(),
+                this.rightFrontMotor.getVelocity(),
+                this.leftBackMotor.getVelocity(),
+                this.rightBackMotor.getVelocity()
         };
 
+        //  leftFront, rightFront, leftBack, rightBack
         return results;
     }
 
     //  Drive forward or backward
-    public void drive(double power) {
-        this.driveDifferential(power, power);
+    public void drive(double velocity) {
+        this.driveDifferential(velocity, velocity);
     }
 
-    public void driveDifferential(double leftPower, double rightPower) {
-        this.powerDifferential(leftPower, rightPower, leftPower, rightPower);
+    public void driveDifferential(double leftVelocity, double rightVelocity) {
+        this.velocityDifferential(leftVelocity, rightVelocity, leftVelocity, rightVelocity);
     }
 
-    //  Default:  positive power strafe right
-    public void strafe(double power) {
-        this.strafeDifferential(power, power);
+    //  Default:  positive velocity strafe right
+    public void strafe(double velocity) {
+        this.strafeDifferential(velocity, velocity);
     }
 
-    //  Default:  positive power strafes right
+    //  Default:  positive velocity strafes right
     public void strafeDifferential(double p1, double p2) {
-        this.powerDifferential(p1, -p2, -p2, p1);
+        this.velocityDifferential(p1, -p2, -p2, p1);
     }
 
-    public void spin(double power) {
+    public void spin(double velocity) {
         //  LF; RF; LB; RB
-        this.powerDifferential(power, -power, power, -power);
+        this.velocityDifferential(velocity, -velocity, velocity, -velocity);
     }
 
     //  Wide turn?
-    private void wideTurn(double power) {
+    private void wideTurn(double velocity) {
         throw new RuntimeException("Not implemented.  Really needed?");
     }
 
-    //  positive power:  left forwrae diagnol; negative power:  reverse right diagnoal
-    public void leftDiagonalStrafe(double power) {
-        this.powerDifferential(0, power, power, 0);
+    //  positive velocity:  left forwrae diagnol; negative velocity:  reverse right diagnoal
+    public void leftDiagonalStrafe(double velocity) {
+        this.velocityDifferential(0, velocity, velocity, 0);
     }
 
-    //  power power:  right forward diagnol; negative power:  reverse left diagnoal
-    public void rightDiagonalStrafe(double power) {
-        this.powerDifferential(power, 0, 0, power);
+    //  velocity:  right forward diagnol; negative velocity:  reverse left diagnoal
+    public void rightDiagonalStrafe(double velocity) {
+        this.velocityDifferential(velocity, 0, 0, velocity);
     }
 
     public void stop() {
-        this.powerDifferential(0, 0, 0, 0);
+        this.velocityDifferential(0, 0, 0, 0);
     }
 
 }
