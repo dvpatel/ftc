@@ -70,9 +70,9 @@ public class GamePadTele extends AbstractLinearOpMode {
         while (opModeIsActive()) {
 
             //  Task 1:  Driving
-            double[] p = gpd.calculatePowerDifferential(gamepad1);
+            double[] v = gpd.calculateVelocityDifferential(gamepad1);
             gpd.drive(gamepad1);
-            telemetry.addData("PowerDifferential:  ", p[0] + ", " + p[1] + ", " + p[2] + ", " + p[3]);
+            telemetry.addData("VelocityDifferential:  ", v[0] + ", " + v[1] + ", " + v[2] + ", " + v[3]);
 
             //  Task 2:  ShortArmServo
             this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
