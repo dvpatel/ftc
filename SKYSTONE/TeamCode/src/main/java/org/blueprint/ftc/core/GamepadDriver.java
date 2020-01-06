@@ -22,24 +22,29 @@ public class GamepadDriver {
         this.driver = driver;
     }
 
-    public double[] calculatePowerDifferential(Gamepad gamepad) {
-        return this.calculatePowerDifferential(gamepad.left_stick_y, gamepad.left_stick_x, gamepad.right_stick_x);
+    private double toVelocity(double stickValue) {
+        return stickValue * Constants.MOTOR_MAX_VELOCITY;
+    }
+
+    public double[] calculateVelocityDifferential(Gamepad gamepad) {
+        return this.calculateVelocityDifferential(gamepad.left_stick_y, gamepad.left_stick_x, gamepad.right_stick_x);
     }
 
     public void drive(Gamepad gamepad) {
-        double[] p = this.calculatePowerDifferential(gamepad);
-//        this.driver.powerDifferential(p[0], p[1], p[2], p[3]);
+        //  double[] p = this.calculateVelocityDifferential(gamepad);
+        //  this.driver.powerDifferential(p[0], p[1], p[2], p[3]);
 
-        double straightBack = -gamepad.left_stick_y;
-        double leftRight = gamepad.left_stick_x;
-        double turnMann = gamepad.right_stick_x;
+        double straightBack = toVelocity(-gamepad.left_stick_y);
+        double leftRight = toVelocity(gamepad.left_stick_x);
+        double turnMann = toVelocity(gamepad.right_stick_x);
 
         //  Confirm with Vishnu;
-        this.driver.powerDifferential(straightBack + leftRight + turnMann, straightBack - leftRight - turnMann, straightBack - leftRight + turnMann, straightBack + rightBack - turnMann);
+        //  this.driver.powerDifferential(straightBack + leftRight + turnMann, straightBack - leftRight - turnMann, straightBack - leftRight + turnMann, straightBack + rightBack - turnMann);
 
+        this.driver.velocityDifferential(straightBack + leftRight + turnMann, straightBack - leftRight - turnMann, straightBack - leftRight + turnMann, straightBack + rightBack - turnMann);
     }
 
-    private double[] calculatePowerDifferential(float left_stick_y, float left_stick_x, float right_stick_x) {
+    private double[] calculateVelocityDifferential(float left_stick_y, float left_stick_x, float right_stick_x) {
 
         //  left_stick_y, left_stick_x:  Up = -1.0;  Down = 1.0;
         //               right_stick_x:  Up = -1.0;  Down: 1.0;
@@ -76,7 +81,7 @@ public class GamepadDriver {
         }
 
         //  Double check direction ;
-        double[] result = {leftFront, rightFront, leftBack, rightBack};
+        double[] result = {toVelocity(leftFront), toVelocity(rightFront), toVelocity(leftBack), toVelocity(rightBack)};
         return result;
     }
 
