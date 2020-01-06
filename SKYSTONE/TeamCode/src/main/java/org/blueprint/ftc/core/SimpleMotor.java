@@ -16,8 +16,8 @@ public class SimpleMotor {
 
         this.motor = hardwareMap.dcMotor.get(deviceName);
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        this.setRunWithoutEncoderMode();
         this.drive(0);
     }
 
@@ -47,10 +47,6 @@ public class SimpleMotor {
 
     public void setStopAndResetMode() {
         this.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-    public void setRunWithoutEncoderMode() {
-        this.motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setRunToPositionMode() {
