@@ -40,15 +40,9 @@ public final class Constants {
     public static int MOTOR_MAX_VELOCITY = 2900;  //  ticks per second;
     public static int DEFAULT_VELOCITY = (int) 0.90*MOTOR_MAX_VELOCITY;  //  ticks per second;
 
-    //  Cycles PER ROTATION; 28
-    public static final int MOTOR_CYCLE_PER_ROTATION = MOTOR_TICK_COUNT / MOTOR_GEAR_RATIO;
-
-    //  From this explanation;  Pulse generated per second;  747
-    //  https://www.robotshop.com/community/forum/t/deducing-the-encoder-ticks/46430
-    //  http://www.revrobotics.com/content/docs/Encoder-Guide.pdf
-    public static final double MOTOR_PPS = (MOTOR_NO_LOAD_RPM * MOTOR_PPR)/60;
-
     public static final double TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
+    public static final double DRIVETRAIN_GEAR_RATIO = 45.0/35.0;  //  Ratio with modified gears;
+    public static final double TICK_GEAR_RATIO = Constants.TICK_DIAMETER_RATIO / Constants.DRIVETRAIN_GEAR_RATIO ;
 
     //  For AndyMark motor connected to linear slide system
     public static final int SIMPLE_WHEEL_DIAMETER = 2; // inches ;
