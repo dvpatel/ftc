@@ -13,7 +13,6 @@ public class GameBot {
 
     private ColorSensorController colorSensor;
     private IMUController imu;
-    //  private MotorControllerEx motorPID;
     private Driver driver;
 
     //  Motor to power linear slide system
@@ -30,10 +29,6 @@ public class GameBot {
     private SkystoneDetector skystonDetector;
 
     private IntakeSystem intakeSystem;
-
-    private static final double MID_SERVO = 0.5;
-    private static final double ARM_UP_POWER = 0.45;
-    private static final double ARM_DOWN_POWER = -0.45;
 
     private ElapsedTime period = new ElapsedTime();
 
@@ -58,10 +53,6 @@ public class GameBot {
 
         //  IMU ;  DON'T SET MODE.
         this.imu = new IMUController(hardwareMap);
-
-        //   PID Logic for DC Motors;  Default 0.30 power ;
-        //  this.motorPID = new MotorControllerEx();
-        //  this.motorPID.enableDrivePID(Constants.DEFAULT_POWER);
 
         //  Setup short arm servo;
         this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
@@ -109,10 +100,8 @@ public class GameBot {
     public MotorControllerEx getMotorPID() {
 
         //  MotorPID cannot be a singleton;  Otherwise internal state is maintained and prevents multiple turns;
-
-        //  return this.motorPID;
         MotorControllerEx motorPID = new MotorControllerEx();
-        motorPID.enableDrivePID(Constants.DEFAULT_POWER);
+        motorPID.enableDrivePID(Constants.DEFAULT_VELOCITY);
         return motorPID;
     }
 
