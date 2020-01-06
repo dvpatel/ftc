@@ -34,7 +34,7 @@ public class ColorSensorSample extends AbstractLinearOpMode {
 
     private View relativeLayout;
 
-    double power = this.normalizePower(0.50);
+    private static final double VELOCITY = 0.5*Constants.MOTOR_MAX_VELOCITY;  // ticks per second
 
     @Override
     public void initOpMode() throws InterruptedException {
@@ -74,7 +74,7 @@ public class ColorSensorSample extends AbstractLinearOpMode {
         this.waitToPressStart();
 
         //  Must be called in loop ;
-        this.drive(power);
+        this.drive(VELOCITY);
         while (opModeIsActive() && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())) {
 
             int[] argb = this.colorSensor.argb();
