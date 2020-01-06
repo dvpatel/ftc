@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.Constants;
 import org.blueprint.ftc.core.Driver;
 import org.blueprint.ftc.core.IMUController;
 import org.blueprint.ftc.core.MotorControllerEx;
@@ -27,8 +28,9 @@ public class GyroTurnPid extends AbstractLinearOpMode {
     private Driver driver;
     private IMUController imu;
 
-    double power = 0.50;
-    int degrees = 180;
+    private static final double VELOCITY = 0.50 * Constants.MOTOR_MAX_VELOCITY;
+
+    private static final int DEGREES = 180;
 
     @Override
     public void initOpMode() throws InterruptedException {
@@ -70,7 +72,7 @@ public class GyroTurnPid extends AbstractLinearOpMode {
         telemetry.update();
 
         do {
-            this.turn(degrees, power);
+            this.turn(DEGREES, VELOCITY);
 
             idle();
         } while (opModeIsActive() && !this.motor.angleOnTarget());
