@@ -32,7 +32,7 @@ public class IntakeSystem {
         this.power(0);
     }
 
-    //  Autonomous mode w/ Switch and right, left bumper
+    //  Game mode w/ Switch and right, left bumper
     public void autoMode(Gamepad gamepad) {
         if (gamepad.left_bumper) {
             this.intakePower = -1;
