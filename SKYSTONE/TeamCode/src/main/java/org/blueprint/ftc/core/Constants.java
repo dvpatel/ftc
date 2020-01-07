@@ -38,7 +38,7 @@ public final class Constants {
     public static final int MOTOR_NO_LOAD_RPM = 160;
 
     public static int MOTOR_MAX_VELOCITY = 2900;  //  ticks per second;
-    public static int DEFAULT_VELOCITY = (int) 0.90*MOTOR_MAX_VELOCITY;  //  ticks per second;
+    public static int DEFAULT_VELOCITY = (int) (0.90*MOTOR_MAX_VELOCITY);  //  ticks per second;
 
     public static final double TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
     public static final double DRIVETRAIN_GEAR_RATIO = 45.0/35.0;  //  Ratio with modified gears;
@@ -75,7 +75,7 @@ public final class Constants {
 
     //  Will need to tune these for turning;
     // Speed of wheels while slowing down
-    public static double PID_ROTATE_KP = 0.025;       //  0.009
+    public static double PID_ROTATE_KP = 0.030;       //  0.009
 
     // Do not need - once the robot reaches 90°, the angle does not change.
     public static double PID_ROTATE_KI = 0;           //  0.0000374
