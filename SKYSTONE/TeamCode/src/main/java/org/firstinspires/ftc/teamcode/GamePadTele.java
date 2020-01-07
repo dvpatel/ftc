@@ -10,10 +10,11 @@ import org.blueprint.ftc.core.Driver;
 import org.blueprint.ftc.core.GamepadDriver;
 import org.blueprint.ftc.core.IMUController;
 import org.blueprint.ftc.core.IntakeSystem;
+import org.blueprint.ftc.core.LiftSystem;
 import org.blueprint.ftc.core.MotorControllerEx;
 import org.blueprint.ftc.core.ServoController;
 
-@TeleOp(name = "GamePadDrive", group = "Tele")
+@TeleOp(name = "GamePadMode", group = "Tele")
 //  @Disabled
 public class GamePadTele extends AbstractLinearOpMode {
 
@@ -23,6 +24,7 @@ public class GamePadTele extends AbstractLinearOpMode {
     private ServoController servo;
 
     private IntakeSystem intakeSystem;
+    private LiftSystem liftSystem;
 
     //  private double rotation ;
     private boolean aButton, bButton, touched;
@@ -35,6 +37,8 @@ public class GamePadTele extends AbstractLinearOpMode {
         this.imu = this.rosie.getIMUController();
 
         this.intakeSystem = rosie.getIntakeSystem();
+
+        this.liftSystem = this.rosie.getLiftSystem();
 
         //  Enable PID Controller to track state
         //  this.motor.enablePID();
@@ -70,22 +74,25 @@ public class GamePadTele extends AbstractLinearOpMode {
         while (opModeIsActive()) {
 
             //  Task 1:  Driving
-            double[] v = gpd.calculateVelocityDifferential(gamepad1);
+            //  double[] v = gpd.calculateVelocityDifferential(gamepad1);
             gpd.drive(gamepad1);
-            telemetry.addData("VelocityDifferential:  ", v[0] + ", " + v[1] + ", " + v[2] + ", " + v[3]);
+            //  telemetry.addData("VelocityDifferential:  ", v[0] + ", " + v[1] + ", " + v[2] + ", " + v[3]);
 
             //  Task 2:  ShortArmServo
             this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
-            telemetry.addData("LeftTrigger", gamepad1.left_trigger);
-            telemetry.addData("RightTrigger", gamepad1.right_trigger);
-            telemetry.addData("ServoPos", this.servo.getPosition());
+            //  telemetry.addData("LeftTrigger", gamepad1.left_trigger);
+            //  telemetry.addData("RightTrigger", gamepad1.right_trigger);
+            //  telemetry.addData("ServoPos", this.servo.getPosition());
 
             //  Task 3:  IntakeSystem
             //  gamepad left / right bumper to turn on and off intake system
             this.intakeSystem.autoMode(gamepad1);
 
+            //  Arm system/
+            this.liftSystem.autoMode(gamepad2);
+
             //  Telemetry print for debugging;
-            telemetry.update();
+            //  telemetry.update();
 
             idle();
         }
