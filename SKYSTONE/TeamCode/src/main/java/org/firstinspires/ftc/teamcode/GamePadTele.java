@@ -21,28 +21,21 @@ public class GamePadTele extends AbstractLinearOpMode {
     private MotorControllerEx motor;
     private Driver driver;
     private IMUController imu;
-    private ServoController servo;
+    private ServoController shortArmServo;
 
     private IntakeSystem intakeSystem;
     private LiftSystem liftSystem;
-
-    //  private double rotation ;
-    private boolean aButton, bButton, touched;
 
     @Override
     public void initOpMode() throws InterruptedException {
         this.initRosie();
 
-        this.servo = this.rosie.getShortArmServo();
+        this.shortArmServo = this.rosie.getShortArmServo();
         this.imu = this.rosie.getIMUController();
 
         this.intakeSystem = rosie.getIntakeSystem();
 
         this.liftSystem = this.rosie.getLiftSystem();
-
-        //  Enable PID Controller to track state
-        //  this.motor.enablePID();
-        //this.motor.enableDrivePID(power);
     }
 
     @Override
@@ -74,25 +67,23 @@ public class GamePadTele extends AbstractLinearOpMode {
         while (opModeIsActive()) {
 
             //  Task 1:  Driving
-            //  double[] v = gpd.calculateVelocityDifferential(gamepad1);
             gpd.drive(gamepad1);
-            //  telemetry.addData("VelocityDifferential:  ", v[0] + ", " + v[1] + ", " + v[2] + ", " + v[3]);
 
-            //  Task 2:  ShortArmServo
-            this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
-            //  telemetry.addData("LeftTrigger", gamepad1.left_trigger);
-            //  telemetry.addData("RightTrigger", gamepad1.right_trigger);
-            //  telemetry.addData("ServoPos", this.servo.getPosition());
+            //  Task 2:  ShortArmServo:  left_trigger, right_trigger
+            double armPos = this.shortArmServo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
+            telemetry.addData("ShortArm Position", "%.04f", armPos);
 
-            //  Task 3:  IntakeSystem
+            //  Task 3:  IntakeSystem:  left, right bumpers
             //  gamepad left / right bumper to turn on and off intake system
             this.intakeSystem.autoMode(gamepad1);
 
-            //  Arm system/
-            this.liftSystem.autoMode(gamepad2);
+            //  Arm system:  Gamepad2, left_stick_y; X, B; dpad_left, dpad_right
+            //  0:  motor position, 1:  arm position, 2: slide servo position;
+            double[] positions = this.liftSystem.autoMode(gamepad2);
+            telemetry.addData("Motor, Arm, Slide Position", "%.04f, %.04f, %.0f",
+                    positions[0], positions[1], positions[2]);
 
-            //  Telemetry print for debugging;
-            //  telemetry.update();
+            telemetry.update();
 
             idle();
         }
