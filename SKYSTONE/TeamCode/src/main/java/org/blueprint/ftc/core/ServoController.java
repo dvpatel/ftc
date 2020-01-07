@@ -32,7 +32,7 @@ public class ServoController {
     }
 
     //  Logic for short arm servo ;
-    public void triggerPosition(float leftTrigger, float rightTrigger) {
+    public double triggerPosition(float leftTrigger, float rightTrigger) {
 
         if (rightTrigger > 0.25) {
             //  Drop on stop at 10 degrees ;
@@ -42,6 +42,8 @@ public class ServoController {
             this.setPositionByDegrees(MIN_POS_DEGREE);
             leftTrigger = 0;
         }
+
+        return this.servo.getPosition();
 
     }
 
