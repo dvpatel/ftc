@@ -46,7 +46,8 @@ public class LiftSystem {
     private boolean armState = false;
 
     //  Used in tele with Gamepad;
-    public void autoMode(Gamepad gamepad) {
+    //  returns motor positio, arm position, slideservo position;
+    public double[] autoMode(Gamepad gamepad) {
 
         //  Go up / down;
         this.linearSlideMotor.drive(-gamepad.left_stick_y);
@@ -68,6 +69,9 @@ public class LiftSystem {
         if (gamepad.dpad_right){
             this.linearArmServo.setPosition(0);
         }
+
+        double[] r = { this.linearSlideMotor.getCurrentPosition(), this.linearArmServo.getPosition(), this.linearSlideServo.getPosition() };
+        return r;
     }
 
 
