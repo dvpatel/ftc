@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
@@ -8,7 +9,7 @@ import org.blueprint.ftc.core.GamepadDriver;
 import org.blueprint.ftc.core.IntakeSystem;
 
 @TeleOp(name = "IntakeSystemTest", group = "Linear Opmode")
-//  @Disabled
+@Disabled
 public class IntakeTele extends AbstractLinearOpMode {
 
     private IntakeSystem intakeSystem;
