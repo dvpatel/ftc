@@ -81,13 +81,13 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     }
 
 
+    //  PIDF optimized for driving, NOT strafing.  Strafing stalls.
     //  Reverse:  this.drive(-distance, -velocity);
     protected void drive(double distanceInInches, double velocity) {
-
         Driver driver = this.rosie.getDriver();
         driver.setTargetPosition(distanceInInches);
         driver.drive(velocity);
-        while (driver.motorsBusy()) {
+        while (opModeIsActive() && driver.motorsBusy()) {
             //  leftFront, rightFront, leftBack, rightBack;
             //  int[] cp = driver.getCurrentPosition();
             //  telemetry.addData("ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] + ", isBusy=" + driver.motorsBusy());
@@ -96,6 +96,26 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         }
         driver.stop();
     }
+
+    //  PIDF optimized for driving, NOT strafing.  Strafing stalls.
+    protected void strafe(double distanceInInches, double velocity) {
+
+        this.rosie.getIMUController().resetAngle();
+
+        Driver driver = this.rosie.getDriver();
+        int ticks = driver.calculateTicks(distanceInInches);
+        driver.setStopAndResetMode();
+        driver.strafeDifferential(velocity, velocity);
+        while (!driver.distanceReached(ticks)) {
+            //  int[] cp = driver.getCurrentPosition();
+            //  telemetry.addData("ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] + ", isBusy=" + driver.motorsBusy());
+            telemetry.addData("Strafe: ", "Running");
+            telemetry.update();
+        }
+
+        driver.stop();
+    }
+
 
     protected void spin(double velocity) {
         Driver driver = this.rosie.getDriver();
@@ -110,10 +130,14 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.strafeDifferential(velocity, velocity);
     }
 
+    private double velocityToPower(double velocity) {
+        return velocity/Constants.MOTOR_MAX_VELOCITY;
+    }
+
     protected void turn(double degrees, double velocity) {
 
+        double power = velocityToPower(velocity);
         Driver driver = this.rosie.getDriver();
-        driver.setStopAndResetMode();
         MotorControllerEx motor = this.rosie.getMotorPID();
         IMUController imu = this.rosie.getIMUController();
         imu.resetAngle();
@@ -121,29 +145,17 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         while (!motor.angleOnTarget()) {
             //  NOTE:  imu.getAngle returns positive on left turn, negative on right turn
             //  Negative degrees means left turn
-            double p = motor.calculateRotateCorrection(-degrees, imu.getAngle(), velocity);
-            driver.velocityDifferential(-p, p, -p, p);
-            telemetry.addData("Velocity", p);
+            telemetry.addData("Degrees", -degrees);
+            telemetry.addData("Angle", imu.getAngle());
+            telemetry.addData("Power", power);
+
+            double p = motor.calculateRotateCorrection(-degrees, imu.getAngle(), power);
+            telemetry.addData("Correction", p);
+
+            driver.powerDifferential(-p, p, -p, p);
             telemetry.addData("IMU Angle", imu.getAngle());
             telemetry.update();
         }
-
-        driver.stop();
-    }
-
-    protected void strafe(double distanceInInches, double velocity) {
-
-        Driver driver = this.rosie.getDriver();
-        driver.setStrafeTargetPosition(distanceInInches);
-        this.rosie.getIMUController().resetAngle();
-
-        driver.strafeDifferential(velocity, velocity);
-        do {
-            //  int[] cp = driver.getCurrentPosition();
-            //  telemetry.addData("ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] + ", isBusy=" + driver.motorsBusy());
-            telemetry.addData("Strafe: ", "Running");
-            telemetry.update();
-        } while (opModeIsActive() && driver.motorsBusy());
 
         driver.stop();
     }
