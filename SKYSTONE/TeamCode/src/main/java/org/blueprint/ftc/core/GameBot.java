@@ -15,20 +15,17 @@ public class GameBot {
     private IMUController imu;
     private Driver driver;
 
-    //  Motor to power linear slide system
-    private SimpleMotor linearSlideMotor;
-
     //  private TouchSensorController touch;
 
     private GamepadDriver gamepadDriver;
 
     private ServoController shortArmServo;
-    private ServoController linearSlideServo;
-    private ServoController linearArmServo;
 
     private SkystoneDetector skystonDetector;
 
     private IntakeSystem intakeSystem;
+
+    private LiftSystem liftSystem;
 
     private ElapsedTime period = new ElapsedTime();
 
@@ -48,20 +45,12 @@ public class GameBot {
         //  Build driver ;
         this.driver = new Driver(hardwareMap);
 
-        //  motor to control linear slide system
-        this.linearSlideMotor = new SimpleMotor(hardwareMap, Constants.LINEAR_SLIDE_MOTOR_NAME);
-
         //  IMU ;  DON'T SET MODE.
         this.imu = new IMUController(hardwareMap);
 
         //  Setup short arm servo;
         this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
 
-        //  Servo attached to linear slide system;
-        this.linearSlideServo = new ServoController(this.hardwareMap, Constants.LINEAR_SLIDE_SERVO);
-
-        //  Servo attached to linear arm system;
-        this.linearArmServo = new ServoController(this.hardwareMap, Constants.LINEAR_ARM_SERVO);
 
         //  Uncomment when TouchSensor is attached;
         //  this.touch = new TouchSensorController(hardwareMap);
@@ -75,6 +64,8 @@ public class GameBot {
         //  IntakeSystem ;
         this.intakeSystem = new IntakeSystem(this.hardwareMap);
 
+        //  LiftSystem
+        this.liftSystem = new LiftSystem(hardwareMap);
     }
 
     private void waitForCalibration() throws InterruptedException {
@@ -101,16 +92,12 @@ public class GameBot {
 
         //  MotorPID cannot be a singleton;  Otherwise internal state is maintained and prevents multiple turns;
         MotorControllerEx motorPID = new MotorControllerEx();
-        motorPID.enableDrivePID(Constants.DEFAULT_VELOCITY);
+        motorPID.enableDrivePID(Constants.MOTOR_MAX_VELOCITY);
         return motorPID;
     }
 
     public Driver getDriver() {
         return this.driver;
-    }
-
-    public SimpleMotor getLinearSlideMotor() {
-        return this.linearSlideMotor;
     }
 
     public SkystoneDetector getSkystoneDetector() {
@@ -125,12 +112,21 @@ public class GameBot {
         return this.shortArmServo;
     }
 
+
+    public LiftSystem getLiftSystem() {
+        return this.liftSystem;
+    }
+
+    public SimpleMotor getLinearSlideMotor() {
+        return this.liftSystem.getLinearSlideMotor();
+    }
+
     public ServoController getLinearSlideServo() {
-        return this.linearSlideServo;
+        return this.liftSystem.getLinearSlideServo();
     }
 
     public ServoController getLinearArmServo() {
-        return this.linearArmServo;
+        return this.liftSystem.getLinearArmServo();
     }
 
     public IntakeSystem getIntakeSystem() {
