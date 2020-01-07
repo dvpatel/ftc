@@ -1,5 +1,8 @@
 package org.blueprint.ftc.core;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
 public class LiftSystem {
 
     private GameBot rosie;
@@ -13,17 +16,60 @@ public class LiftSystem {
 
     private int currentPosition;
 
-    public LiftSystem(GameBot rosie) {
-        //  Make sure init is called from Tele / Autonomous code
-        this.rosie = rosie;
+    public LiftSystem(HardwareMap hardwareMap) {
 
-        this.linearSlideMotor = this.rosie.getLinearSlideMotor();
-        this.linearSlideServo = this.rosie.getLinearSlideServo();
-        this.linearArmServo = this.rosie.getLinearArmServo();
+        //  motor to control linear slide system
+        this.linearSlideMotor = new SimpleMotor(hardwareMap, Constants.LINEAR_SLIDE_MOTOR_NAME);
+
+        //  Servo attached to linear slide system;
+        this.linearSlideServo = new ServoController(hardwareMap, Constants.LINEAR_SLIDE_SERVO);
+
+        //  Servo attached to linear arm system;
+        this.linearArmServo = new ServoController(hardwareMap, Constants.LINEAR_ARM_SERVO);
 
         //  Reset to base
-        this.backToBase();
+        //  this.backToBase();
     }
+
+    public SimpleMotor getLinearSlideMotor() {
+        return this.linearSlideMotor;
+    }
+
+    public ServoController getLinearSlideServo() {
+        return this.linearSlideServo;
+    }
+
+    public ServoController getLinearArmServo() {
+        return this.linearArmServo;
+    }
+
+    private boolean armState = false;
+
+    //  Used in tele with Gamepad;
+    public void autoMode(Gamepad gamepad) {
+
+        //  Go up / down;
+        this.linearSlideMotor.drive(-gamepad.left_stick_y);
+
+        if (gamepad.x) {
+            this.linearSlideServo.setPosition(0.3);
+        }
+
+        if (gamepad.b) {
+            this.linearSlideServo.setPosition(1.0);
+        }
+
+
+        if (gamepad.dpad_left) {
+            //  open
+            this.linearArmServo.setPosition(1.0);
+        }
+
+        if (gamepad.dpad_right){
+            this.linearArmServo.setPosition(0);
+        }
+    }
+
 
     private void lift(int distanceInInches) {
 
