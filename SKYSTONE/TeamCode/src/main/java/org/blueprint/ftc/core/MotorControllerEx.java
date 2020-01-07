@@ -31,14 +31,14 @@ public class MotorControllerEx {
         this.pidDrive.setSetpoint(0);            // Want to set PID value to 0;
 
         // always positive;  power output
-        this.pidDrive.setOutputRange(0, Range.clip(velocity, -Constants.MOTOR_MAX_VELOCITY, Constants.MOTOR_MAX_VELOCITY));
+        this.pidDrive.setOutputRange(0, velocity);
 
         this.pidDrive.setInputRange(-90, 90);    // always positive;  angle
         this.pidDrive.enable();                  //  Enable PID calculation
     }
 
 
-    public void enableRotatePID(double degrees, double velocity) {
+    public void enableRotatePID(double degrees, double power) {
 
         // if degrees > 359 we cap at 359 with same sign as original degrees.
         if (Math.abs(degrees) > 359) degrees = (int) Math.copySign(359, degrees);
@@ -55,7 +55,7 @@ public class MotorControllerEx {
         this.pidRotate.reset();
         this.pidRotate.setSetpoint(degrees);
         this.pidRotate.setInputRange(0, degrees);
-        this.pidRotate.setOutputRange(0, Range.clip(velocity, -Constants.MOTOR_MAX_VELOCITY, Constants.MOTOR_MAX_VELOCITY));
+        this.pidRotate.setOutputRange(0, power);
         this.pidRotate.setTolerance(0.5);
         this.pidRotate.enable();
 
@@ -86,11 +86,11 @@ public class MotorControllerEx {
     }
 
 
-    public double calculateRotateCorrection(double degrees, double angle, double velocity) {
+    public double calculateRotateCorrection(double degrees, double angle, double power) {
 
         //  Must call this before opModeActive
         if (!this.enableRotatePidCalled) {
-            this.enableRotatePID(degrees, velocity);
+            this.enableRotatePID(degrees, power);
             this.enableRotatePidCalled = true;
         }
 
