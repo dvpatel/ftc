@@ -91,13 +91,13 @@ public class Driver {
         //  run w/o encoders
         //  Always reset;  starts at zero;
         this.setStopAndResetMode();
-        this.setRunWithEncoderMode();
+        this.setRunWithEncoderOffMode();
 
         //  set target
-        this.setTicksToTargetsForStrafe(distanceInInches);
+        //  this.setTicksToTargetsForStrafe(distanceInInches);
 
         //  Run to target position;
-        this.setRunToPositionMode();
+        //  this.setRunToPositionMode();
 
         //  Apply velocity, somewhere ;  MAKE sure to turn off encoder when done.
     }
@@ -125,6 +125,14 @@ public class Driver {
 
         this.setVelocityPID();
     }
+
+    private void setRunWithEncoderOffMode() {
+        this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.leftBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        this.rightBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
+
 
     public void setRunToPositionMode() {
         this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -155,11 +163,31 @@ public class Driver {
     }
 
     public void velocityDifferential(double leftFrontVelocity, double rightFrontVelocity, double leftBackVelocity, double rightBackVelocity) {
+        this.leftFrontMotor.setVelocity(leftFrontVelocity);
+        this.rightFrontMotor.setVelocity(rightFrontVelocity);
+        this.leftBackMotor.setVelocity(leftBackVelocity);
+        this.rightBackMotor.setVelocity(rightBackVelocity);
+    }
 
-        this.leftFrontMotor.setVelocity(normalizeVelocity(leftFrontVelocity));
-        this.rightFrontMotor.setVelocity(normalizeVelocity(rightFrontVelocity));
-        this.leftBackMotor.setVelocity(normalizeVelocity(leftBackVelocity));
-        this.rightBackMotor.setVelocity(normalizeVelocity(rightBackVelocity));
+    //  Use only for right / left turn using Gyro
+    public void powerDifferential(double lfPow, double rfPow, double lbPow, double rbPow) {
+        this.leftFrontMotor.setPower(lfPow);
+        this.rightFrontMotor.setPower(rfPow);
+        this.leftBackMotor.setPower(lbPow);
+        this.rightBackMotor.setPower(rbPow);
+    }
+
+    public boolean distanceReached(int ticks) {
+
+        //  negative ticks;
+        //  -5 -1200
+
+        int absTicks = Math.abs(ticks);
+
+        return (Math.abs(this.leftFrontMotor.getCurrentPosition()) >= absTicks ||
+                Math.abs(this.rightFrontMotor.getCurrentPosition()) >= absTicks ||
+                Math.abs(this.leftBackMotor.getCurrentPosition()) >= absTicks ||
+                Math.abs(this.rightBackMotor.getCurrentPosition()) >= absTicks);
     }
 
     //  Current position in ticks;
