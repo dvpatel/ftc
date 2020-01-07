@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,6 +16,7 @@ import java.util.List;
 //  NOTE:  TEST WITH ROBOT LOAD!!!  DON'T PUT ON SKYSTONE BLOCK
 
 @TeleOp(name = "MaxVelocityTest", group = "Linear Opmode")
+@Disabled
 public class MaxVelocityTest extends LinearOpMode {
 
     private static final double DISTANCE = 12; //  inches
