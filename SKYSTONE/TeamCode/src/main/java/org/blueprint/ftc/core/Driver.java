@@ -126,7 +126,7 @@ public class Driver {
         this.setVelocityPID();
     }
 
-    private void setRunWithEncoderOffMode() {
+    public void setRunWithEncoderOffMode() {
         this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.rightFrontMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         this.leftBackMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
