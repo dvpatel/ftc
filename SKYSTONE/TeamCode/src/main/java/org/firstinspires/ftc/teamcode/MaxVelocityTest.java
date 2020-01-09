@@ -19,7 +19,7 @@ import java.util.List;
 @Disabled
 public class MaxVelocityTest extends LinearOpMode {
 
-    private static final double DISTANCE = 12; //  inches
+    private static final double DISTANCE = 48; //  inches
 
     private DcMotorEx leftFrontMotor;
     private DcMotorEx rightFrontMotor;
@@ -52,11 +52,11 @@ public class MaxVelocityTest extends LinearOpMode {
         waitForStart();
 
         //  Run this method to determine PIDF values;  Make sure robot is running with load!
-        //  this.calculatePIDF(distanceInTicks);
+        this.calculatePIDF(distanceInTicks);
         //  Update Constants file:  PID, MAX_Velocity;
 
         //  Run this to validate PIDF values;  Besure to update maxVelocity and PIDF variables
-        this.testWithPIDFValues(distanceInTicks);
+        //  this.testWithPIDFValues(distanceInTicks);
 
         this.stop();
     }
@@ -115,11 +115,11 @@ public class MaxVelocityTest extends LinearOpMode {
                 if (cvItem[i] > maxV[i]) {
                     maxV[i] = cvItem[i];
                 }
-
-                telemetry.addData("Maximum Velocity", "%.04f, %.04f, %.0f, %.0f",
-                        maxV[0], maxV[1], maxV[2], maxV[3]);
             }
         }
+
+        telemetry.addData("Maximum Velocity", "%.04f, %.04f, %.0f, %.0f",
+                maxV[0], maxV[1], maxV[2], maxV[3]);
 
         currentPosition = this.getCurrentPosition();
         telemetry.addData("Current Position", "%d, %d, %d, %d",
