@@ -46,7 +46,10 @@ public final class Constants {
 
     //  For AndyMark motor connected to linear slide system
     public static final int SIMPLE_WHEEL_DIAMETER = 2; // inches ;
-    public static final double SIMPLE_TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.SIMPLE_WHEEL_DIAMETER));
+    public static final double SIMPLE_WHEEL_DISTANCE = Constants.SIMPLE_WHEEL_DIAMETER*Math.PI;  //  6.2857 inches;
+    public static final double SIMPLE_TICK_DIAMETER_RATIO = MOTOR_TICK_COUNT / SIMPLE_WHEEL_DISTANCE; // 178.1822 ticks / inches
+    public static final double SIMPLE_WHEEL_MAX_DISTANCE = 22.5; // inches;
+    public static final double SIMPLE_WHEEL_MAX_TICKS = SIMPLE_WHEEL_MAX_DISTANCE*SIMPLE_TICK_DIAMETER_RATIO; // inches;
 
     public static final int COLOR_ALPHA=0 ;
     public static final int COLOR_RED=1 ;
