@@ -106,4 +106,7 @@ public final class Constants {
     public static final float DRIVETRAIN_WIDTH = 17.10f;
     public static final float DRIVETRAIN_HEIGHT = 3.50f;
 
+    //  Tune this for gamepad.
+    public static double DEADZONE = 0.15;
+
 }
