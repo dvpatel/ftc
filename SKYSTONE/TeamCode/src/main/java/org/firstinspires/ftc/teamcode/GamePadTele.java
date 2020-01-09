@@ -80,6 +80,7 @@ public class GamePadTele extends AbstractLinearOpMode {
             //  Arm system:  Gamepad2, left_stick_y; X, B; dpad_left, dpad_right
             //  0:  motor position, 1:  arm position, 2: slide servo position;
             double[] positions = this.liftSystem.autoMode(gamepad2);
+            telemetry.addData("SlidePower", -gamepad2.left_stick_y);
             telemetry.addData("Motor, Arm, Slide Position", "%.04f, %.04f, %.0f",
                     positions[0], positions[1], positions[2]);
 
