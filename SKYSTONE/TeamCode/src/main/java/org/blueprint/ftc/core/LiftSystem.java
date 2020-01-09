@@ -49,8 +49,14 @@ public class LiftSystem {
     //  returns motor positio, arm position, slideservo position;
     public double[] autoMode(Gamepad gamepad) {
 
-        //  Go up / down;
-        this.linearSlideMotor.drive(-gamepad.left_stick_y);
+        //  If max or min height, stop;
+        float yVal = -gamepad.left_stick_y;
+        if (((this.linearSlideMotor.getCurrentPosition() >= Constants.SIMPLE_WHEEL_MAX_TICKS) && yVal > 0 ) ||
+                ((this.linearSlideMotor.getCurrentPosition() <= 10) && yVal < 0) ) {
+            yVal = 0;
+        }
+        this.linearSlideMotor.drive(yVal);
+
 
         if (gamepad.x) {
             this.linearSlideServo.setPosition(0.3);
@@ -61,12 +67,12 @@ public class LiftSystem {
         }
 
 
-        if (gamepad.dpad_left) {
+        if (gamepad.dpad_right) {
             //  open
             this.linearArmServo.setPosition(1.0);
         }
 
-        if (gamepad.dpad_right){
+        if (gamepad.dpad_left){
             this.linearArmServo.setPosition(0);
         }
 
