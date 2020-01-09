@@ -68,10 +68,10 @@ public final class Constants {
     public static double SCALE_FACTOR = 255;
 
     //  Will need to tune these for driving straight;  See MaxVelocityTest.java
-    public static double PID_DRIVE_KP = 1.1299 ;
-    public static double PID_DRIVE_KI = 0.11299 ;
+    public static double PID_DRIVE_KP = 1.18 ;
+    public static double PID_DRIVE_KI = 0.118 ;
     public static double PID_DRIVE_KD = 0.0;
-    public static double PID_DRIVE_KF = 11.2990;
+    public static double PID_DRIVE_KF = 11.7867;
 
     //  Will need to tune these for turning;
     // Speed of wheels while slowing down
