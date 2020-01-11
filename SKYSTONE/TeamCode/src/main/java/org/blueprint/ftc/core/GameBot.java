@@ -59,7 +59,7 @@ public class GameBot {
         // this.skystonDetector = new SkystoneDetector(hardwareMap);
 
         //  Drive using gamepad ;
-        this.gamepadDriver = new GamepadDriver(this.driver);
+        this.gamepadDriver = new GamepadDriver(this.driver, this.imu);
 
         //  IntakeSystem ;
         this.intakeSystem = new IntakeSystem(this.hardwareMap);
