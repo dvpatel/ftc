@@ -9,6 +9,10 @@ public class IntakeSystem {
     private DcMotor leftMotor;
     private DcMotor rightMotor;
 
+    private ServoController leftServo;
+    private ServoController rightServo;
+
+
     private boolean isOn;  // on, off switch
     private double intakePower;
 
@@ -21,9 +25,20 @@ public class IntakeSystem {
         this.rightMotor = hardwareMap.dcMotor.get(Constants.INTAKE_RIGHT_MOTOR);
         this.rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        //  Setup short arm servo;
+        this.leftServo = new ServoController(hardwareMap, Constants.INTAKE_LEFT_SERVO);
+        this.rightServo = new ServoController(hardwareMap, Constants.INTAKE_RIGHT_SERVO);
+
+        this.setIntakeServosPosition();
     }
 
-    public void power(double power) {
+    private void setIntakeServosPosition() {
+        this.leftServo.setPosition(-1.0);
+        this.rightServo.setPosition(1.0);
+    }
+
+    private void power(double power) {
         this.leftMotor.setPower(power);
         this.rightMotor.setPower(power);
     }
