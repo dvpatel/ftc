@@ -38,7 +38,7 @@ public class IntakeSystem {
         this.rightServo.setPosition(1.0);
     }
 
-    private void power(double power) {
+    public void power(double power) {
         this.leftMotor.setPower(power);
         this.rightMotor.setPower(power);
     }
