@@ -18,6 +18,8 @@ public final class Constants {
     // Left and right motors for intake system
     public static final String INTAKE_LEFT_MOTOR = "intake_left_motor";
     public static final String INTAKE_RIGHT_MOTOR = "intake_right_motor";
+    public static final String INTAKE_LEFT_SERVO = "intake_left_servo";
+    public static final String INTAKE_RIGHT_SERVO = "intake_right_servo";
 
     public static final String LINEAR_SLIDE_MOTOR_NAME = "linear_slide_motor";
     public static final String LINEAR_SLIDE_SERVO = "linear_slide_servo";
@@ -111,5 +113,4 @@ public final class Constants {
 
     //  Tune this for gamepad.
     public static double DEADZONE = 0.15;
-
 }
