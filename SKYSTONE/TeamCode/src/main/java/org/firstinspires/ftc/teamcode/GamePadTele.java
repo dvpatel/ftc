@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 
 //  http://controls.coderedrobotics.com/programminglessons/11.html
 //  https://drive.google.com/file/d/0B5ci5zMS_2kZUlRYaHZkMGNuZGc/view
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
@@ -32,6 +33,7 @@ public class GamePadTele extends AbstractLinearOpMode {
 
         this.shortArmServo = this.rosie.getShortArmServo();
         this.imu = this.rosie.getIMUController();
+        this.imu.resetAngle();
 
         this.intakeSystem = rosie.getIntakeSystem();
 
@@ -65,6 +67,8 @@ public class GamePadTele extends AbstractLinearOpMode {
 
         GamepadDriver gpd = this.rosie.getGamepadDriver();
         while (opModeIsActive()) {
+
+            telemetry.addData("YAW", this.imu.getAngle());
 
             //  Task 1:  Driving
             gpd.drive(gamepad1);
