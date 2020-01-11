@@ -56,7 +56,7 @@ public class GyroTele extends AbstractLinearOpMode {
             this.driveStraight();
 
             telemetry.addData("imu heading", this.rosie.getIMUController().getFirstAngle());
-            telemetry.addData("global heading", this.rosie.getIMUController().getGlobalAngle());
+            telemetry.addData("global heading", this.rosie.getIMUController().getAngle());
 
             // We record the sensor values because we will test them in more than
             // one place with time passing between those places. See the lesson on
