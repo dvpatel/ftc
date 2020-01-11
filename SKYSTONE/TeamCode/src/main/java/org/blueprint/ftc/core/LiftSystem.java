@@ -66,15 +66,8 @@ public class LiftSystem {
             this.linearSlideServo.setPosition(1.0);
         }
 
-
-        if (gamepad.dpad_right) {
-            //  open
-            this.linearArmServo.setPosition(1.0);
-        }
-
-        if (gamepad.dpad_left){
-            this.linearArmServo.setPosition(0);
-        }
+        //  open, close
+        this.linearArmServo.linearSlideArmTriggerPosition(gamepad.dpad_left, gamepad.dpad_right);
 
         double[] r = { this.linearSlideMotor.getCurrentPosition(), this.linearArmServo.getPosition(), this.linearSlideServo.getPosition() };
         return r;
