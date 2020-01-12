@@ -3,20 +3,29 @@ package org.blueprint.ftc.core;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.Const;
 
 public class IntakeSystem {
 
     private DcMotor leftMotor;
     private DcMotor rightMotor;
 
-    private ServoController leftServo;
-    private ServoController rightServo;
+    private CRServoController leftServo;
+    private CRServoController rightServo;
+    private boolean servosDown;
 
 
     private boolean isOn;  // on, off switch
     private double intakePower;
 
     public IntakeSystem(HardwareMap hardwareMap) {
+        this.initDCMotors(hardwareMap);
+        this.initCRServos(hardwareMap);
+    }
+
+    private void initDCMotors(HardwareMap hardwareMap) {
         this.leftMotor = hardwareMap.dcMotor.get(Constants.INTAKE_LEFT_MOTOR);
         this.leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.leftMotor.setDirection(DcMotor.Direction.REVERSE);
@@ -25,26 +34,38 @@ public class IntakeSystem {
         this.rightMotor = hardwareMap.dcMotor.get(Constants.INTAKE_RIGHT_MOTOR);
         this.rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         this.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
+    private void initCRServos(HardwareMap hardwareMap) {
         //  Setup short arm servo;
-        this.leftServo = new ServoController(hardwareMap, Constants.INTAKE_LEFT_SERVO);
-        this.rightServo = new ServoController(hardwareMap, Constants.INTAKE_RIGHT_SERVO);
-
-        this.setIntakeServosPosition();
+        this.leftServo = new CRServoController(hardwareMap, Constants.INTAKE_LEFT_SERVO, Constants.INTAKE_LEFT_SERVO_REVERSE);
+        this.rightServo = new CRServoController(hardwareMap, Constants.INTAKE_RIGHT_SERVO, Constants.INTAKE_RIGHT_SERVO_REVERSE);
     }
 
-    private void setIntakeServosPosition() {
-        this.leftServo.setPosition(-1.0);
-        this.rightServo.setPosition(1.0);
+    public void setIntakeServosInitPosition() {
+        this.leftServo.setPower(Constants.INTAKE_LEFT_SERVO_INIT_POWER);
+        this.rightServo.setPower(Constants.INTAKE_RIGHT_SERVO_INIT_POWER);
+
+        this.servosDown = true;
     }
 
-    public void power(double power) {
+    public void setIntakeServosPower(double power) {
+        this.leftServo.setPower(power);
+        this.rightServo.setPower(power);
+    }
+
+    public void resetIntakeServos() {
+        this.setIntakeServosPower(0.0);
+        this.servosDown = false;
+    }
+
+    public void setDCMotorsPower(double power) {
         this.leftMotor.setPower(power);
         this.rightMotor.setPower(power);
     }
 
-    public void stop() {
-        this.power(0);
+    public void stopDCMotors() {
+        this.setDCMotorsPower(0);
     }
 
     //  Game mode w/ Switch and right, left bumper
@@ -52,21 +73,33 @@ public class IntakeSystem {
         if (gamepad.left_bumper) {
             this.intakePower = -1;
             this.isOn = true;
+
+            if (!this.servosDown) {
+                this.setIntakeServosInitPosition();
+            }
+
         }
 
         if (gamepad.right_bumper) {
             this.intakePower = 1;
             this.isOn = true;
+
+            if (!this.servosDown) {
+                this.setIntakeServosInitPosition();
+            }
         }
 
         if (gamepad.a) {
             this.intakePower = 0;
             this.isOn = false;
-            this.stop();
+            this.stopDCMotors();
+
+            //  Bring back servos back up??
+            this.resetIntakeServos();
         }
 
         if (this.isOn) {
-            this.power(this.intakePower);
+            this.setDCMotorsPower(this.intakePower);
         }
     }
 }
