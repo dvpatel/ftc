@@ -1,6 +1,8 @@
 package org.blueprint.ftc.core;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -40,6 +42,8 @@ public class IntakeSystem {
         //  Setup short arm servo;
         this.leftServo = new CRServoController(hardwareMap, Constants.INTAKE_LEFT_SERVO, Constants.INTAKE_LEFT_SERVO_REVERSE);
         this.rightServo = new CRServoController(hardwareMap, Constants.INTAKE_RIGHT_SERVO, Constants.INTAKE_RIGHT_SERVO_REVERSE);
+
+        this.setIntakeServosInitPosition();
     }
 
     public void setIntakeServosInitPosition() {
@@ -68,34 +72,27 @@ public class IntakeSystem {
         this.setDCMotorsPower(0);
     }
 
+    public void stop() {
+        this.stopDCMotors();
+        //  this.resetIntakeServos();
+    }
+
     //  Game mode w/ Switch and right, left bumper
     public void autoMode(Gamepad gamepad) {
         if (gamepad.left_bumper) {
             this.intakePower = -1;
             this.isOn = true;
-
-            if (!this.servosDown) {
-                this.setIntakeServosInitPosition();
-            }
-
         }
 
         if (gamepad.right_bumper) {
             this.intakePower = 1;
             this.isOn = true;
-
-            if (!this.servosDown) {
-                this.setIntakeServosInitPosition();
-            }
         }
 
         if (gamepad.a) {
             this.intakePower = 0;
             this.isOn = false;
-            this.stopDCMotors();
-
-            //  Bring back servos back up??
-            this.resetIntakeServos();
+            this.stop();
         }
 
         if (this.isOn) {
