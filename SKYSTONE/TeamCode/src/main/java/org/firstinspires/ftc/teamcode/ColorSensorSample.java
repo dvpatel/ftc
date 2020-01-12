@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
@@ -26,7 +27,7 @@ import org.blueprint.ftc.core.Constants;
  */
 
 @TeleOp(name = "ColorSensorDrive", group = "Linear Opmode")
-//@Disabled
+@Disabled
 public class ColorSensorSample extends AbstractLinearOpMode {
 
     //  My pushbotrobot ;
