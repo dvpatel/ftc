@@ -79,7 +79,7 @@ public class LiftSystem {
         return r;
     }
 
-    private int lift(double distanceInInches) {
+    public int lift(double distanceInInches) {
         double distance = distanceInInches - this.linearSlideMotor.calculateInches(this.linearSlideMotor.getCurrentPosition());
         double pow = distance > 0 ? POWER_LEVEL : -POWER_LEVEL;
         return this.linearSlideMotor.drive(distance, pow);
@@ -123,7 +123,7 @@ public class LiftSystem {
         this.linearArmServo.setPositionByDegrees(0);
     }
 
-    private void reset() {
+    public void reset() {
         this.linearSlideMotor.stop();
         this.backToBase();
     }
