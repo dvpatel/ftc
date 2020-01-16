@@ -33,7 +33,9 @@ public final class Constants {
     public static final String TOUCH_SENSOR_NAME = "touch_sensor" ;
     public static final String COLOR_SENSOR_NAME = "colorSensor";
     public static final String IMU_NAME = "imu" ;
-    public static final String SHORT_ARM_SERVO = "short_arm_servo";
+
+    public static final String FOUNDATION_LEFT_SERVO = "foundation_left_servo";
+    public static final String FOUNDATION_RIGHT_SERVO = "foundation_right_servo";
 
     //  For AndyMark motor;  1 rev = 1120 ticks ;
     public static final int WHEEL_DIAMETER = 4; // inches ;
@@ -93,11 +95,27 @@ public final class Constants {
     // How much the robot slows down before it reaches 90°
     public static double PID_ROTATE_KD = 0.025;
 
+    public static final String CAMERA_NAME = "Webcam 1";
     public static final String VUFORIA_KEY =
             "ARBNGpP/////AAABmbLvzx0Qekiui2o+DSSa3YJIIuD7Q0UL6sLKYRh6/OCm/uvQLlRLPNs/o72itb3SXgG71435htgeXTLgMciuPUca8vG5BbLoR5k9K5L6pbe8XLD9VFAG4Llh55ETmOQzz+S7yyjN69HtY34ahSjsi4bzZzwrfeTrTsCPfa1ZTAdf6MxWbZ5yn6LKmanzxLbnmBiftmRbgVVtxeMbOdxPv/f2uxXWqnKEHz5/LDvoacDFVQwu07AnvUXk0cDRSKEObQs5lE+IjdxSbYMOHPYbJy9jWf+2tZURyVZF1atz0nHaW1yra8YXg0HYQvWDzkt9+2S831dsB25sJElDK4xLGFFb/GVCSFGfnjvRHgbvD1AP";
-    public static boolean PHONE_IS_PORTRAIT = false;
-    public static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
+
+    // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     public static final float MM_PER_INCHES = 25.4f;
+
+    public static final String VISIBLE_TARGET_NAME = "Stone Target";
+
+    public static final boolean CAMERA_MONITOR_ON = false;
+
+    //  front facing robot on the red aliance side;  cartesian coordinates; right hand rule
+    public static final float CAMERA_X = -90.0f;   //
+    public static final float CAMERA_Y = 90.0f;   //
+    public static final float CAMERA_Z = 0.0f;   //
+
+    //  relative to robot origin;
+    public static final float CAMERA_DX_MM = 6.375f * MM_PER_INCHES;   //  width
+    public static final float CAMERA_DY_MM = 8.875f * MM_PER_INCHES;   //  front, includes intake system
+    public static final float CAMERA_DZ_MM = 4.75f * MM_PER_INCHES;    //  height;
+
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
@@ -108,14 +126,20 @@ public final class Constants {
     public static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
     public static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
 
-    //  tile is 22.75" by 22.75';
-    public static final float TILE_SIZE = 22.75f;
+    public static final float TILE_SIZE = 24f;  //  24 inches square according to doc.
 
-    //  DriveTrain size;
-    public static final float DRIVETRAIN_LENGTH = 17.75f;
-    public static final float DRIVETRAIN_WIDTH = 17.10f;
-    public static final float DRIVETRAIN_HEIGHT = 3.50f;
+    //  DriveTrain size;  in forward direction from red alliance side
+    public static final float DRIVETRAIN_LENGTH = 17.75f;   //  dy
+    public static final float DRIVETRAIN_WIDTH = 16.75f;    //  dx
+    public static final float DRIVETRAIN_HEIGHT = 4.0f;     //  dz, includes wheels
+
+    public static final float DRIVETRAIN_LENGTH_MM = DRIVETRAIN_LENGTH * MM_PER_INCHES;   //  dy in mm;
+    public static final float DRIVETRAIN_WIDTH_MM = DRIVETRAIN_WIDTH*MM_PER_INCHES;    //  width in mm;
+    public static final float DRIVETRAIN_HEIGHT_MM = DRIVETRAIN_HEIGHT*MM_PER_INCHES;     //  dz, includes wheels, mm
+
+    public static final float FIELD_WIDTH = 144;
+    public static final float FIELD_WIDTH_MM = FIELD_WIDTH*MM_PER_INCHES;
 
     //  Tune this for gamepad.
-    public static double DEADZONE = 0.15;
+    public static double DEADZONE = 0.25;
 }
