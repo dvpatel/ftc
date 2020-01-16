@@ -27,6 +27,11 @@ public class SimpleMotor {
         return (int) (distanceInInches * Constants.SIMPLE_TICK_DIAMETER_RATIO);
     }
 
+    public int calculateInches(double ticks) {
+        return (int) (ticks / Constants.SIMPLE_TICK_DIAMETER_RATIO);
+    }
+
+
     public void setTargetPosition(double distanceInInches) {
 
         //  Always reset;  starts at zero;
@@ -61,6 +66,15 @@ public class SimpleMotor {
 
     public void drive(double power) {
         this.motor.setPower(power);
+    }
+
+    public int drive(double distanceInInches, double power) {
+        this.setTargetPosition(distanceInInches);
+        this.drive(power);
+        while (this.motor.isBusy()) {
+        }
+        this.stop();
+        return this.getCurrentPosition();
     }
 
     //  Current position in ticks;
