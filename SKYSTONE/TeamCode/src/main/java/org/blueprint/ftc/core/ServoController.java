@@ -14,14 +14,9 @@ public class ServoController {
     private static final int MAX_POS_DEGREE = 180;
     private static final int MIN_POS_DEGREE = 0;
 
-    private ServoController(HardwareMap hardwareMap) {
-        this.servo = hardwareMap.get(Servo.class, Constants.SHORT_ARM_SERVO);
-    }
-
     public ServoController(HardwareMap hardwareMap, String deviceName) {
         this.servo = hardwareMap.get(Servo.class, deviceName);
     }
-
 
     private double calculatePosition(double degrees) {
         return Range.clip(degrees, 0, 180) / ServoController.MAX_POS_DEGREE;
@@ -31,7 +26,7 @@ public class ServoController {
         this.servo.setPosition(this.calculatePosition(degrees));
     }
 
-    //  Logic for short arm servo ; lift and drop arm
+    //  Logic for arm servo ; lift and drop arm
     public double triggerPosition(float leftTrigger, float rightTrigger) {
 
         if (rightTrigger > 0.25) {
