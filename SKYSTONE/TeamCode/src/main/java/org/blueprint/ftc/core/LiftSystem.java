@@ -1,20 +1,19 @@
 package org.blueprint.ftc.core;
 
+import android.text.method.Touch;
+
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 public class LiftSystem {
-
-    private GameBot rosie;
 
     private SimpleMotor linearSlideMotor;
     private ServoController linearSlideServo;
     private ServoController linearArmServo;
 
-    private static final int DISTANCE_IN_INCHES = 24;
     private static final double POWER_LEVEL = 0.90;
-
-    private int currentPosition;
 
     public LiftSystem(HardwareMap hardwareMap) {
 
@@ -26,9 +25,6 @@ public class LiftSystem {
 
         //  Servo attached to linear arm system;
         this.linearArmServo = new ServoController(hardwareMap, Constants.LINEAR_ARM_SERVO);
-
-        //  Reset to base
-        //  this.backToBase();
     }
 
     public SimpleMotor getLinearSlideMotor() {
@@ -58,13 +54,23 @@ public class LiftSystem {
         this.linearSlideMotor.drive(yVal);
 
 
+        if (gamepad.y) {
+            this.pickup();
+        }
+
+        if (gamepad.a) {
+            this.backToBase();
+        }
+
+
         if (gamepad.x) {
-            this.linearSlideServo.setPosition(0.3);
+            this.linearSlideServo.setPosition(0);
         }
 
         if (gamepad.b) {
             this.linearSlideServo.setPosition(1.0);
         }
+
 
         //  open, close
         this.linearArmServo.linearSlideArmTriggerPosition(gamepad.dpad_left, gamepad.dpad_right);
@@ -73,40 +79,41 @@ public class LiftSystem {
         return r;
     }
 
-
-    private void lift(int distanceInInches) {
-
-        linearSlideMotor.setTargetPosition(linearSlideMotor.getCurrentPosition() + distanceInInches);
-        linearSlideMotor.drive(POWER_LEVEL);
-        while (linearSlideMotor.motorsBusy()) {
-            this.currentPosition = linearSlideMotor.getCurrentPosition();
-        }
-        this.currentPosition = linearSlideMotor.getCurrentPosition();
-        linearSlideMotor.stop();
-
-        //  Disable encoders ;
-        //  motor.turnOffEncoders();
+    private int lift(double distanceInInches) {
+        double distance = distanceInInches - this.linearSlideMotor.calculateInches(this.linearSlideMotor.getCurrentPosition());
+        double pow = distance > 0 ? POWER_LEVEL : -POWER_LEVEL;
+        return this.linearSlideMotor.drive(distance, pow);
     }
 
 
-    public void backToBase() {
+    public int backToBase() {
+        this.moveForwardSlide();
+
+        //  Go back to starting position;
+        return this.lift(0);
+    }
+
+    public void pickup() {
+        // Put lift at 11.22 inches;
+        this.lift(11.22);
+        this.moveBackSlide();
         this.releaseObject();
-        this.linearSlideServo.setPositionByDegrees(0);
-        this.lift(-this.linearSlideMotor.getCurrentPosition());
+
+        //  Double check;
+        this.lift(8.987);
+        this.grabObject();
+
+        this.lift(11.22);
+        this.backToBase();
     }
 
-    public void pickup(int distancesInInches) {
-        this.grabObject();
-        this.lift(distancesInInches);
+    public void moveBackSlide() {
+        this.linearSlideServo.setPositionByDegrees(0);
+    }
+
+    public void moveForwardSlide() {
         this.linearSlideServo.setPositionByDegrees(180);
     }
-
-    public void drop() {
-        this.releaseObject();
-        this.linearSlideServo.setPositionByDegrees(0);
-        this.lift(-this.linearSlideMotor.getCurrentPosition());
-    }
-
 
     public void grabObject() {
         this.linearArmServo.setPositionByDegrees(180);
@@ -118,8 +125,7 @@ public class LiftSystem {
 
     private void reset() {
         this.linearSlideMotor.stop();
-        this.linearSlideServo.setPositionByDegrees(0);
+        this.backToBase();
     }
-
 
 }
