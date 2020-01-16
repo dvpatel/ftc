@@ -15,17 +15,14 @@ public class GameBot {
     private IMUController imu;
     private Driver driver;
 
-    //  private TouchSensorController touch;
-
     private GamepadDriver gamepadDriver;
-
-    private ServoController shortArmServo;
 
     private SkystoneDetector skystonDetector;
 
     private IntakeSystem intakeSystem;
-
     private LiftSystem liftSystem;
+    private FoundationSystem foundationSystem;
+
 
     private ElapsedTime period = new ElapsedTime();
 
@@ -39,33 +36,17 @@ public class GameBot {
         // Save reference to Hardware map
         this.hardwareMap = hardwareMap;
 
-        // get a reference to the color sensor.
-        this.colorSensor = new ColorSensorController(hardwareMap);
+        //  IMU ;  DON'T SET MODE.
+        this.imu = new IMUController(hardwareMap);
+
 
         //  Build driver ;
         this.driver = new Driver(hardwareMap);
 
-        //  IMU ;  DON'T SET MODE.
-        this.imu = new IMUController(hardwareMap);
-
-        //  Setup short arm servo;
-        this.shortArmServo = new ServoController(this.hardwareMap, Constants.SHORT_ARM_SERVO);
-
-
-        //  Uncomment when TouchSensor is attached;
-        //  this.touch = new TouchSensorController(hardwareMap);
-
-        //  Skystone detector, activate when ready ;
-        // this.skystonDetector = new SkystoneDetector(hardwareMap);
 
         //  Drive using gamepad ;
         this.gamepadDriver = new GamepadDriver(this.driver, this.imu);
 
-        //  IntakeSystem ;
-        this.intakeSystem = new IntakeSystem(this.hardwareMap);
-
-        //  LiftSystem
-        this.liftSystem = new LiftSystem(hardwareMap);
     }
 
     private void waitForCalibration() throws InterruptedException {
@@ -76,17 +57,19 @@ public class GameBot {
     }
 
     public ColorSensorController getColorSensorController() {
-        this.colorSensor.ledOn();
+
+        // get a reference to the color sensor.
+        if (this.colorSensor == null) {
+            this.colorSensor = new ColorSensorController(hardwareMap);
+            this.colorSensor.ledOn();
+        }
+
         return this.colorSensor;
     }
 
     public IMUController getIMUController() {
         return this.imu;
     }
-
-    //  public TouchSensorController getTouchSensorController() {
-    //     return this.touch;
-    //  }
 
     public MotorControllerEx getMotorPID() {
 
@@ -101,6 +84,12 @@ public class GameBot {
     }
 
     public SkystoneDetector getSkystoneDetector() {
+
+        //  Skystone detector, activate when ready ;
+        if (this.skystonDetector == null) {
+            this.skystonDetector = new SkystoneDetector(hardwareMap);
+        }
+
         return this.skystonDetector;
     }
 
@@ -108,30 +97,43 @@ public class GameBot {
         return this.gamepadDriver;
     }
 
-    public ServoController getShortArmServo() {
-        return this.shortArmServo;
+    public FoundationSystem getFoundationSystem() {
+        //  Setup short arm servo;
+        if (this.foundationSystem == null) {
+            this.foundationSystem = new FoundationSystem(this.hardwareMap);
+        }
+
+        return this.foundationSystem;
     }
 
-
     public LiftSystem getLiftSystem() {
+        //  LiftSystem
+        if (this.liftSystem == null) {
+            this.liftSystem = new LiftSystem(hardwareMap);
+        }
+
         return this.liftSystem;
     }
 
     public SimpleMotor getLinearSlideMotor() {
-        return this.liftSystem.getLinearSlideMotor();
+        return this.getLiftSystem().getLinearSlideMotor();
     }
 
     public ServoController getLinearSlideServo() {
-        return this.liftSystem.getLinearSlideServo();
+        return this.getLiftSystem().getLinearSlideServo();
     }
 
     public ServoController getLinearArmServo() {
-        return this.liftSystem.getLinearArmServo();
+        return this.getLiftSystem().getLinearArmServo();
     }
 
     public IntakeSystem getIntakeSystem() {
+        //  IntakeSystem ;
+        if (this.intakeSystem == null) {
+            this.intakeSystem = new IntakeSystem(this.hardwareMap);
+        }
+
         return this.intakeSystem;
     }
-
 }
 
