@@ -39,6 +39,7 @@ public class GamePadTele extends AbstractLinearOpMode {
         this.intakeSystem = rosie.getIntakeSystem();
 
         this.liftSystem = this.rosie.getLiftSystem();
+        this.liftSystem.setLinearOpMode(this);
     }
 
     @Override
