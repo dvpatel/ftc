@@ -46,7 +46,7 @@ public class IMUController {
         //  Successful, calibrated reading of getCalibrationStatus:  s0 g3 a0 m0;
     }
 
-    private BNO055IMU getIMU() {
+    public BNO055IMU getIMU() {
         return this.imu ;
     }
 
