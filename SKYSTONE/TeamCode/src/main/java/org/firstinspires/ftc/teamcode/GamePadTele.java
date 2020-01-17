@@ -17,7 +17,6 @@ import org.blueprint.ftc.core.MotorControllerEx;
 import org.blueprint.ftc.core.ServoController;
 
 @TeleOp(name = "GamePadMode", group = "Tele")
-//  @Disabled
 public class GamePadTele extends AbstractLinearOpMode {
 
     private MotorControllerEx motor;
