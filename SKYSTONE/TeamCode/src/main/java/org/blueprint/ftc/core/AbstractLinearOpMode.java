@@ -58,29 +58,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.driveDifferential(velocity, velocity);
     }
 
-    protected void linearSlideDriveForward(int distance, double velocity) {
-        this.linearSlideDrive(distance, velocity);
-    }
-
-    protected void linearSlideDriveReverse(int distance, double velocity) {
-        this.linearSlideDrive(-distance, -velocity);
-    }
-
-    //  Reverse:  this.drive(-distance, -velocity);
-    protected void linearSlideDrive(double distanceInInches, double velocity) {
-
-        SimpleMotor motor = this.rosie.getLinearSlideMotor();
-        motor.setTargetPosition(distanceInInches);
-        motor.drive(velocity);
-        while (motor.motorsBusy()) {
-            int cp = motor.getCurrentPosition();
-            telemetry.addData("ticks", cp + ", isBusy=" + motor.motorsBusy());
-            telemetry.update();
-        }
-        motor.stop();
-    }
-
-
     //  PIDF optimized for driving, NOT strafing.  Strafing stalls.
     //  Reverse:  this.drive(-distance, -velocity);
     protected void drive(double distanceInInches, double velocity) {
