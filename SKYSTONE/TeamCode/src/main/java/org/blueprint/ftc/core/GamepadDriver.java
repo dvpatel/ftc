@@ -22,6 +22,8 @@ public class GamepadDriver {
     private Driver driver;
     private IMUController imu;
 
+    private boolean reverseInProgress;
+
     private boolean goReverse = false;
 
     public GamepadDriver(Driver driver, IMUController imu) {
@@ -41,8 +43,10 @@ public class GamepadDriver {
     public void drive(Gamepad gamepad) {
 
         //  Add b button for going reverse;;
-        if (gamepad.b) {
+        if (gamepad.b && !reverseInProgress) {
+            this.reverseInProgress = true;
             this.goReverse = !this.goReverse;
+            this.reverseInProgress = false;
         }
 
         double forward = goReverse ? gamepad.left_stick_y : -gamepad.left_stick_y;
