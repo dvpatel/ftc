@@ -140,6 +140,8 @@ public final class Constants {
     public static final float FIELD_WIDTH = 144;
     public static final float FIELD_WIDTH_MM = FIELD_WIDTH*MM_PER_INCHES;
 
+    public static final float DRIVETRAIN_SECOND_QUADRANT_CENTER = Constants.TILE_SIZE + ((Constants.TILE_SIZE - Constants.DRIVETRAIN_LENGTH) / 2);
+
     //  Tune this for gamepad.
     public static double DEADZONE = 0.25;
 }
