@@ -1,14 +1,6 @@
 package org.blueprint.ftc.core;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.Range;
-
-import org.blueprint.ftc.core.Driver;
-import org.blueprint.ftc.core.GameBot;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import static org.blueprint.ftc.core.Constants.DEADZONE;
 
