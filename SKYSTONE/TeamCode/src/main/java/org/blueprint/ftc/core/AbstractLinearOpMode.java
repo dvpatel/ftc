@@ -80,16 +80,20 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         this.rosie.getIMUController().resetAngle();
 
         Driver driver = this.rosie.getDriver();
-        int ticks = driver.calculateTicks(distanceInInches);
+
+        int ticks = (int)(driver.calculateTicks(distanceInInches) * Constants.STRAFE_DISTANCE_FACTOR);
+
+        telemetry.addData("Target Ticks", ticks );
+
         driver.setStopAndResetMode();
         driver.strafeDifferential(velocity, velocity);
         while (!driver.distanceReached(ticks)) {
-            //  int[] cp = driver.getCurrentPosition();
-            //  telemetry.addData("ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] + ", isBusy=" + driver.motorsBusy());
             telemetry.addData("Strafe: ", "Running");
             telemetry.update();
         }
 
+        int[] cp = driver.getCurrentPosition();
+        telemetry.addData("Actual Ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] );
         driver.stop();
     }
 
