@@ -49,6 +49,8 @@ public final class Constants {
     public static int MOTOR_MAX_VELOCITY = 2900;  //  ticks per second;
     public static int DEFAULT_VELOCITY = (int) (0.90*MOTOR_MAX_VELOCITY);  //  ticks per second;
 
+    public static double STRAFE_DISTANCE_FACTOR = 1.1424;
+
     public static final double TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
     public static final double DRIVETRAIN_GEAR_RATIO = 45.0/35.0;  //  Ratio with modified gears;
     public static final double TICK_GEAR_RATIO = Constants.TICK_DIAMETER_RATIO / Constants.DRIVETRAIN_GEAR_RATIO ;
@@ -126,7 +128,7 @@ public final class Constants {
     public static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
     public static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
 
-    public static final float TILE_SIZE = 24f;  //  24 inches square according to doc.
+    public static final float TILE_SIZE = 24.0f;  //  24 inches square according to doc.
 
     //  DriveTrain size;  in forward direction from red alliance side
     public static final float DRIVETRAIN_LENGTH = 17.75f;   //  dy
