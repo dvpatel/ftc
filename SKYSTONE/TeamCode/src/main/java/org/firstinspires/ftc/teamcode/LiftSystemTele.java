@@ -15,7 +15,7 @@ import org.blueprint.ftc.core.SimpleMotor;
 import java.util.Random;
 
 @TeleOp(name = "LiftSystemTest")
-//  @Disabled
+@Disabled
 public class LiftSystemTele extends AbstractLinearOpMode {
 
     private LiftSystem liftSystem;
