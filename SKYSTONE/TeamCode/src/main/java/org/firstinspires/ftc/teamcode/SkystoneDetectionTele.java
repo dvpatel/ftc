@@ -31,122 +31,166 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
 import org.blueprint.ftc.core.Constants;
+import org.blueprint.ftc.core.IntakeSystem;
 import org.blueprint.ftc.core.SkystoneDetector;
-import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-
-import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
-import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
-
-/**
- * This 2019-2020 OpMode illustrates the basics of using the Vuforia localizer to determine
- * positioning and orientation of robot on the SKYSTONE FTC field.
- * The code is structured as a LinearOpMode
- * <p>
- * When images are located, Vuforia is able to determine the position and orientation of the
- * image relative to the camera.  This sample code then combines that information with a
- * knowledge of where the target images are on the field, to determine the location of the camera.
- * <p>
- * From the Audience perspective, the Red Alliance station is on the right and the
- * Blue Alliance Station is on the left.
- * <p>
- * Eight perimeter targets are distributed evenly around the four perimeter walls
- * Four Bridge targets are located on the bridge uprights.
- * Refer to the Field Setup manual for more specific location details
- * <p>
- * A final calculation then uses the location of the camera on the robot to determine the
- * robot's location and orientation on the field.
- *
- * @see VuforiaLocalizer
- * @see VuforiaTrackableDefaultListener
- * see  skystone/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
- * <p>
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
- * <p>
- * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
- * is explained below.
- */
 
 
-@TeleOp(name = "SkystoneTele", group = "Tele")
-// @Disabled
+//  See
+//  https://github.com/gearsincorg/FTCVuforiaDemo/blob/master/TeleopOpmode.java
+
+@TeleOp(name = "SkystoneTele")
+@Disabled
 public class SkystoneDetectionTele extends AbstractLinearOpMode {
 
     private SkystoneDetector skystoneDetector;
-    private float mmPerInch;
+    private IntakeSystem intakeSystem;
+
+    private static final double VELOCITY = 0.35 * Constants.MOTOR_MAX_VELOCITY;  // ticks per second
+    double[] targetCoordinates;
+    boolean foundStone;
+
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void initOpMode() throws InterruptedException {
         this.initRosie();
 
+        this.intakeSystem = this.rosie.getIntakeSystem();
+
         this.skystoneDetector = this.rosie.getSkystoneDetector();
-        mmPerInch = Constants.MM_PER_INCHES;
+        this.skystoneDetector.initVuforia(this);
+        this.skystoneDetector.activateTracking();
+
+        //  wait for camera to be activated;
+        sleep(10000);
+
+        //  detect during init;  give 30 seconds;
+        runtime.reset();
+        while ((runtime.seconds() < 30.0)) {
+            foundStone = this.detectSkystone();
+            if (!foundStone) {
+                telemetry.addData("Skystone", " searching.");
+                telemetry.addData("Time remaining", runtime);
+                telemetry.update();
+            } else {
+                break;
+            }
+
+            //  this.skystoneDetector.addNavTelemetry();
+            idle();
+        }
+        this.skystoneDetector.deactivateTracking();
+
+        if (foundStone) {
+            double dY = targetCoordinates[1];
+            telemetry.addData("Skystone", " Found it.");
+            telemetry.addData("dY", dY);
+            telemetry.update();
+
+            sleep(5000);
+        }
+
     }
 
     @Override
     public void stopOpMode() {
         // Disable Tracking when we are done;
-        this.skystoneDetector.getVuforiaTrackables().deactivate();
+        this.skystoneDetector.deactivateTracking();
+        this.intakeSystem.stop();
     }
-
 
     @Override
     public void runOpMode() throws InterruptedException {
 
         this.initOpMode();
 
-        // WARNING:
-        // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
-        // This sequence is used to enable the new remote DS Camera Preview feature to be used with this sample.
-        // CONSEQUENTLY do not put any driving commands in this loop.
-        // To restore the normal opmode structure, just un-comment the following line:
+        // Wait for the game to start (driver presses PLAY)
+        while (!isStarted()) {
+            // Prompt User
+            telemetry.addData(">", "Press start");
+
+            // Display any Nav Targets while we wait for the match to start
+            this.skystoneDetector.targetsAreVisible();
+            this.skystoneDetector.addNavTelemetry();
+            telemetry.update();
+        }
+
         this.waitToPressStart();
 
-        // Note: To use the remote camera preview:
-        // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
-        // Tap the preview window to receive a fresh image.
+        while(opModeIsActive()) {
 
-        VuforiaTrackables targetsSkyStone = this.skystoneDetector.getVuforiaTrackables();
-        targetsSkyStone.activate();
-        while (opModeIsActive()) {
+            if (this.foundStone) {
+                this.driveToTarget(this.targetCoordinates);
 
-            // Provide feedback as to where the robot is located (if we know).
-            if (skystoneDetector.isTargetVisible()) {
+                //  this.intakeSystem.start();
 
-                telemetry.addData("Visible Target", skystoneDetector.getTargetName());
-
-                OpenGLMatrix lastLocation = skystoneDetector.getLastLocation();
-
-                // express position (translation) of robot in inches.
-                VectorF translation = lastLocation.getTranslation();
-                telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
-
-                // express the rotation of the robot in degrees.
-                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
-
-            } else {
-                telemetry.addData("Visible Target", "none");
-
-                //  Strafe left or right...
-
-
+                stop();
             }
-            telemetry.update();
 
-            idle();
         }
 
         this.stopOpMode();
+    }
+
+    private boolean detectSkystone() {
+        if (skystoneDetector.targetsAreVisible()) {
+            String targetName = skystoneDetector.getTargetName();
+            if (Constants.VISIBLE_TARGET_NAME.equals(targetName)) {
+
+                // robotBearing:  yaw / heading;
+                //  targetRange:  Hypotenuse
+                //  targetBearing:  Angle between x and y
+                //  relativeBearing:  targetBearing-robotBearing
+                // robotX, robotY, robotX, robotBearing, targetRange, targetBearing, relativeBearing;
+                this.targetCoordinates = this.skystoneDetector.getTargetCoordinatesInInches();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void driveToTarget(double[] targetCoordinates) {
+
+        double dX = Math.abs(targetCoordinates[0]);
+        double dY = targetCoordinates[1];
+        double angle = targetCoordinates[5];
+        double thetaRadians = Math.toRadians(90 - Math.abs(angle));
+        double hypot = targetCoordinates[4];
+        double totalY = hypot * Math.cos(thetaRadians);
+
+        //  intake offset;
+        double buffer = 2.0;
+        double intakeOffset = 3.25;
+        double robotWidth = Constants.DRIVETRAIN_WIDTH / 2;
+        double stoneOffset = 1.0;
+
+
+        double distX = dX;
+        double distY = 0;
+        if (dY > 0) {  //  right side of camera origin;
+            distY = robotWidth + totalY+buffer;
+        } else if (dY < 0) {  //  left side of camera origin
+            distY = robotWidth - totalY + stoneOffset;
+        }
+
+        telemetry.addData("Angle", angle);
+        telemetry.addData("TotalY", totalY);
+        telemetry.addData("Y", dY);
+        telemetry.update();
+
+        //  direction;  Negative is left of robot;  Positive is right of robot
+        //  positive velocity strafe left; negative strafe right
+        if (dY > 0) {
+            this.strafeRight(distY, VELOCITY);
+        } else if (dY < 0) {
+            this.strafeLeft(distY, VELOCITY);
+        }
+
+        this.drive(distX, VELOCITY);
+
     }
 }
