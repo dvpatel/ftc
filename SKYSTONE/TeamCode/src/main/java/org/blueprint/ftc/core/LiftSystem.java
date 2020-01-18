@@ -24,6 +24,10 @@ public class LiftSystem {
     private boolean XinProgress;
     private boolean BinProgress;
 
+    private static final double SLIDE_COUNTER_MAX = 50.0;
+    private double slideCounter;
+    private double slidePos;
+
     private static final double POWER_LEVEL = 0.65;
 
     private static final double BACKWARD_POS = 0.9;
@@ -71,68 +75,60 @@ public class LiftSystem {
     //  Used in tele with Gamepad;
     //  returns motor positio, arm position, slideservo position;
 
-    private double slidePos = 0.0f;
-
     public double[] autoMode(Gamepad gamepad) {
 
         //  If max or min height, stop;
         float yVal = -gamepad.left_stick_y;
-        if (((this.linearSlideMotor.getCurrentPosition() > Constants.SIMPLE_WHEEL_MAX_TICKS) && yVal > 0 ) ||
-                    ((this.linearSlideMotor.getCurrentPosition() < 10) && yVal < 0) ) {
+        if (((this.linearSlideMotor.getCurrentPosition() > Constants.SIMPLE_WHEEL_MAX_TICKS) && yVal > 0) ||
+                ((this.linearSlideMotor.getCurrentPosition() < 10) && yVal < 0)) {
             yVal = 0;
         }
         this.linearSlideMotor.drive(yVal);
 
+
+        //  Auto pickup stones
         if (gamepad.y && !this.pickupInProgress) {
             this.pickupInProgress = true;
             this.pickup();
             this.pickupInProgress = false;
         }
 
+        //  go back to base
         if (gamepad.a && !this.backToBaseInProgress) {
             this.backToBaseInProgress = true;
             this.backToBase();
             this.backToBaseInProgress = false;
         }
 
+        //  -1 to 1  -->  very sensitive
+        //  -1000 to 1000;  Move slide;
         double inp = -gamepad.right_stick_y;
         if (inp > 0) {
-            slidePos = slidePos + 0.001f;
-            if (slidePos >= FORWARD_POS) {
-                slidePos = FORWARD_POS;
+            slideCounter++;
+
+            if (slideCounter > SLIDE_COUNTER_MAX) {
+                slideCounter = SLIDE_COUNTER_MAX;
             }
 
+            double slidePos = slideCounter / SLIDE_COUNTER_MAX;
             this.linearSlideServo.setPosition(slidePos);
 
         } else if (inp < 0) {
-            slidePos = slidePos - 0.001f;
-            if (slidePos < BACKWARD_POS) {
-                slidePos = BACKWARD_POS;
+            slideCounter--;
+            if (slideCounter < -SLIDE_COUNTER_MAX) {
+                slideCounter = -SLIDE_COUNTER_MAX;
             }
 
+            double slidePos = slideCounter / SLIDE_COUNTER_MAX;
             this.linearSlideServo.setPosition(slidePos);
         }
-
-
-
-        if (gamepad.x && !this.XinProgress) {
-            this.XinProgress = true;
-            //  Push back;
-            this.moveBackSlide();
-            this.XinProgress = false;
-        }
-
-        if (gamepad.b && !this.BinProgress) {
-            this.BinProgress = true;
-            //  push out, 180 degrees or 2/3 of 270
-            this.moveForwardSlide();
-            this.BinProgress = false;
-        }
+        myOpMode.telemetry.addData("ServoPos", this.linearSlideServo.getPosition());
+        myOpMode.telemetry.update();
 
 
         //  open, close
         this.linearArmServo.linearSlideArmTriggerPosition(gamepad.dpad_left, gamepad.dpad_right);
-        double[] r = { this.linearSlideMotor.getCurrentPosition(), this.linearArmServo.getPosition(), this.linearSlideServo.getPosition() };
+        double[] r = {this.linearSlideMotor.getCurrentPosition(), this.linearArmServo.getPosition(), this.linearSlideServo.getPosition()};
         return r;
 
     }
@@ -143,7 +139,12 @@ public class LiftSystem {
 
 
     public int backToBase() {
-        this.moveForwardSlide();
+
+        //  back:  0.9  (243 degrees)
+        //  forward:  0.29 (78.3)
+        //  down;
+        //  this.linearSlideServo.setPosition(0.666);
+        //  this.moveForwardSlide();
 
         //  Go back to starting position;
         this.lift(0);
@@ -168,7 +169,8 @@ public class LiftSystem {
 
         //  Double check;
         //  Was -4.85;  Target is 6.65
-        this.lift(6.65);  //  POS:  ~7890;  Don't change this.
+//        this.lift(6.65);  //  POS:  ~7890;  Don't change this.
+        this.lift(10.0);  //  POS:  ~7890;  Don't change this.
         myOpMode.sleep(500);
 
         this.grabObject();
@@ -183,8 +185,9 @@ public class LiftSystem {
 
         //  Back to base;
         this.lift(0);
-        this.moveForwardSlide(0.40);  //  0.35*270 degrees
-        this.linearSlideMotor.stop();
+
+        //  this.moveForwardSlide(0.40);  //  0.35*270 degrees
+        this.moveForwardSlide(0.37);  //  0.35*270 degrees
 
         return this.linearSlideMotor.getCurrentPosition();
     }
