@@ -72,6 +72,10 @@ public class IntakeSystem {
         this.setDCMotorsPower(0);
     }
 
+    public void start() {
+        this.setDCMotorsPower(1.0);
+    }
+
     public void stop() {
         this.stopDCMotors();
         //  this.resetIntakeServos();

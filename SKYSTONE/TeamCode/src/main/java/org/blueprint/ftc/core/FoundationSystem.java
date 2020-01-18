@@ -32,12 +32,21 @@ public class FoundationSystem {
 
     }
 
+    public void triggerDown() {
+        this.setPositionByDegrees(90);
+    }
+
+    public void triggerUp() {
+        this.setPositionByDegrees(MIN_POS_DEGREE);
+    }
+
+
     public double[] triggerPosition(Gamepad gamepad) {
         //  gamepad1;
         if (gamepad.right_trigger > 0.25) {
-            this.setPositionByDegrees(90);
+            this.triggerDown();
         } else if (gamepad.left_trigger > 0.25) {
-            this.setPositionByDegrees(MIN_POS_DEGREE);
+            this.triggerUp();
         }
 
         double[] r = { this.foundationLeftServo.getPosition(), this.foundationRightServo.getPosition() };
