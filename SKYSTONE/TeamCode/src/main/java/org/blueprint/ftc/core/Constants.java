@@ -146,4 +146,8 @@ public final class Constants {
 
     //  Tune this for gamepad.
     public static double DEADZONE = 0.25;
+    
+    // Robot & Tile Dimensions
+    public static final int TILE_LENGTH = 24;
+    public static final int ROBOT_LENGTH = 81;
 }
