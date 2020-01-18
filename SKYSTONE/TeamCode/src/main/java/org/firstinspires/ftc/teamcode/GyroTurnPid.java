@@ -14,21 +14,27 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.Constants;
 import org.blueprint.ftc.core.Driver;
 import org.blueprint.ftc.core.IMUController;
 import org.blueprint.ftc.core.MotorControllerEx;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-@Autonomous(name = "GyroTurnPID", group = "Auto")
+@TeleOp(name = "GyroTurnPID")
 @Disabled
 public class GyroTurnPid extends AbstractLinearOpMode {
     private MotorControllerEx motor;
     private Driver driver;
     private IMUController imu;
 
-    double power = 0.50;
-    int degrees = 180;
+    private static final double VELOCITY = 0.50 * Constants.MOTOR_MAX_VELOCITY;
+
+    private static final int DEGREES = 180;
 
     @Override
     public void initOpMode() throws InterruptedException {
@@ -49,10 +55,10 @@ public class GyroTurnPid extends AbstractLinearOpMode {
     @Override
     public void stopOpMode() {
         // turn the motors off.
-        driver.stop();
+        //  driver.stop();
 
         // wait for rotation to stop.
-        sleep(500);
+        //  sleep(500);
 
         // reset angle tracking on new heading.
         //  this.imu.resetAngle();
@@ -66,29 +72,27 @@ public class GyroTurnPid extends AbstractLinearOpMode {
 
         // wait for start button.
         waitForStart();
-        telemetry.addData("Mode", "running");
-        telemetry.update();
 
-        do {
-            this.turn(degrees, power);
-        } while (opModeIsActive() && !this.motor.angleOnTarget());
+        //  this.turn(DEGREES, VELOCITY);
+        //  while(opModeIsActive() && !this.motor.angleOnTarget()) {
+        //      telemetry.addData("IMU Angle", this.imu.getAngle());
+        //      telemetry.update();
+        //  }
 
-        telemetry.addData("IMU Angle", this.imu.getAngle());
-        telemetry.update();
+        //  Intrinsic / Extrinsic Angle test;
+        while(opModeIsActive()) {
+            double intrinsicAngle = this.imu.getAngle();
+            float extrinsicAngle = this.imu.getIMU().getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+            telemetry.addData("IntrinsicAngle", intrinsicAngle);
+            telemetry.addData("ExtrinsicAngle", extrinsicAngle);
+            telemetry.update();
+
+            sleep(50);
+        }
+
 
         sleep(5000);
         this.stopOpMode();
-    }
-
-    /**
-     * Get current cumulative angle rotation from last reset.
-     *
-     * @return Angle in degrees. + = left, - = right from zero point.
-     */
-    private double getAngle() {
-        double angle = this.imu.getAngle();
-        telemetry.addData("Imu.Angle", angle);
-        telemetry.update();
-        return angle;
     }
 }

@@ -1,76 +1,225 @@
 package org.blueprint.ftc.core;
 
+import android.text.method.Touch;
+
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class LiftSystem {
 
-    private GameBot rosie;
+    private LinearOpMode myOpMode;
 
     private SimpleMotor linearSlideMotor;
     private ServoController linearSlideServo;
     private ServoController linearArmServo;
 
-    private static final int DISTANCE_IN_INCHES = 24;
-    private static final double POWER_LEVEL = 0.90;
+    //  only for boolean buttons;
+    private boolean pickupInProgress;
+    private boolean backToBaseInProgress;
+    private boolean XinProgress;
+    private boolean BinProgress;
 
-    private int currentPosition;
+    private static final double SLIDE_COUNTER_MAX = 50.0;
+    private double slideCounter;
+    private double slidePos;
 
-    public LiftSystem(GameBot rosie) {
-        //  Make sure init is called from Tele / Autonomous code
-        this.rosie = rosie;
+    private static final double POWER_LEVEL = 0.65;
 
-        this.linearSlideMotor = this.rosie.getLinearSlideMotor();
-        this.linearSlideServo = this.rosie.getLinearSlideServo();
-        this.linearArmServo = this.rosie.getLinearArmServo();
+    private static final double BACKWARD_POS = 0.9;
+    private static final double FORWARD_POS = 0.259;   //  70/270
 
-        //  Reset to base
-        this.backToBase();
+    public LiftSystem(HardwareMap hardwareMap) {
+
+        //  motor to control linear slide system
+        this.linearSlideMotor = new SimpleMotor(hardwareMap, Constants.LINEAR_SLIDE_MOTOR_NAME);
+
+        //  Servo attached to linear slide system;
+        this.linearSlideServo = new ServoController(hardwareMap, Constants.LINEAR_SLIDE_SERVO);
+
+        //  Servo attached to linear arm system;
+        this.linearArmServo = new ServoController(hardwareMap, Constants.LINEAR_ARM_SERVO);
     }
 
-    private void lift(int distanceInInches) {
+    public void setLinearOpMode(LinearOpMode myOpMode) {
+        this.myOpMode = myOpMode;
+    }
 
-        linearSlideMotor.setTargetPosition(linearSlideMotor.getCurrentPosition() + distanceInInches);
-        linearSlideMotor.drive(POWER_LEVEL);
-        while (linearSlideMotor.motorsBusy()) {
-            this.currentPosition = linearSlideMotor.getCurrentPosition();
+    public LinearOpMode getLinearOpMode() {
+
+        if (this.myOpMode == null) {
+            throw new NullPointerException("LinearOpMode not set.");
         }
-        this.currentPosition = linearSlideMotor.getCurrentPosition();
-        linearSlideMotor.stop();
 
-        //  Disable encoders ;
-        //  motor.turnOffEncoders();
+        return this.myOpMode;
+    }
+
+    public SimpleMotor getLinearSlideMotor() {
+        return this.linearSlideMotor;
+    }
+
+    public ServoController getLinearSlideServo() {
+        return this.linearSlideServo;
+    }
+
+    public ServoController getLinearArmServo() {
+        return this.linearArmServo;
+    }
+
+    private boolean armState = false;
+
+    //  Used in tele with Gamepad;
+    //  returns motor positio, arm position, slideservo position;
+
+    public double[] autoMode(Gamepad gamepad) {
+
+        //  If max or min height, stop;
+        float yVal = -gamepad.left_stick_y;
+        if (((this.linearSlideMotor.getCurrentPosition() > Constants.SIMPLE_WHEEL_MAX_TICKS) && yVal > 0) ||
+                ((this.linearSlideMotor.getCurrentPosition() < 10) && yVal < 0)) {
+            yVal = 0;
+        }
+        this.linearSlideMotor.drive(yVal);
+
+
+        //  Auto pickup stones
+        if (gamepad.y && !this.pickupInProgress) {
+            this.pickupInProgress = true;
+            this.pickup();
+            this.pickupInProgress = false;
+        }
+
+        //  go back to base
+        if (gamepad.a && !this.backToBaseInProgress) {
+            this.backToBaseInProgress = true;
+            this.backToBase();
+            this.backToBaseInProgress = false;
+        }
+
+        //  -1 to 1  -->  very sensitive
+        //  -1000 to 1000;  Move slide;
+        double inp = -gamepad.right_stick_y;
+        if (inp > 0) {
+            slideCounter++;
+
+            if (slideCounter > SLIDE_COUNTER_MAX) {
+                slideCounter = SLIDE_COUNTER_MAX;
+            }
+
+            double slidePos = slideCounter / SLIDE_COUNTER_MAX;
+            this.linearSlideServo.setPosition(slidePos);
+
+        } else if (inp < 0) {
+            slideCounter--;
+            if (slideCounter < -SLIDE_COUNTER_MAX) {
+                slideCounter = -SLIDE_COUNTER_MAX;
+            }
+
+            double slidePos = slideCounter / SLIDE_COUNTER_MAX;
+            this.linearSlideServo.setPosition(slidePos);
+        }
+        myOpMode.telemetry.addData("ServoPos", this.linearSlideServo.getPosition());
+        myOpMode.telemetry.update();
+
+
+        //  open, close
+        this.linearArmServo.linearSlideArmTriggerPosition(gamepad.dpad_left, gamepad.dpad_right);
+        double[] r = {this.linearSlideMotor.getCurrentPosition(), this.linearArmServo.getPosition(), this.linearSlideServo.getPosition()};
+        return r;
+
+    }
+
+    public int lift(double targetDistanceInInches) {
+        return this.linearSlideMotor.drive(myOpMode, targetDistanceInInches, POWER_LEVEL);
     }
 
 
-    public void backToBase() {
+    public int backToBase() {
+
+        //  back:  0.9  (243 degrees)
+        //  forward:  0.29 (78.3)
+        //  down;
+        //  this.linearSlideServo.setPosition(0.666);
+        //  this.moveForwardSlide();
+
+        //  Go back to starting position;
+        this.lift(0);
+        return this.linearSlideMotor.getCurrentPosition();
+    }
+
+    public int pickup() {
+
+        //  Go back starting position;
+        this.moveForwardSlide();
+        this.lift(0);
+        myOpMode.sleep(250);
+
+        //  consider offset;  Start at 11.50";
+        double startingPoint = 12.50;
+
+        //  inches;
+        this.lift(startingPoint);  //  POS: 8854;  Don't chnage this.
+        this.moveBackSlide();
         this.releaseObject();
-        this.linearSlideServo.setPositionByDegrees(0);
-        this.lift(-this.linearSlideMotor.getCurrentPosition());
-    }
+        myOpMode.sleep(750);
 
-    public void pickup(int distancesInInches) {
+        //  Double check;
+        //  Was -4.85;  Target is 6.65
+//        this.lift(6.65);  //  POS:  ~7890;  Don't change this.
+        this.lift(10.0);  //  POS:  ~7890;  Don't change this.
+        myOpMode.sleep(500);
+
         this.grabObject();
-        this.lift(distancesInInches);
-        this.linearSlideServo.setPositionByDegrees(180);
+        myOpMode.sleep(500);  //  Don't change this.
+
+        //  Was 12.0
+        this.lift(19.65);    //  POS:  ~9645
+        myOpMode.sleep(750);
+
+        this.moveForwardSlide();
+        myOpMode.sleep(500);
+
+        //  Back to base;
+        this.lift(0);
+
+        //  this.moveForwardSlide(0.40);  //  0.35*270 degrees
+        this.moveForwardSlide(0.37);  //  0.35*270 degrees
+
+        return this.linearSlideMotor.getCurrentPosition();
     }
 
-    public void drop() {
-        this.releaseObject();
-        this.linearSlideServo.setPositionByDegrees(0);
-        this.lift(-this.linearSlideMotor.getCurrentPosition());
+    public int getCurrentPosition() {
+        return this.linearSlideMotor.getCurrentPosition();
+    }
+
+    public void moveBackSlide() {
+        this.linearSlideServo.setPosition(BACKWARD_POS);
+    }
+
+    public void moveForwardSlide() {
+        this.linearSlideServo.setPosition(FORWARD_POS);
+    }
+
+    public void moveForwardSlide(double pos) {
+        this.linearSlideServo.setPosition(pos);
     }
 
 
     public void grabObject() {
-        this.linearArmServo.setPositionByDegrees(180);
+        this.linearArmServo.setPosition(1.0);
     }
 
     public void releaseObject() {
-        this.linearArmServo.setPositionByDegrees(0);
+        this.linearArmServo.setPosition(0.0);
     }
 
-    private void reset() {
+    public void reset() {
         this.linearSlideMotor.stop();
-        this.linearSlideServo.setPositionByDegrees(0);
+        this.backToBase();
     }
-
 
 }

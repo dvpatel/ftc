@@ -1,5 +1,7 @@
 package org.blueprint.ftc.core;
 
+import com.qualcomm.robotcore.util.Range;
+
 public class MotorControllerEx {
 
     private PIDController pidDrive;
@@ -24,10 +26,13 @@ public class MotorControllerEx {
         this.pidRotate = new PIDController(Constants.PID_ROTATE_KP, Constants.PID_ROTATE_KI, Constants.PID_ROTATE_KD);
     }
 
-    public void enableDrivePID(double power) {
+    public void enableDrivePID(double velocity) {
         // Set up parameters for driving in a straight line.
         this.pidDrive.setSetpoint(0);            // Want to set PID value to 0;
-        this.pidDrive.setOutputRange(0, power);  // always positive;  power output
+
+        // always positive;  power output
+        this.pidDrive.setOutputRange(0, velocity);
+
         this.pidDrive.setInputRange(-90, 90);    // always positive;  angle
         this.pidDrive.enable();                  //  Enable PID calculation
     }
@@ -73,11 +78,11 @@ public class MotorControllerEx {
     }
 
     //  logic for driving straight; corrects if angle is not zero ;
-    public double[] calculateDriveCorrection(double power, double angle) {
+    public double[] calculateDriveCorrection(double velocity, double angle) {
         // Use PID with imu input to drive in a straight line.
 
-        double powerCorrection = this.pidDrive.performPID(angle);
-        return new double[]{(power - powerCorrection), (power + powerCorrection), powerCorrection};
+        double correction = this.pidDrive.performPID(angle);
+        return new double[]{(velocity - correction), (velocity + correction), correction};
     }
 
 

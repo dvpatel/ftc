@@ -64,8 +64,13 @@ public class IMUController {
         this.globalAngle = 0;
     }
 
+    //  Yaw angle;
+    public double getYaw() {
+        return this.getAngle();
+    }
+
     /**
-     * Get current cumulative angle rotation from last reset.
+     * Get current cumulative angle rotation from last reset.  Yaw angle;
      * @return Angle in degrees. + = left, - = right from zero point.
      */
     public double getAngle()
@@ -91,7 +96,7 @@ public class IMUController {
         return this.globalAngle;
     }
 
-    public double getGlobalAngle() {
+    private double getGlobalAngle() {
         return this.globalAngle ;
     }
 

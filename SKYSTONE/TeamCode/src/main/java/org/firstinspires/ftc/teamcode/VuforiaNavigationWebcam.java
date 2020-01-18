@@ -1,15 +1,14 @@
-package org.blueprint.ftc.core;
+package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.blueprint.ftc.core.Constants;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
@@ -21,24 +20,66 @@ import java.util.List;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.XYZ;
+import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 
+/**
+ * This 2019-2020 OpMode illustrates the basics of using the Vuforia localizer to determine
+ * positioning and orientation of robot on the SKYSTONE FTC field.
+ * The code is structured as a LinearOpMode
+ *
+ * When images are located, Vuforia is able to determine the position and orientation of the
+ * image relative to the camera.  This sample code then combines that information with a
+ * knowledge of where the target images are on the field, to determine the location of the camera.
+ *
+ * From the Audience perspective, the Red Alliance station is on the right and the
+ * Blue Alliance Station is on the left.
 
-public class SkystoneDetector {
+ * Eight perimeter targets are distributed evenly around the four perimeter walls
+ * Four Bridge targets are located on the bridge uprights.
+ * Refer to the Field Setup manual for more specific location details
+ *
+ * A final calculation then uses the location of the camera on the robot to determine the
+ * robot's location and orientation on the field.
+ *
+ * @see VuforiaLocalizer
+ * @see VuforiaTrackableDefaultListener
+ * see  skystone/doc/tutorial/FTC_FieldCoordinateSystemDefinition.pdf
+ *
+ * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list.
+ *
+ * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
+ * is explained below.
+ */
 
-    private HardwareMap hardwareMap;
-    private LinearOpMode myOpMode;
-
+@TeleOp()
+@Disabled
+public class VuforiaNavigationWebcam extends LinearOpMode {
 
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
-    private static final boolean PHONE_IS_PORTRAIT = false;
+    private static final boolean PHONE_IS_PORTRAIT = false  ;
+
+    /*
+     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
+     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
+     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
+     * web site at https://developer.vuforia.com/license-manager.
+     *
+     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
+     * random data. As an example, here is a example of a fragment of a valid key:
+     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
+     * Once you've obtained a license key, copy the string from the Vuforia web site
+     * and paste it in to your code on the next line, between the double quotes.
+     */
+    private static final String VUFORIA_KEY = Constants.VUFORIA_KEY;
 
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     // We will define some constants and conversions here
-    private static final float mmPerInch = 25.4f;
-    private static final float mmTargetHeight = (6) * mmPerInch;          // the height of the center of the target image above the floor
+    private static final float mmPerInch        = 25.4f;
+    private static final float mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
 
     // Constant for Stone Target
     private static final float stoneZ = 2.00f * mmPerInch;
@@ -52,13 +93,11 @@ public class SkystoneDetector {
 
     // Constants for perimeter targets
     private static final float halfField = 72 * mmPerInch;
-    private static final float quadField = 36 * mmPerInch;
+    private static final float quadField  = 36 * mmPerInch;
 
     // Class Members
-    private OpenGLMatrix lastLocation;
-    private VuforiaLocalizer vuforia;
-    private VuforiaTrackables targetsSkyStone;
-    private List<VuforiaTrackable> allTrackables;
+    private OpenGLMatrix lastLocation = null;
+    private VuforiaLocalizer vuforia = null;
 
     /**
      * This is the webcam we are to use. As with other hardware devices such as motors and
@@ -67,41 +106,39 @@ public class SkystoneDetector {
     WebcamName webcamName = null;
 
     private boolean targetVisible = false;
-    private float phoneXRotate = 0;
-    private float phoneYRotate = 0;
-    private float phoneZRotate = 0;
+    private float phoneXRotate    = 0;
+    private float phoneYRotate    = 0;
+    private float phoneZRotate    = 0;
 
-    private boolean targetFound;    // set to true if Vuforia is currently tracking a target
-    private String targetName;     // Name of the currently tracked target
+    @Override public void runOpMode() {
+        /*
+         * Retrieve the camera we are to use.
+         */
+        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-    private double robotX;
-    private double robotY;
-    private double robotZ;
-    private double robotAngleX, robotAngleY, robotAngleZ;
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
+         * If no camera monitor is desired, use the parameter-less constructor instead (commented out below).
+         */
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
-    private double robotBearing;   // Robot's rotation around the Z axis (CCW is positive)
-    private double targetRange;    // Range from robot's center to target in mm
-    private double targetBearing;  // Heading of the target , relative to the robot's unrotated center
-    private double relativeBearing;// Heading to the target from the robot's current bearing.
+        // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
+        parameters.vuforiaLicenseKey = VUFORIA_KEY;
 
-    public SkystoneDetector(HardwareMap hardwareMap) {
-
-        this.hardwareMap = hardwareMap;
-        this.webcamName = this.hardwareMap.get(WebcamName.class, Constants.CAMERA_NAME);
-    }
-
-    public void initVuforia(LinearOpMode opMode) {
-
-        this.myOpMode = opMode;
-        VuforiaLocalizer.Parameters parameters = this.getParameters();
+        /**
+         * We also indicate which camera on the RC we wish to use.
+         */
+        parameters.cameraName = webcamName;
 
         //  Instantiate the Vuforia engine
-        this.vuforia = ClassFactory.getInstance().createVuforia(parameters);
+        vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
-        this.targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
+        VuforiaTrackables targetsSkyStone = this.vuforia.loadTrackablesFromAsset("Skystone");
 
         VuforiaTrackable stoneTarget = targetsSkyStone.get(0);
         stoneTarget.setName("Stone Target");
@@ -131,7 +168,7 @@ public class SkystoneDetector {
         rear2.setName("Rear Perimeter 2");
 
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        this.allTrackables = new ArrayList<VuforiaTrackable>();
+        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(targetsSkyStone);
 
         /**
@@ -187,7 +224,7 @@ public class SkystoneDetector {
 
         front1.setLocation(OpenGLMatrix
                 .translation(-halfField, -quadField, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 90)));
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , 90)));
 
         front2.setLocation(OpenGLMatrix
                 .translation(-halfField, quadField, mmTargetHeight)
@@ -203,7 +240,7 @@ public class SkystoneDetector {
 
         rear1.setLocation(OpenGLMatrix
                 .translation(halfField, quadField, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , -90)));
 
         rear2.setLocation(OpenGLMatrix
                 .translation(halfField, -quadField, mmTargetHeight)
@@ -232,187 +269,75 @@ public class SkystoneDetector {
 
         // Rotate the phone vertical about the X axis if it's in portrait mode
         if (PHONE_IS_PORTRAIT) {
-            phoneXRotate = 90;
+            phoneXRotate = 90 ;
         }
 
         // Next, translate the camera lens to where it is on the robot.
+        // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
+        final float CAMERA_FORWARD_DISPLACEMENT  = 4.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot-center
+        final float CAMERA_VERTICAL_DISPLACEMENT = 8.0f * mmPerInch;   // eg: Camera is 8 Inches above ground
+        final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
 
-        float[] cameraDisplacement = this.getCameraDisplacement();
         OpenGLMatrix robotFromCamera = OpenGLMatrix
-                .translation(cameraDisplacement[1], cameraDisplacement[2], cameraDisplacement[0])
-                .multiplied(Orientation.getRotationMatrix(
-                        AxesReference.EXTRINSIC, AxesOrder.YZX,
-                        AngleUnit.DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
-
-
-        //  final float CAMERA_FORWARD_DISPLACEMENT  = 4.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot-center, dY
-        //  final float CAMERA_VERTICAL_DISPLACEMENT = 8.0f * mmPerInch;   // eg: Camera is 8 Inches above ground, dZ
-        //  final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line, dX
-        //  OpenGLMatrix robotFromCamera = OpenGLMatrix
-        //          .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
-        //          .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
-
+                .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
 
         /**  Let all the trackable listeners know where the phone is.  */
         for (VuforiaTrackable trackable : allTrackables) {
             ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
         }
-    }
 
-    private VuforiaLocalizer.Parameters getParameters() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
-         * If no camera monitor is desired, use the parameter-less constructor instead (commented out below).
-         */
+        // WARNING:
+        // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
+        // This sequence is used to enable the new remote DS Camera Preview feature to be used with this sample.
+        // CONSEQUENTLY do not put any driving commands in this loop.
+        // To restore the normal opmode structure, just un-comment the following line:
 
-        VuforiaLocalizer.Parameters parameters;
-        if (Constants.CAMERA_MONITOR_ON) {
-            int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-            parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        } else {
-            parameters = new VuforiaLocalizer.Parameters();
-        }
+        // waitForStart();
 
-        parameters.vuforiaLicenseKey = Constants.VUFORIA_KEY;
-        parameters.cameraDirection = CAMERA_CHOICE;
-        parameters.cameraName = webcamName;
-        parameters.useExtendedTracking = false;
+        // Note: To use the remote camera preview:
+        // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
+        // Tap the preview window to receive a fresh image.
 
-        return parameters;
-    }
+        targetsSkyStone.activate();
+        while (!isStopRequested()) {
 
-    //  Get position of camera from robot origin;
-    private float[] getCameraDisplacement() {
-        //  assume robot is facing front on red alliance
-        //  x distance from origin, y distance from front, height
-        float[] position = {Constants.CAMERA_DX_MM, Constants.CAMERA_DY_MM, Constants.CAMERA_DZ_MM};
-        return position;
-    }
+            // check all the trackable targets to see which one (if any) is visible.
+            targetVisible = false;
+            for (VuforiaTrackable trackable : allTrackables) {
+                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+                    telemetry.addData("Visible Target", trackable.getName());
+                    targetVisible = true;
 
-    /***
-     * See if any of the vision targets are in sight.
-     *
-     * @return true if any target is found
-     */
-    public boolean targetsAreVisible() {
-
-        int targetTestID = 0;
-
-        // Check each target in turn, but stop looking when the first target is found.
-        while ((targetTestID < 12) && !targetIsVisible(targetTestID)) {
-            targetTestID++;
-        }
-
-        return (targetFound);
-    }
-
-    /***
-     * Determine if specified target ID is visible and
-     * If it is, retreive the relevant data, and then calculate the Robot and Target locations
-     *
-     * @param   targetId
-     * @return true if the specified target is found
-     */
-    private boolean targetIsVisible(int targetId) {
-
-        VuforiaTrackable target = targetsSkyStone.get(targetId);
-        VuforiaTrackableDefaultListener listener = (VuforiaTrackableDefaultListener) target.getListener();
-        OpenGLMatrix location = null;
-
-        // if we have a target, look for an updated robot position
-        if ((target != null) && (listener != null) && listener.isVisible()) {
-            targetFound = true;
-            targetName = target.getName();
-
-            // If we have an updated robot location, update all the relevant tracking information
-            location = listener.getUpdatedRobotLocation();
-            if (location != null) {
-
-                // Create a translation and rotation vector for the robot.
-                VectorF trans = location.getTranslation();
-                Orientation rot = Orientation.getOrientation(location, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-                robotAngleX = rot.firstAngle;
-                robotAngleY = rot.secondAngle;
-                robotAngleZ = rot.thirdAngle;
-
-                // Robot position is defined by the standard Matrix translation (x and y)
-                robotX = trans.get(0);
-                robotY = trans.get(1);
-                robotZ = trans.get(2);
-
-                // Robot bearing (in +vc CCW cartesian system) is defined by the standard Matrix z rotation
-                robotBearing = rot.thirdAngle;
-
-                // target range is based on distance from robot position to origin.
-                targetRange = Math.hypot(robotX, robotY);
-
-                // target bearing is based on angle formed between the X axis to the target range line
-                targetBearing = Math.toDegrees(-Math.asin(robotY / targetRange));
-
-                // Target relative bearing is the target Heading relative to the direction the robot is pointing.
-                relativeBearing = targetBearing - robotBearing;
+                    // getUpdatedRobotLocation() will return null if no new information is available since
+                    // the last time that call was made, or if the trackable is not currently visible.
+                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+                    if (robotLocationTransform != null) {
+                        lastLocation = robotLocationTransform;
+                    }
+                    break;
+                }
             }
-            targetFound = true;
-        } else {
-            // Indicate that there is no target visible
-            targetFound = false;
-            targetName = "None";
+
+            // Provide feedback as to where the robot is located (if we know).
+            if (targetVisible) {
+                // express position (translation) of robot in inches.
+                VectorF translation = lastLocation.getTranslation();
+                telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+
+                // express the rotation of the robot in degrees.
+                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+                telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+            }
+            else {
+                telemetry.addData("Visible Target", "none");
+            }
+            telemetry.update();
         }
 
-        return targetFound;
-    }
-
-    public double[] getTargetCoordinatesInInches() {
-        //  double[] r = { robotX/mmPerInch, robotY/mmPerInch, robotX/mmPerInch, robotBearing, targetRange, targetBearing, relativeBearing};
-        double[] r = { robotX/mmPerInch, robotY/mmPerInch, robotX/mmPerInch, robotBearing, targetRange/mmPerInch, targetBearing, relativeBearing};
-        return r;
-    }
-
-    /***
-     * Start tracking Vuforia images
-     */
-    public void activateTracking() {
-
-        // Start tracking any of the defined targets
-        if (targetsSkyStone != null)
-            targetsSkyStone.activate();
-    }
-
-    public void deactivateTracking() {
-        // Start tracking any of the defined targets
-        if (targetsSkyStone != null)
-            targetsSkyStone.deactivate();
-    }
-
-    public String getTargetName() {
-        return this.targetName;
-    }
-
-    /***
-     * Send telemetry data to indicate navigation status
-     */
-    public void addNavTelemetry() {
-        if (targetFound) {
-            // Display the current visible target name, robot info, target info, and required robot action.
-            myOpMode.telemetry.addData("Visible", targetName);
-
-            this.myOpMode.telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                    robotX / mmPerInch, robotY / mmPerInch, robotZ / mmPerInch);
-            this.myOpMode.telemetry.addData("Rot (deg)", "{Roll, Pitch, Yaw/Heading} = %.0f, %.0f, %.0f", robotAngleX, robotAngleY, robotAngleZ);
-
-
-            myOpMode.telemetry.addData("Robot", "[X]:[Y] (B) [%5.0fmm]:[%5.0fmm] (%4.0f°)",
-                    robotX, robotY, robotBearing);
-            myOpMode.telemetry.addData("Target", "[R] (B):(RB) [%5.0fmm] (%4.0f°):(%4.0f°)",
-                    targetRange, targetBearing, relativeBearing);
-
-            myOpMode.telemetry.addData("- Turn    ", "%s %4.0f°", relativeBearing < 0 ? ">>> CW " : "<<< CCW", Math.abs(relativeBearing));
-            myOpMode.telemetry.addData("- Strafe  ", "%s %5.0fmm", robotY < 0 ? "LEFT" : "RIGHT", Math.abs(robotY));
-            myOpMode.telemetry.addData("- Distance", "%5.0fmm", Math.abs(robotX));
-        } else {
-            myOpMode.telemetry.addData("Visible", "- - - -");
-        }
+        // Disable Tracking when we are done;
+        targetsSkyStone.deactivate();
     }
 }
+

@@ -2,8 +2,7 @@ package org.blueprint.ftc.core;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.blueprint.ftc.core.Driver;
-import org.blueprint.ftc.core.GameBot;
+import static org.blueprint.ftc.core.Constants.DEADZONE;
 
 //  left_stick_y:  -1.0 to 1.0 float;
 //  left_stick_x:  -1.0 to 1.0 float;
@@ -13,61 +12,51 @@ import org.blueprint.ftc.core.GameBot;
 public class GamepadDriver {
 
     private Driver driver;
+    private IMUController imu;
 
-    double leftFront, leftBack, rightFront, rightBack;
+    private boolean reverseInProgress;
 
-    GameBot game = new GameBot();
+    private boolean goReverse = false;
 
-    public GamepadDriver(Driver driver) {
+    public GamepadDriver(Driver driver, IMUController imu) {
+        this.imu = imu;
         this.driver = driver;
+        this.driver.setRunWithEncoderOffMode();
     }
 
-    public double[] calculatePowerDifferential(Gamepad gamepad) {
-        return this.calculatePowerDifferential(gamepad.left_stick_y, gamepad.left_stick_x, gamepad.right_stick_x);
+    private double toVelocity(double stickValue) {
+        return stickValue * Constants.MOTOR_MAX_VELOCITY;
+    }
+
+    public boolean isReverse() {
+        return this.goReverse;
     }
 
     public void drive(Gamepad gamepad) {
-        double[] p = this.calculatePowerDifferential(gamepad);
-//        this.driver.powerDifferential(p[0], p[1], p[2], p[3]);
 
-        double straightBack = -gamepad.left_stick_y;
-        double leftRight = gamepad.left_stick_x;
-        double turnMann = gamepad.right_stick_x;
+        //  Add b button for going reverse;;
+        if (gamepad.b && !reverseInProgress) {
+            this.reverseInProgress = true;
+            this.goReverse = !this.goReverse;
+            this.reverseInProgress = false;
+        }
 
-        //  Confirm with Vishnu;
-        this.driver.powerDifferential(straightBack + leftRight + turnMann, straightBack - leftRight - turnMann, straightBack - leftRight + turnMann, straightBack + rightBack - turnMann);
+        double forward = goReverse ? gamepad.left_stick_y : -gamepad.left_stick_y;
+        double sideways = gamepad.left_stick_x;
+        double turn = gamepad.right_stick_x;
 
-    }
+        //  Buffer;
+        if (Math.abs(forward) < DEADZONE) forward = 0;
+        if (Math.abs(sideways) < DEADZONE) sideways = 0;
+        if (Math.abs(turn) < DEADZONE) turn = 0;
 
-    private double[] calculatePowerDifferential(float left_stick_y, float left_stick_x, float right_stick_x) {
+        double leftFront = forward + sideways + turn;
+        double rightFront = forward - sideways - turn;
+        double leftBack = forward - sideways + turn;
+        double rightBack = forward + sideways - turn;
 
-        //  left_stick_y, left_stick_x:  Up = -1.0;  Down = 1.0;
-        //               right_stick_x:  Up = -1.0;  Down: 1.0;
-
-        leftFront = -left_stick_y;
-        rightFront = -left_stick_y;
-        leftBack = -left_stick_y;
-        rightBack = -left_stick_y;
-
-        // leftFront = leftFront + left_stick_x
-        leftFront += left_stick_x;
-
-        // rightFront = rightFront - left_stick_x
-        rightFront += -left_stick_x;
-
-        // leftBack = leftBack + left_stick_x
-        leftBack += -left_stick_x;
-
-        // rightBack = rightBack - left_stick_x
-        rightBack += left_stick_x;
-
-        leftFront += right_stick_x;
-        rightFront += -right_stick_x;
-        leftBack += right_stick_x;
-        rightBack += -right_stick_x;
-
+        //  Scale;
         double max = Math.max(Math.max(Math.abs(leftFront), Math.abs(rightFront)), Math.max(Math.abs(leftBack), Math.abs(rightBack)));
-
         if (max > 1) {
             leftFront = leftFront / max;
             rightFront = rightFront / max;
@@ -75,10 +64,10 @@ public class GamepadDriver {
             rightBack = rightBack / max;
         }
 
-        //  Double check direction ;
-        double[] result = {leftFront, rightFront, leftBack, rightBack};
-        return result;
+        this.driver.velocityDifferential(
+                toVelocity(leftFront),
+                toVelocity(rightFront),
+                toVelocity(leftBack),
+                toVelocity(rightBack));
     }
-
-
 }

@@ -3,50 +3,49 @@ package org.firstinspires.ftc.teamcode;
 
 //  http://controls.coderedrobotics.com/programminglessons/11.html
 //  https://drive.google.com/file/d/0B5ci5zMS_2kZUlRYaHZkMGNuZGc/view
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
 import org.blueprint.ftc.core.Driver;
+import org.blueprint.ftc.core.FoundationSystem;
 import org.blueprint.ftc.core.GamepadDriver;
 import org.blueprint.ftc.core.IMUController;
+import org.blueprint.ftc.core.IntakeSystem;
+import org.blueprint.ftc.core.LiftSystem;
 import org.blueprint.ftc.core.MotorControllerEx;
+import org.blueprint.ftc.core.ServoController;
 
-@TeleOp(name = "GamePadDrive", group = "Tele")
-//  @Disabled
+@TeleOp(name = "GamePadMode", group = "Tele")
 public class GamePadTele extends AbstractLinearOpMode {
 
     private MotorControllerEx motor;
     private Driver driver;
     private IMUController imu;
-    //  private ServoController servo;
+    private FoundationSystem foundationSystem;
 
-    //  private double rotation ;
-    private boolean aButton, bButton, touched;
-
-    private double power;
+    private IntakeSystem intakeSystem;
+    private LiftSystem liftSystem;
 
     @Override
     public void initOpMode() throws InterruptedException {
-
-        telemetry.addData("Mode", "init Rosie");
-        telemetry.update();
-
         this.initRosie();
 
-        //  this.servo = this.rosie.getShortArmServo();
+        this.foundationSystem = this.rosie.getFoundationSystem();
         this.imu = this.rosie.getIMUController();
+        this.imu.resetAngle();
 
+        this.intakeSystem = rosie.getIntakeSystem();
 
-        //  Enable PID Controller to track state
-        //  this.motor.enablePID();
-        //this.motor.enableDrivePID(power);
-
-        telemetry.addData("Mode", "init complete;  Running");
-        telemetry.update();
+        this.liftSystem = this.rosie.getLiftSystem();
+        this.liftSystem.setLinearOpMode(this);
     }
 
     @Override
     public void stopOpMode() {
+
+        this.intakeSystem.stop();
+
         this.stopDriving();
         //  this.servo.setPositionByDegrees(180);
     }
@@ -70,22 +69,31 @@ public class GamePadTele extends AbstractLinearOpMode {
         GamepadDriver gpd = this.rosie.getGamepadDriver();
         while (opModeIsActive()) {
 
-            //  Uncomment when real motors attached ; Direction correct?
-            double[] p = gpd.calculatePowerDifferential(gamepad1);
-            gpd.drive(gamepad1);
+            telemetry.addData("YAW", this.imu.getAngle());
 
-            //  Controls direction
-            telemetry.addData("LeftF", p[0]);
-            telemetry.addData("RightF", p[1]);
-            telemetry.addData("LeftB", p[2]);
-            telemetry.addData("RightB", p[3]);
+            //  Task 1:  Driving
+            gpd.drive(gamepad1);
+            telemetry.addData("Reverse Mode", gpd.isReverse());
+
+            //  Task 2:  FoundationSystem:  left_trigger, right_trigger
+            double[] pos = this.foundationSystem.triggerPosition(gamepad1);
+            // telemetry.addData("Foundation System", "%.04f, %.04f",
+            //        pos[0], pos[1]);
+
+            //  Task 3:  IntakeSystem:  left, right bumpers
+            //  gamepad left / right bumper to turn on and off intake system
+            this.intakeSystem.autoMode(gamepad1);
+
+            //  Arm system:  Gamepad2, left_stick_y; X, B; dpad_left, dpad_right
+            //  0:  motor position, 1:  arm position, 2: slide servo position;
+            double[] positions = this.liftSystem.autoMode(gamepad2);
+            telemetry.addData("SlidePower", -gamepad2.left_stick_y);
+            telemetry.addData("Motor, Arm, Slide Position", "%.04f, %.04f, %.0f",
+                    positions[0], positions[1], positions[2]);
+
             telemetry.update();
 
-            //  this.servo.triggerPosition(gamepad1.left_trigger, gamepad1.right_trigger);
-            //  telemetry.addData("ServoPos", this.servo.getPosition());
-            //  telemetry.update();
-
-            idle();
+            //  idle();
         }
 
         this.stopOpMode();

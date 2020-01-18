@@ -97,7 +97,13 @@ public class ColorSensorController {
                 (hue > Constants.TARGET_COLOR_RED_HUE_LOW || hue < Constants.TARGET_COLOR_RED_HUE_HIGH);
     }
 
+    public void ledOn() {
+        this.colorSensor.enableLed(true);
+    }
 
+    public void ledOff() {
+        this.colorSensor.enableLed(false);
+    }
 
     public double getDistance() {
         return this.sensorColorRange.getDistance(DistanceUnit.CM) ;

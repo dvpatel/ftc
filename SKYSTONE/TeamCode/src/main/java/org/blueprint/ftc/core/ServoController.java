@@ -10,17 +10,13 @@ public class ServoController {
 
     private Servo servo;
 
+    //  0.88
     private static final int MAX_POS_DEGREE = 180;
-    private static final int MIN_POS_DEGREE = 10;
-
-    private ServoController(HardwareMap hardwareMap) {
-        this.servo = hardwareMap.get(Servo.class, Constants.SHORT_ARM_SERVO);
-    }
+    private static final int MIN_POS_DEGREE = 0;
 
     public ServoController(HardwareMap hardwareMap, String deviceName) {
         this.servo = hardwareMap.get(Servo.class, deviceName);
     }
-
 
     private double calculatePosition(double degrees) {
         return Range.clip(degrees, 0, 180) / ServoController.MAX_POS_DEGREE;
@@ -30,8 +26,8 @@ public class ServoController {
         this.servo.setPosition(this.calculatePosition(degrees));
     }
 
-    //  Logic for short arm servo ;
-    public void triggerPosition(float leftTrigger, float rightTrigger) {
+    //  Logic for arm servo ; lift and drop arm
+    public double triggerPosition(float leftTrigger, float rightTrigger) {
 
         if (rightTrigger > 0.25) {
             //  Drop on stop at 10 degrees ;
@@ -42,7 +38,23 @@ public class ServoController {
             leftTrigger = 0;
         }
 
+        return this.servo.getPosition();
+
     }
+
+    //  open, close gripper
+    public double linearSlideArmTriggerPosition(boolean leftTrigger, boolean rightTrigger) {
+
+        if (leftTrigger) {
+            //  open;
+            this.setPositionByDegrees(0);
+        } else if (rightTrigger) {
+            this.setPositionByDegrees(90);
+        }
+
+        return this.servo.getPosition();
+    }
+
 
     public void setPosition(double inp) {
         this.servo.setPosition(Range.clip(inp, 0, 1.0));

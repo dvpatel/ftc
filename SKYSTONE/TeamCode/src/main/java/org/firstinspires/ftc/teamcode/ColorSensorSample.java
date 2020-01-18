@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
@@ -26,7 +27,7 @@ import org.blueprint.ftc.core.Constants;
  */
 
 @TeleOp(name = "ColorSensorDrive", group = "Linear Opmode")
-//@Disabled
+@Disabled
 public class ColorSensorSample extends AbstractLinearOpMode {
 
     //  My pushbotrobot ;
@@ -34,7 +35,7 @@ public class ColorSensorSample extends AbstractLinearOpMode {
 
     private View relativeLayout;
 
-    double power = this.normalizePower(0.50);
+    private static final double VELOCITY = 0.5*Constants.MOTOR_MAX_VELOCITY;  // ticks per second
 
     @Override
     public void initOpMode() throws InterruptedException {
@@ -73,10 +74,9 @@ public class ColorSensorSample extends AbstractLinearOpMode {
         //  Wait for start button ;
         this.waitToPressStart();
 
+        //  Must be called in loop ;
+        this.drive(VELOCITY);
         while (opModeIsActive() && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())) {
-
-            //  Must be called in loop ;
-            this.drive(power);
 
             int[] argb = this.colorSensor.argb();
             telemetry.addData("Alpha", argb[Constants.COLOR_ALPHA]);
@@ -97,6 +97,8 @@ public class ColorSensorSample extends AbstractLinearOpMode {
             // send the info back to driver station using telemetry function.
             //  telemetry.clearAll();
             //  telemetry.addData("Distance (cm)", String.format(Locale.US, "%.02f", this.colorSensor.getDistance()));
+
+            idle();
         }
 
         //  Found Red or Blue ;

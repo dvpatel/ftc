@@ -1,3 +1,7 @@
+SKYSTONE5.2
+road-runner
+road-runner-quickstart
+
 SKYSTONE/doc/
 SKYSTONE/gradle/
 SKYSTONE/libs/
@@ -13,6 +17,9 @@ SKYSTONE/local.properties
 SKYSTONE/settings.gradle
 
 SKYSTONE/build/
+
+SKYSTONE/.github
+SKYSTONE/.gitignore
 
 build.gradle
 gradle*

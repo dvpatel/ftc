@@ -1,2 +1,13 @@
 https://github.com/FIRST-Tech-Challenge/SKYSTONE/wiki
 
+//  RoadRunner
+https://github.com/acmerobotics/road-runner-quickstart
+
+//  check / test for bulk read
+https://github.com/OpenFTC/RevExtensions2
+
+//  OpenCV
+https://github.com/OpenFTC/EasyOpenCV
+
+
+https://first.global/fgc/robot-kit/
