@@ -88,4 +88,8 @@ public final class Constants {
     public static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
     public static final double P_DRIVE_COEFF = 0.15;     // Larger is more responsive, but also less stable
 
+    // Robot & Tile Dimensions
+    public static final int TILE_LENGTH = 24;
+    public static final int ROBOT_LENGTH = 81;
+
 }
