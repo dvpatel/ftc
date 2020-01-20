@@ -75,7 +75,6 @@ public class GameBot {
 
         //  MotorPID cannot be a singleton;  Otherwise internal state is maintained and prevents multiple turns;
         MotorControllerEx motorPID = new MotorControllerEx();
-        motorPID.enableDrivePID(Constants.MOTOR_MAX_VELOCITY);
         return motorPID;
     }
 
