@@ -27,9 +27,8 @@ public class FoundationSystem {
 
         //  Offset by 10 degrees;  or fix left servo so that properly positioned;
 
-        this.foundationLeftServo.setPosition(this.calculatePosition(degrees+10));
+        this.foundationLeftServo.setPosition(this.calculatePosition(degrees + 10));
         this.foundationRightServo.setPosition(this.calculatePosition(degrees));
-
     }
 
     public void triggerDown() {
@@ -40,16 +39,14 @@ public class FoundationSystem {
         this.setPositionByDegrees(MIN_POS_DEGREE);
     }
 
-
-    public double[] triggerPosition(Gamepad gamepad) {
-        //  gamepad1;
-        if (gamepad.right_trigger > 0.25) {
+    public double[] triggerPosition(float leftTrigger, float rightTrigger) {
+        if (rightTrigger > 0.25) {
             this.triggerDown();
-        } else if (gamepad.left_trigger > 0.25) {
+        } else if (leftTrigger > 0.25) {
             this.triggerUp();
         }
 
-        double[] r = { this.foundationLeftServo.getPosition(), this.foundationRightServo.getPosition() };
+        double[] r = {this.foundationLeftServo.getPosition(), this.foundationRightServo.getPosition()};
         return r;
     }
 }
