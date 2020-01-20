@@ -18,15 +18,8 @@ public class LiftSystem {
     private ServoController linearSlideServo;
     private ServoController linearArmServo;
 
-    //  only for boolean buttons;
-    private boolean pickupInProgress;
-    private boolean backToBaseInProgress;
-    private boolean XinProgress;
-    private boolean BinProgress;
-
     private static final double SLIDE_COUNTER_MAX = 50.0;
     private double slideCounter;
-    private double slidePos;
 
     private static final double POWER_LEVEL = 0.65;
 
@@ -49,14 +42,6 @@ public class LiftSystem {
         this.myOpMode = myOpMode;
     }
 
-    public LinearOpMode getLinearOpMode() {
-
-        if (this.myOpMode == null) {
-            throw new NullPointerException("LinearOpMode not set.");
-        }
-
-        return this.myOpMode;
-    }
 
     public SimpleMotor getLinearSlideMotor() {
         return this.linearSlideMotor;
@@ -70,39 +55,25 @@ public class LiftSystem {
         return this.linearArmServo;
     }
 
-    private boolean armState = false;
-
     //  Used in tele with Gamepad;
     //  returns motor positio, arm position, slideservo position;
 
-    public double[] autoMode(Gamepad gamepad) {
+    public void drive(float power) {
+        float yVal = power;
 
         //  If max or min height, stop;
-        float yVal = -gamepad.left_stick_y;
         if (((this.linearSlideMotor.getCurrentPosition() > Constants.SIMPLE_WHEEL_MAX_TICKS) && yVal > 0) ||
                 ((this.linearSlideMotor.getCurrentPosition() < 10) && yVal < 0)) {
             yVal = 0;
         }
         this.linearSlideMotor.drive(yVal);
+    }
 
-
-        //  Auto pickup stones
-        if (gamepad.y && !this.pickupInProgress) {
-            this.pickupInProgress = true;
-            this.pickup();
-            this.pickupInProgress = false;
-        }
-
-        //  go back to base
-        if (gamepad.a && !this.backToBaseInProgress) {
-            this.backToBaseInProgress = true;
-            this.backToBase();
-            this.backToBaseInProgress = false;
-        }
+    public void positionSlideServo(float positionValue) {
 
         //  -1 to 1  -->  very sensitive
         //  -1000 to 1000;  Move slide;
-        double inp = -gamepad.right_stick_y;
+        double inp = positionValue;
         if (inp > 0) {
             slideCounter++;
 
@@ -122,21 +93,12 @@ public class LiftSystem {
             double slidePos = slideCounter / SLIDE_COUNTER_MAX;
             this.linearSlideServo.setPosition(slidePos);
         }
-        myOpMode.telemetry.addData("ServoPos", this.linearSlideServo.getPosition());
-        myOpMode.telemetry.update();
-
-
-        //  open, close
-        this.linearArmServo.linearSlideArmTriggerPosition(gamepad.dpad_left, gamepad.dpad_right);
-        double[] r = {this.linearSlideMotor.getCurrentPosition(), this.linearArmServo.getPosition(), this.linearSlideServo.getPosition()};
-        return r;
 
     }
 
     public int lift(double targetDistanceInInches) {
         return this.linearSlideMotor.drive(myOpMode, targetDistanceInInches, POWER_LEVEL);
     }
-
 
     public int backToBase() {
 
@@ -208,7 +170,6 @@ public class LiftSystem {
         this.linearSlideServo.setPosition(pos);
     }
 
-
     public void grabObject() {
         this.linearArmServo.setPosition(1.0);
     }
@@ -221,5 +182,4 @@ public class LiftSystem {
         this.linearSlideMotor.stop();
         this.backToBase();
     }
-
 }
