@@ -26,8 +26,12 @@ public class GamepadDriver {
         return stickValue * Constants.MOTOR_MAX_VELOCITY;
     }
 
-    public void changeDrivingDirection() {
-        this.goReverse = !this.goReverse;
+    public void putInReverse() {
+        this.goReverse = true;
+    }
+
+    public void putInDrive() {
+        this.goReverse = false;
     }
 
     public boolean getDrivingDirection() {
