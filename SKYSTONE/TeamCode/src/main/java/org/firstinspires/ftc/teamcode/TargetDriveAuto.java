@@ -9,7 +9,7 @@ import org.blueprint.ftc.core.Driver;
 import org.blueprint.ftc.core.IMUController;
 import org.blueprint.ftc.core.MotorControllerEx;
 
-@Autonomous(name = "TargetDrive", group = "Auto")
+@Autonomous(name = "TargetDrive")
 @Disabled
 public class TargetDriveAuto extends AbstractLinearOpMode {
 
