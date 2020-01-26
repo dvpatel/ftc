@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
@@ -9,6 +10,7 @@ import org.blueprint.ftc.core.Constants;
 import org.blueprint.ftc.core.Driver;
 
 @Autonomous(name = "DriveToLine", group = "Auto")
+@Disabled
 public class DriveToLine extends AbstractLinearOpMode {
 
     private Driver driver;
