@@ -47,20 +47,28 @@ public class ServoController {
 
         if (leftTrigger) {
             //  open;
-            this.openGripper();
+            this.openGripper(true);
         } else if (rightTrigger) {
-            this.closeGripper();
+            this.closeGripper(true);
         }
 
         return this.servo.getPosition();
     }
 
-    public void openGripper() {
-        this.setPositionByDegrees(0);
+    public void openGripper(boolean input) {
+
+        if (input) {
+            this.setPositionByDegrees(0);
+        }
+
     }
 
-    public void closeGripper() {
-        this.setPositionByDegrees(90);
+    public void closeGripper(boolean input) {
+
+        if (input) {
+            this.setPositionByDegrees(90);
+        }
+
     }
 
     public void setPosition(double inp) {
