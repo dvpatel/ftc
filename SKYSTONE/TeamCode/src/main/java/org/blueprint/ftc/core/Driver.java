@@ -34,19 +34,19 @@ public class Driver {
     private void setRightMotor(HardwareMap hardwareMap, String rightFrontDeviceName, String rightBackDeviceName) {
         this.rightFrontMotor = (DcMotorEx) hardwareMap.dcMotor.get(rightFrontDeviceName);
         this.rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
 
         this.rightBackMotor = (DcMotorEx) hardwareMap.dcMotor.get(rightBackDeviceName);
         this.rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     private void setLeftMotor(HardwareMap hardwareMap, String leftFrontDeviceName, String leftBackDeviceName) {
         this.leftFrontMotor = (DcMotorEx) hardwareMap.dcMotor.get(leftFrontDeviceName);
         this.leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.leftFrontMotor.setDirection(DcMotor.Direction.REVERSE);
 
         this.leftBackMotor = (DcMotorEx) hardwareMap.dcMotor.get(leftBackDeviceName);
         this.leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.leftBackMotor.setDirection(DcMotor.Direction.REVERSE);
     }
 
     //  Must set properly for driving;  From MaxVelocityTest
