@@ -20,7 +20,7 @@ public class DriveToLine extends AbstractLinearOpMode {
     private int quadrant;
 
     private int powerToStrafe;
-    private int distanceToQuadrant;
+    private float distanceToQuadrant;
 
     @Override
     public void initOpMode() throws InterruptedException {

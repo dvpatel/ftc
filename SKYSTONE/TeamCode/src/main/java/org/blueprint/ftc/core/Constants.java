@@ -152,5 +152,5 @@ public final class Constants {
     public static float DEADZONE = 0.10f;
 
     // Robot & Tile Dimensions
-    public static final int TILE_LENGTH = 24;
+    public static final float TILE_LENGTH = 24.0f;
 }
