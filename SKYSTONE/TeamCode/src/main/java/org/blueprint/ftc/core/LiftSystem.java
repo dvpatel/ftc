@@ -93,58 +93,67 @@ public class LiftSystem {
         return this.linearSlideMotor.drive(myOpMode, targetDistanceInInches, POWER_LEVEL);
     }
 
-    public int backToBase() {
+    public int backToBase(boolean input) {
 
-        //  back:  0.9  (243 degrees)
-        //  forward:  0.29 (78.3)
-        //  down;
-        //  this.linearSlideServo.setPosition(0.666);
-        //  this.moveForwardSlide();
+        if (input) {
 
-        //  Go back to starting position;
-        this.lift(0);
-        return this.linearSlideMotor.getCurrentPosition();
+            //  back:  0.9  (243 degrees)
+            //  forward:  0.29 (78.3)
+            //  down;
+            //  this.linearSlideServo.setPosition(0.666);
+            //  this.moveForwardSlide();
+
+            //  Go back to starting position;
+            this.lift(0);
+
+        }
+
+        return this.getCurrentPosition();
     }
 
-    public int pickup() {
+    public int pickup(boolean input) {
 
-        //  Go back starting position;
-        this.moveForwardSlide();
-        this.lift(0);
-        myOpMode.sleep(250);
+        if (input) {
 
-        //  consider offset;  Start at 11.50";
-        double startingPoint = 12.50;
+            //  Go back starting position;
+            this.moveForwardSlide();
+            this.lift(0);
+            myOpMode.sleep(250);
 
-        //  inches;
-        this.lift(startingPoint);  //  POS: 8854;  Don't chnage this.
-        this.moveBackSlide();
-        this.releaseObject();
-        myOpMode.sleep(750);
+            //  consider offset;  Start at 11.50";
+            double startingPoint = 12.50;
 
-        //  Double check;
-        //  Was -4.85;  Target is 6.65
+            //  inches;
+            this.lift(startingPoint);  //  POS: 8854;  Don't chnage this.
+            this.moveBackSlide();
+            this.releaseObject();
+            myOpMode.sleep(750);
+
+            //  Double check;
+            //  Was -4.85;  Target is 6.65
 //        this.lift(6.65);  //  POS:  ~7890;  Don't change this.
-        this.lift(10.0);  //  POS:  ~7890;  Don't change this.
-        myOpMode.sleep(500);
+            this.lift(10.0);  //  POS:  ~7890;  Don't change this.
+            myOpMode.sleep(500);
 
-        this.grabObject();
-        myOpMode.sleep(500);  //  Don't change this.
+            this.grabObject();
+            myOpMode.sleep(500);  //  Don't change this.
 
-        //  Was 12.0
-        this.lift(19.65);    //  POS:  ~9645
-        myOpMode.sleep(750);
+            //  Was 12.0
+            this.lift(19.65);    //  POS:  ~9645
+            myOpMode.sleep(750);
 
-        this.moveForwardSlide();
-        myOpMode.sleep(500);
+            this.moveForwardSlide();
+            myOpMode.sleep(500);
 
-        //  Back to base;
-        this.lift(0);
+            //  Back to base;
+            this.lift(0);
 
-        //  this.moveForwardSlide(0.40);  //  0.35*270 degrees
-        this.moveForwardSlide(0.37);  //  0.35*270 degrees
+            //  this.moveForwardSlide(0.40);  //  0.35*270 degrees
+            this.moveForwardSlide(0.37);  //  0.35*270 degrees
 
-        return this.linearSlideMotor.getCurrentPosition();
+        }
+
+        return this.getCurrentPosition();
     }
 
     public int getCurrentPosition() {
@@ -173,6 +182,6 @@ public class LiftSystem {
 
     public void reset() {
         this.linearSlideMotor.stop();
-        this.backToBase();
+        this.backToBase(true);
     }
 }
