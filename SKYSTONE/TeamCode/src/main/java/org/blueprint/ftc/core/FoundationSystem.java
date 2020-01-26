@@ -31,19 +31,27 @@ public class FoundationSystem {
         this.foundationRightServo.setPosition(this.calculatePosition(degrees));
     }
 
-    public void triggerDown() {
-        this.setPositionByDegrees(90);
+    public void triggerDown(boolean input) {
+
+        if (input) {
+            this.setPositionByDegrees(90);
+        }
+
     }
 
-    public void triggerUp() {
-        this.setPositionByDegrees(MIN_POS_DEGREE);
+    public void triggerUp(boolean input) {
+
+        if (input) {
+            this.setPositionByDegrees(MIN_POS_DEGREE);
+        }
+
     }
 
     public double[] triggerPosition(float leftTrigger, float rightTrigger) {
         if (rightTrigger > 0.25) {
-            this.triggerDown();
+            this.triggerDown(true);
         } else if (leftTrigger > 0.25) {
-            this.triggerUp();
+            this.triggerUp(true);
         }
 
         double[] r = {this.foundationLeftServo.getPosition(), this.foundationRightServo.getPosition()};
