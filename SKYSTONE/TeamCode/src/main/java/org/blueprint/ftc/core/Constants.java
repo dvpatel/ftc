@@ -2,10 +2,6 @@ package org.blueprint.ftc.core;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-
-import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
-
 @Config
 public final class Constants {
 
@@ -45,10 +41,13 @@ public final class Constants {
     public static final int WHEEL_DIAMETER = 4; // inches ;
     public static final int WHEEL_WIDTH = 2; // inches ;
 
-    public static final int MOTOR_TICK_COUNT = 1120;   //  ticks per revoluion;
-    public static final int MOTOR_GEAR_RATIO = 40;  //  NeverRest 40; 40:1 gearbox
-    public static final int MOTOR_PPR = 280;  //  NeverRest 40; 40:1 gearbox;  40*7
-    public static final int MOTOR_NO_LOAD_RPM = 160;
+    public static final double MOTOR_TICK_COUNT = 537.6;   //  ticks per revoluion for Andymark Orbital 20;
+    public static final double MOTOR_GEAR_RATIO = 19.2;  //  NeverRest 40; 40:1 gearbox
+    public static final double MOTOR_PPR = 134.4;  //  Orbital 20; 19.2:1 gearbox;  19.2*7
+    public static final int MOTOR_NO_LOAD_RPM = 340;
+    public static final double TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
+    public static final double DRIVETRAIN_GEAR_RATIO = 45.0/35.0;  //  Ratio with modified gears;
+    public static final double TICK_GEAR_RATIO = Constants.TICK_DIAMETER_RATIO / Constants.DRIVETRAIN_GEAR_RATIO ;
 
     public static int MOTOR_MAX_VELOCITY = 2740;  //  ticks per second;  Set from MaxVelocityTest;  was 2900
     public static int DEFAULT_VELOCITY = (int) (0.90*MOTOR_MAX_VELOCITY);  //  ticks per second;
@@ -56,14 +55,12 @@ public final class Constants {
     //  strafe != forward distance.  Need this factor to match.
     public static double STRAFE_DISTANCE_FACTOR = 1.1424;
 
-    public static final double TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
-    public static final double DRIVETRAIN_GEAR_RATIO = 45.0/35.0;  //  Ratio with modified gears;
-    public static final double TICK_GEAR_RATIO = Constants.TICK_DIAMETER_RATIO / Constants.DRIVETRAIN_GEAR_RATIO ;
 
-    //  For AndyMark motor connected to linear slide system
+    //  For AndyMark Neverest 40 motor connected to linear slide system
+    public static final int SIMPLE_MOTOR_TICK_COUNT = 1120;  //  For neverest classic 40
     public static final int SIMPLE_WHEEL_DIAMETER = 2; // inches ;
     public static final double SIMPLE_WHEEL_DISTANCE = Constants.SIMPLE_WHEEL_DIAMETER*Math.PI;  //  6.2857 inches;
-    public static final double SIMPLE_TICK_DIAMETER_RATIO = MOTOR_TICK_COUNT / SIMPLE_WHEEL_DISTANCE; // 178.1822 ticks / inches
+    public static final double SIMPLE_TICK_DIAMETER_RATIO = SIMPLE_MOTOR_TICK_COUNT / SIMPLE_WHEEL_DISTANCE; // 178.1822 ticks / inches
     public static final double SIMPLE_WHEEL_MAX_DISTANCE = 22.5; // inches;
     public static final double SIMPLE_WHEEL_MAX_TICKS = SIMPLE_WHEEL_MAX_DISTANCE*SIMPLE_TICK_DIAMETER_RATIO; // inches;
 
@@ -89,10 +86,10 @@ public final class Constants {
 
     //  Will need to tune these for driving straight;  See MaxVelocityTest.java
     //  frontleft, frontright, backleft, backright
-    public static double PID_DRIVE_KP = 1.18721;
-    public static double PID_DRIVE_KI = 0.118721;
-    public static double PID_DRIVE_KD = 0.0;
-    public static double PID_DRIVE_KF = 11.8721;
+    public static double PID_DRIVE_KP = 1.0;
+    public static double PID_DRIVE_KI = 0.152;
+    public static double PID_DRIVE_KD = 0.0375;
+    public static double PID_DRIVE_KF = 11.0;     //  was never set;  multiply P by 10?  Not neede if using I
 
     //  Will need to tune these for turning;
     // Speed of wheels while slowing down
@@ -152,9 +149,8 @@ public final class Constants {
     public static final float DRIVETRAIN_SECOND_QUADRANT_CENTER = Constants.TILE_SIZE + ((Constants.TILE_SIZE - Constants.DRIVETRAIN_LENGTH) / 2);
 
     //  Tune this for gamepad.
-    public static double DEADZONE = 0.25;
-    
+    public static float DEADZONE = 0.10f;
+
     // Robot & Tile Dimensions
     public static final int TILE_LENGTH = 24;
-    public static final int ROBOT_LENGTH = 81;
 }
