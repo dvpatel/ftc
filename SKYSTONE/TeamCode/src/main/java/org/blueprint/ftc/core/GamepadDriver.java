@@ -26,16 +26,41 @@ public class GamepadDriver {
         return stickValue * Constants.MOTOR_MAX_VELOCITY;
     }
 
-    public void putInReverse() {
-        this.goReverse = true;
+    public void putInReverse(boolean inp) {
+
+        if (inp) {
+            this.goReverse = true;
+        }
+
     }
 
-    public void putInDrive() {
-        this.goReverse = false;
+    public void putInDrive(boolean inp) {
+
+        if (inp) {
+            this.goReverse = false;
+        }
+
     }
 
     public boolean getDrivingDirection() {
         return this.goReverse;
+    }
+
+    public void driveTest(float driveForward, float sideways, float turn) {
+
+        //  this.gpd.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+
+        double leftFront = driveForward;
+        double rightFront = driveForward;
+        double leftBack = driveForward;
+        double rightBack = driveForward;
+
+        this.driver.velocityDifferential(
+                toVelocity(leftFront),
+                toVelocity(rightFront),
+                toVelocity(leftBack),
+                toVelocity(rightBack));
+
     }
 
     public void drive(float driveForward, float sideways, float turn) {
@@ -43,9 +68,12 @@ public class GamepadDriver {
         double forward = this.getDrivingDirection() ? driveForward : -driveForward;
 
         //  Buffer;
+        //  Needed if using gamepad.setJoystickDeadzone
+        /*
         if (Math.abs(forward) < DEADZONE) forward = 0;
         if (Math.abs(sideways) < DEADZONE) sideways = 0;
         if (Math.abs(turn) < DEADZONE) turn = 0;
+         */
 
         double leftFront = forward + sideways + turn;
         double rightFront = forward - sideways - turn;
