@@ -47,14 +47,21 @@ public class ServoController {
 
         if (leftTrigger) {
             //  open;
-            this.setPositionByDegrees(0);
+            this.openGripper();
         } else if (rightTrigger) {
-            this.setPositionByDegrees(90);
+            this.closeGripper();
         }
 
         return this.servo.getPosition();
     }
 
+    public void openGripper() {
+        this.setPositionByDegrees(0);
+    }
+
+    public void closeGripper() {
+        this.setPositionByDegrees(90);
+    }
 
     public void setPosition(double inp) {
         this.servo.setPosition(Range.clip(inp, 0, 1.0));

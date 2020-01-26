@@ -17,9 +17,9 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
     private Driver driver;
     private IMUController imu;
 
-    private static final int DISTANCE_IN_INCHES = 36;
+    private static final int DISTANCE_IN_INCHES = 48;
     private static final int TURN_ANGLE = 90;
-    private static final int SLEEP_TIME = 250;
+    private static final int SLEEP_TIME = 5000;
 
     @Override
     public void initOpMode() throws InterruptedException {
@@ -57,7 +57,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
 
         telemetry.addData("Strafe:  ", "strafe left");
         telemetry.update();
-        this.strafeLeft(24, 0.50*Constants.DEFAULT_VELOCITY);
+        this.strafeLeft(DISTANCE_IN_INCHES, 0.50 * Constants.DEFAULT_VELOCITY);
         sleep(SLEEP_TIME);
 
         //  drive backward 12 inches ;
@@ -69,7 +69,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
         //  Strafe 12 inches right ; both values must be negative ;
         telemetry.addData("Strafe:  ", "strafe 6 inches right");
         telemetry.update();
-        this.strafeRight(24, 0.50*Constants.DEFAULT_VELOCITY);
+        this.strafeRight(DISTANCE_IN_INCHES, 0.50 * Constants.DEFAULT_VELOCITY);
         sleep(SLEEP_TIME);
 
         //  Turn 90 degrees to the right
@@ -86,6 +86,22 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
         this.turnLeft(TURN_ANGLE, Constants.MOTOR_MAX_VELOCITY);
         telemetry.addData("GyroTurn:  Done, ", imu.getAngle());
         telemetry.update();
+        sleep(SLEEP_TIME);
+
+        telemetry.addData("GyroTurn:  right ", "90X2 degrees");
+        telemetry.update();
+        this.turnRight(2 * TURN_ANGLE, Constants.MOTOR_MAX_VELOCITY);
+        telemetry.addData("GyroTurn:  Done, ", imu.getAngle());
+        telemetry.update();
+        sleep(SLEEP_TIME);
+
+        //  Turn 90 degrees left;  note degrees direction and velocity
+        telemetry.addData("GyroTurn: left  ", "90X2 degrees??");
+        telemetry.update();
+        this.turnLeft(2 * TURN_ANGLE, Constants.MOTOR_MAX_VELOCITY);
+        telemetry.addData("GyroTurn:  Done, ", imu.getAngle());
+        telemetry.update();
+        sleep(SLEEP_TIME);
 
     }
 }

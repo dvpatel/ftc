@@ -25,6 +25,12 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         this.rosie.getDriver().stop();
     }
 
+    protected void drive(double velocity) {
+        Driver driver = this.rosie.getDriver();
+        driver.setStopAndResetMode();
+        driver.driveDifferential(velocity, velocity);
+    }
+
     protected void driveForward(double distance, double velocity) {
         this.drive(distance, velocity);
     }
@@ -52,12 +58,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         this.turn(-degrees, velocity);
     }
 
-    protected void drive(double velocity) {
-        Driver driver = this.rosie.getDriver();
-        driver.setStopAndResetMode();
-        driver.driveDifferential(velocity, velocity);
-    }
-
     //  PIDF optimized for driving, NOT strafing.  Strafing stalls.
     //  Reverse:  this.drive(-distance, -velocity);
     protected void drive(double distanceInInches, double velocity) {
@@ -76,24 +76,22 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
 
     //  PIDF optimized for driving, NOT strafing.  Strafing stalls.
     protected void strafe(double distanceInInches, double velocity) {
-
-        this.rosie.getIMUController().resetAngle();
-
         Driver driver = this.rosie.getDriver();
 
         int ticks = (int)(driver.calculateTicks(distanceInInches) * Constants.STRAFE_DISTANCE_FACTOR);
-
-        telemetry.addData("Target Ticks", ticks );
 
         driver.setStopAndResetMode();
         driver.strafeDifferential(velocity, velocity);
         while (!driver.distanceReached(ticks)) {
             telemetry.addData("Strafe: ", "Running");
+            telemetry.addData("Target Ticks", ticks );
+
+            int[] cp = driver.getCurrentPosition();
+            telemetry.addData("Actual Ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] );
+
             telemetry.update();
         }
 
-        int[] cp = driver.getCurrentPosition();
-        telemetry.addData("Actual Ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] );
         driver.stop();
     }
 
@@ -105,7 +103,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
 
     protected void strafe(double velocity) {
         //  positive velocity strafe left; negative strafe right
-
         Driver driver = this.rosie.getDriver();
         driver.setStopAndResetMode();
         driver.strafeDifferential(velocity, velocity);
@@ -123,57 +120,31 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         IMUController imu = this.rosie.getIMUController();
         imu.resetAngle();
 
+        //  Using external PID;  Run motors with encoders;
+        driver.setStopAndResetMode();
+        driver.setRunWithEncoderOffMode();
+
         while (!motor.angleOnTarget()) {
-            //  NOTE:  imu.getAngle returns positive on left turn, negative on right turn
+            //  NOTE:  Rotation on Z-Axis, therefore
+            //  imu.getAngle returns positive on left turn, negative on right turn
             //  Negative degrees means left turn
-            telemetry.addData("Degrees", -degrees);
-            telemetry.addData("Angle", imu.getAngle());
-            telemetry.addData("Power", power);
+            telemetry.addData("Target Angle", -degrees);
+            telemetry.addData("Current Angle", imu.getAngle());
+
+            telemetry.addData("Current Power", power);
 
             double p = motor.calculateRotateCorrection(-degrees, imu.getAngle(), power);
-            telemetry.addData("Correction", p);
+            telemetry.addData("Power Correction", p);
 
             driver.powerDifferential(-p, p, -p, p);
-            telemetry.addData("IMU Angle", imu.getAngle());
             telemetry.update();
         }
 
         driver.stop();
+
+        driver.setStopAndResetMode();
+        driver.setRunWithEncoderMode();
     }
 
-    //  Don't use.
-    private void gyroDrive(double velocity) {
-
-        Driver driver = this.rosie.getDriver();
-        MotorControllerEx motor = this.rosie.getMotorPID();
-        IMUController imu = this.rosie.getIMUController();
-
-        //  index 0:  leftVelocityCorrection
-        //  index 1:  rightVelocityCorrection
-        //  index 2:  correction value ;
-        double[] p = motor.calculateDriveCorrection(velocity, imu.getAngle());
-        driver.driveDifferential(p[0], p[1]);
-    }
-
-    //  Don't use.
-    //  positive velocity strafe left; negative strafe right
-    private void gyroStrafe(double velocity) {
-        Driver driver = this.rosie.getDriver();
-        MotorControllerEx motor = this.rosie.getMotorPID();
-        IMUController imu = this.rosie.getIMUController();
-
-        //  index 0:  leftPowerCorrection
-        //  index 1:  rightPowerCorrection
-        //  index 2:  correction value ;
-        double[] p = motor.calculateDriveCorrection(velocity, imu.getAngle());
-        boolean showDebug = p[0] != 0 || p[1] != 0;
-
-        driver.strafeDifferential(p[0], p[1]);
-
-        if (showDebug) {
-            telemetry.addData("Non-Zero Angle.  Adjust velocity.", imu.getAngle());
-            telemetry.update();
-        }
-    }
 }
 

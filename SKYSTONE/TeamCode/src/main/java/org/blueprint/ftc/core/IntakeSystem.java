@@ -43,14 +43,16 @@ public class IntakeSystem {
         this.leftServo = new CRServoController(hardwareMap, Constants.INTAKE_LEFT_SERVO, Constants.INTAKE_LEFT_SERVO_REVERSE);
         this.rightServo = new CRServoController(hardwareMap, Constants.INTAKE_RIGHT_SERVO, Constants.INTAKE_RIGHT_SERVO_REVERSE);
 
-        this.setIntakeServosInitPosition();
+        //  this.setIntakeServosInitPosition();
     }
 
     public void setIntakeServosInitPosition() {
-        this.leftServo.setPower(Constants.INTAKE_LEFT_SERVO_INIT_POWER);
-        this.rightServo.setPower(Constants.INTAKE_RIGHT_SERVO_INIT_POWER);
+        if (!this.servosDown) {
+            this.leftServo.setPower(Constants.INTAKE_LEFT_SERVO_INIT_POWER);
+            this.rightServo.setPower(Constants.INTAKE_RIGHT_SERVO_INIT_POWER);
 
-        this.servosDown = true;
+            this.servosDown = true;
+        }
     }
 
     public void setIntakeServosPower(double power) {
@@ -82,19 +84,15 @@ public class IntakeSystem {
     }
 
     //  Game mode w/ Switch and right, left bumper
-    public void autoMode(Gamepad gamepad) {
-        if (gamepad.left_bumper) {
-            this.intakePower = -1;
+    public void autoMode(boolean leftBumper, boolean rightBumper, boolean isOff) {
+        if (leftBumper) {
+            this.intakePower = -1.0;
             this.isOn = true;
-        }
-
-        if (gamepad.right_bumper) {
-            this.intakePower = 1;
+        } else if (rightBumper) {
+            this.intakePower = 1.0;
             this.isOn = true;
-        }
-
-        if (gamepad.a) {
-            this.intakePower = 0;
+        } else if (isOff) {
+            this.intakePower = 0.0;
             this.isOn = false;
             this.stop();
         }

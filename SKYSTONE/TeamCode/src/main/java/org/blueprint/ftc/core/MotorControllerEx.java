@@ -14,29 +14,11 @@ public class MotorControllerEx {
     //  private double correction ;
 
     public MotorControllerEx() {
-
-        // Set PID proportional value to produce non-zero correction value when robot veers off
-        // straight line. P value controls how sensitive the correction is.
-        this.pidDrive = new PIDController(Constants.PID_DRIVE_KP, Constants.PID_DRIVE_KI, Constants.PID_DRIVE_KD);
-
-
         // Set PID proportional value to start reducing power at about 50 degrees of rotation.
         // P by itself may stall before turn completed so we add a bit of I (integral) which
         // causes the PID controller to gently increase power if the turn is not completed.
         this.pidRotate = new PIDController(Constants.PID_ROTATE_KP, Constants.PID_ROTATE_KI, Constants.PID_ROTATE_KD);
     }
-
-    public void enableDrivePID(double velocity) {
-        // Set up parameters for driving in a straight line.
-        this.pidDrive.setSetpoint(0);            // Want to set PID value to 0;
-
-        // always positive;  power output
-        this.pidDrive.setOutputRange(0, velocity);
-
-        this.pidDrive.setInputRange(-90, 90);    // always positive;  angle
-        this.pidDrive.enable();                  //  Enable PID calculation
-    }
-
 
     public void enableRotatePID(double degrees, double power) {
 
@@ -62,29 +44,9 @@ public class MotorControllerEx {
         this.enableRotatePidCalled = true;
     }
 
-    //  Customize pid for drive ;
-    public void setDrivePID(double rkp, double rki, double rkd) {
-        this.pidDrive = new PIDController(rkp, rki, rkd);
-    }
-
-    //  Customize pid for rotation ;
-    public void setRotatePID(double rkp, double rki, double rkd) {
-        this.pidRotate = new PIDController(rkp, rki, rkd);
-    }
-
-
     public void disablePID(){
         this.pidDrive.disable();
     }
-
-    //  logic for driving straight; corrects if angle is not zero ;
-    public double[] calculateDriveCorrection(double velocity, double angle) {
-        // Use PID with imu input to drive in a straight line.
-
-        double correction = this.pidDrive.performPID(angle);
-        return new double[]{(velocity - correction), (velocity + correction), correction};
-    }
-
 
     public double calculateRotateCorrection(double degrees, double angle, double power) {
 
@@ -100,5 +62,4 @@ public class MotorControllerEx {
     public boolean angleOnTarget() {
         return this.pidRotate.onTarget() ;
     }
-
 }

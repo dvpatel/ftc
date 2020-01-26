@@ -49,10 +49,8 @@ public class Driver {
         this.leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-    //  Must set properly;
-    private void setVelocityPID() {
-        //  Set for each motor?
-
+    //  Must set properly for driving;  From MaxVelocityTest
+    private void setDriveVelocityPID() {
         //  Get values from MaxVelocityTest;
         this.leftFrontMotor.setVelocityPIDFCoefficients(Constants.PID_DRIVE_KP, Constants.PID_DRIVE_KI, Constants.PID_DRIVE_KD, Constants.PID_DRIVE_KF);
         this.rightFrontMotor.setVelocityPIDFCoefficients(Constants.PID_DRIVE_KP, Constants.PID_DRIVE_KI, Constants.PID_DRIVE_KD, Constants.PID_DRIVE_KF);
@@ -70,34 +68,27 @@ public class Driver {
         return (int) (distanceInInches * Constants.TICK_GEAR_RATIO) ;
     }
 
+    //  For driving forward and reverse;
     public void setTargetPosition(double distanceInInches) {
 
         //  run w/o encoders
-        //  Always reset;  starts at zero;
+        //  Always reset;  starts at zero;  Run in this order!
         this.setStopAndResetMode();
         this.setRunWithEncoderMode();
-
-        //  set target
+        this.setDriveVelocityPID();
         this.setTicksToTargets(distanceInInches);
-
-        //  Run to target position;
         this.setRunToPositionMode();
 
         //  Apply velocity, somewhere ;  MAKE sure to turn off encoder when done.
     }
 
+    //  for strafing;  Run max test and check if this will work.
     public void setStrafeTargetPosition(double distanceInInches) {
 
         //  run w/o encoders
         //  Always reset;  starts at zero;
         this.setStopAndResetMode();
         this.setRunWithEncoderOffMode();
-
-        //  set target
-        //  this.setTicksToTargetsForStrafe(distanceInInches);
-
-        //  Run to target position;
-        //  this.setRunToPositionMode();
 
         //  Apply velocity, somewhere ;  MAKE sure to turn off encoder when done.
     }
@@ -117,13 +108,11 @@ public class Driver {
         this.rightBackMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    private void setRunWithEncoderMode() {
+    public void setRunWithEncoderMode() {
         this.leftFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.rightFrontMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        this.setVelocityPID();
     }
 
     public void setRunWithEncoderOffMode() {
@@ -151,14 +140,16 @@ public class Driver {
     }
 
     public void setTicksToTargetsForStrafe(double distanceInInches) {
-        int ticks = this.calculateTicks(distanceInInches);
+
+        int ticks = (int) (this.calculateTicks(distanceInInches) * Constants.STRAFE_DISTANCE_FACTOR);
+
         this.leftFrontMotor.setTargetPosition(ticks);
         this.rightFrontMotor.setTargetPosition(-ticks);
         this.leftBackMotor.setTargetPosition(-ticks);
         this.rightBackMotor.setTargetPosition(ticks);
     }
 
-    private double normalizeVelocity(double velocity) {
+    private double normalizeVelocity(int velocity) {
         return Range.clip(velocity, -Constants.MOTOR_MAX_VELOCITY, Constants.MOTOR_MAX_VELOCITY);
     }
 

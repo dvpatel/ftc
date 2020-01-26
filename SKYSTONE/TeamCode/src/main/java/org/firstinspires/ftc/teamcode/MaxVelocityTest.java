@@ -15,29 +15,29 @@ import java.util.List;
 
 //  NOTE:  TEST WITH ROBOT LOAD!!!  DON'T PUT ON SKYSTONE BLOCK
 
-@TeleOp(name = "MaxVelocityTest", group = "Linear Opmode")
+@TeleOp(name = "MaxVelocityTest")
 @Disabled
 public class MaxVelocityTest extends LinearOpMode {
 
     private static final double DISTANCE = 48; //  inches
+
+    private List<DcMotorEx> motors = new ArrayList<DcMotorEx>();
 
     private DcMotorEx leftFrontMotor;
     private DcMotorEx rightFrontMotor;
     private DcMotorEx leftBackMotor;
     private DcMotorEx rightBackMotor;
 
-    int[] currentPosition = { 0, 0, 0, 0};
+    int[] currentPosition = {0, 0, 0, 0};
 
-    double[] currentVelocity = { 0, 0, 0, 0};
-    double[] maxVelocity = { 2900, 2900, 2900, 2900 };
+    double[] currentVelocity = {0, 0, 0, 0};
+    double[] maxVelocity = {0, 0, 0, 0};
 
-    double[] velocity = { 0, 0, 0, 0};
-
-    double[] P = { 1.1299, 1.1299, 1.1000, 1.1000};
-    double[] I = { 0.11299, 0.11299, 0.11, 0.11 };
-    double[] D = { 0, 0, 0, 0};
-    double[] F = { 11.2990, 11.2990, 11.0, 11.0 };
-
+    //  leftFront, rightFront, leftBack, rightBack;
+    double[] P = {0.0, 0.0, 0.0, 0.0};
+    double[] I = {0.0, 0.0, 0.0, 0.0};
+    double[] D = {0.0, 0.0, 0.0, 0.0};
+    double[] F = {0.0, 0.0, 0.0, 0.0};
 
     @Override
     public void runOpMode() {
@@ -46,19 +46,29 @@ public class MaxVelocityTest extends LinearOpMode {
 
         this.setupMotors();
 
+        waitForStart();
+
+        this.drivingTest();
+
+        this.stop();
+    }
+
+    private void drivingTest() {
+
+        telemetry.addData("Test Type:", "Driving");
+
         int distanceInTicks = this.toTicks(DISTANCE);
         telemetry.addData("Distance Ticks:", distanceInTicks);
 
-        waitForStart();
-
         //  Run this method to determine PIDF values;  Make sure robot is running with load!
-        this.calculatePIDF(distanceInTicks);
+        //  Will set maximum velocity and PIDF for each wheel!
+        this.calculatePIDF(distanceInTicks, 6);
         //  Update Constants file:  PID, MAX_Velocity;
 
-        //  Run this to validate PIDF values;  Besure to update maxVelocity and PIDF variables
-        //  this.testWithPIDFValues(distanceInTicks);
+        sleep(60000);
 
-        this.stop();
+        //  Run this to validate PIDF values;  Besure to update maxVelocity and PIDF variables
+        this.testWithPIDFValues(distanceInTicks);
     }
 
     private void testWithPIDFValues(int distanceInTicks) {
@@ -67,23 +77,31 @@ public class MaxVelocityTest extends LinearOpMode {
         this.setToEncoderMode();
 
         //  Set at 50% max velocity;
+        double[] velocity = {0, 0, 0, 0};
         for (int i = 0; i < 4; i++) {
-            velocity[i] = 0.15 * maxVelocity[i];
+            velocity[i] = 0.50 * maxVelocity[i];
         }
         this.setVelocity(velocity);
 
-        while (opModeIsActive() && !distanceReached(distanceInTicks)) {
+        //  NOTE:  TEST THIS with both distanceReached methods;
+        while (opModeIsActive() && !distanceReachedUnified(distanceInTicks)) {
 
             currentVelocity = this.getVelocity();
             currentPosition = this.getCurrentPosition();
 
             //  Returns ticks per second;
             telemetry.addData("Runtime", "%.03f", getRuntime());
-            telemetry.addData("Specified Velocity", "%.04f, %.04f, %.0f, %.0f",
+            telemetry.addData("Targeted Velocity", "%.04f, %.04f, %.0f, %.0f",
                     velocity[0], velocity[1], velocity[2], velocity[3]);
 
             telemetry.addData("Current Velocity", "%.04f, %.04f, %.0f, %.0f",
                     currentVelocity[0], currentVelocity[1], currentVelocity[2], currentVelocity[3]);
+
+            telemetry.addData("Delta Velocity", "%.04f, %.04f, %.0f, %.0f",
+                    (velocity[0]-currentVelocity[0]),
+                    (velocity[1]-currentVelocity[1]),
+                    (velocity[2]-currentVelocity[2]),
+                    (velocity[3]-currentVelocity[3]));
 
             telemetry.addData("Current Position", "%d, %d, %d, %d",
                     currentPosition[0], currentPosition[1], currentPosition[2], currentPosition[3]);
@@ -91,44 +109,48 @@ public class MaxVelocityTest extends LinearOpMode {
             telemetry.update();
         }
         this.stopPower();
-
-
     }
 
-    private List<double[]> cv = new ArrayList<double[]>();
+    private void calculatePIDF(int distanceInTicks, int count) {
 
-    private void calculatePIDF(int distanceInTicks) {
 
-        double[] maxV = { 0, 0, 0, 0 };
+        List<double[]> cv = new ArrayList<double[]>();
 
-        this.setToNoEncoder();
-        this.setMaxPower();
-        while (opModeIsActive() && !distanceReached(distanceInTicks)) {
-            cv.add(this.getVelocity());
-            idle();
+        //  Capture data in both directions;
+        boolean isReverse = false;
+        for (int i = 0; i < count; i++) {
+            this.setToNoEncoder();
+            this.setMaxPower(isReverse);
+            while (opModeIsActive() && !distanceReached(distanceInTicks)) {
+                cv.add(this.getVelocity());
+                idle();
+            }
+            this.stopPower();
+            isReverse = !isReverse;
+
+            sleep(2000);
         }
-        this.stopPower();
 
-        telemetry.addData("Count:  ", this.cv.size());
-        for(double[] cvItem : cv) {
+        for (double[] cvItem : cv) {
             for (int i = 0; i < cvItem.length; i++) {
-                if (cvItem[i] > maxV[i]) {
-                    maxV[i] = cvItem[i];
+                if (cvItem[i] > maxVelocity[i]) {
+                    maxVelocity[i] = cvItem[i];
                 }
             }
         }
 
         telemetry.addData("Maximum Velocity", "%.04f, %.04f, %.0f, %.0f",
-                maxV[0], maxV[1], maxV[2], maxV[3]);
+                maxVelocity[0], maxVelocity[1], maxVelocity[2], maxVelocity[3]);
 
         currentPosition = this.getCurrentPosition();
         telemetry.addData("Current Position", "%d, %d, %d, %d",
                 currentPosition[0], currentPosition[1], currentPosition[2], currentPosition[3]);
 
+        //  Capture data for all four wheels;
         //  Regardless of your maximum velocity, you can set the position PIDF values to:  P = 5.0
         //  32767 is the same for ALL motors;
         for (int i = 0; i < 4; i++) {
-            F[i] = 32767 / maxV[i];
+            F[i] = 32767 / maxVelocity[i];
             P[i] = 0.1 * F[i];
             I[i] = 0.1 * P[i];
             D[i] = 0;
@@ -162,19 +184,17 @@ public class MaxVelocityTest extends LinearOpMode {
         leftBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        for(int i = 0; i < 4; i++) {
-            leftFrontMotor.setVelocityPIDFCoefficients(P[i], I[i], D[i], F[i]);
-            leftFrontMotor.setPositionPIDFCoefficients(5.0);
+        leftFrontMotor.setVelocityPIDFCoefficients(P[0], I[0], D[0], F[0]);
+        leftFrontMotor.setPositionPIDFCoefficients(5.0);
 
-            rightFrontMotor.setVelocityPIDFCoefficients(P[i], I[i], D[i], F[i]);
-            rightFrontMotor.setPositionPIDFCoefficients(5.0);
+        rightFrontMotor.setVelocityPIDFCoefficients(P[1], I[1], D[1], F[1]);
+        rightFrontMotor.setPositionPIDFCoefficients(5.0);
 
-            leftBackMotor.setVelocityPIDFCoefficients(P[i], I[i], D[i], F[i]);
-            leftBackMotor.setPositionPIDFCoefficients(5.0);
+        leftBackMotor.setVelocityPIDFCoefficients(P[2], I[2], D[2], F[2]);
+        leftBackMotor.setPositionPIDFCoefficients(5.0);
 
-            rightBackMotor.setVelocityPIDFCoefficients(P[i], I[i], D[i], F[i]);
-            rightBackMotor.setPositionPIDFCoefficients(5.0);
-        }
+        rightBackMotor.setVelocityPIDFCoefficients(P[3], I[3], D[3], F[3]);
+        rightBackMotor.setPositionPIDFCoefficients(5.0);
     }
 
     private void setToNoEncoder() {
@@ -193,26 +213,30 @@ public class MaxVelocityTest extends LinearOpMode {
 
         leftFrontMotor = (DcMotorEx) hardwareMap.dcMotor.get(Constants.LEFT_FRONT_MOTOR_NAME);
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.motors.add(leftFrontMotor);
 
         leftBackMotor = (DcMotorEx) hardwareMap.dcMotor.get(Constants.LEFT_BACK_MOTOR_NAME);
         leftBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.motors.add(leftBackMotor);
 
         rightFrontMotor = (DcMotorEx) hardwareMap.dcMotor.get(Constants.RIGHT_FRONT_MOTOR_NAME);
         rightFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontMotor.setDirection(DcMotor.Direction.REVERSE);
+        this.motors.add(rightFrontMotor);
 
         rightBackMotor = (DcMotorEx) hardwareMap.dcMotor.get(Constants.RIGHT_BACK_MOTOR_NAME);
         rightBackMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackMotor.setDirection(DcMotor.Direction.REVERSE);
+        this.motors.add(rightBackMotor);
     }
 
     //  Returns ticks per second;
     private double[] getVelocity() {
         double[] v = {
-                leftFrontMotor.getVelocity(),
-                rightFrontMotor.getVelocity(),
-                leftBackMotor.getVelocity(),
-                rightBackMotor.getVelocity()};
+                Math.abs(leftFrontMotor.getVelocity()),
+                Math.abs(rightFrontMotor.getVelocity()),
+                Math.abs(leftBackMotor.getVelocity()),
+                Math.abs(rightBackMotor.getVelocity())};
         return v;
     }
 
@@ -226,14 +250,39 @@ public class MaxVelocityTest extends LinearOpMode {
     }
 
     private boolean distanceReached(int ticks) {
+
+        boolean result = false;
+        for (DcMotorEx motor : motors) {
+            if (Math.abs(motor.getCurrentPosition()) >= ticks) {
+                this.stopPower(motor);
+                result = true;
+            } else {
+                result = false;
+            }
+        }
+
+        return result;
+
+    }
+
+    private boolean distanceReachedUnified(int ticks) {
         return (leftFrontMotor.getCurrentPosition() >= ticks || rightFrontMotor.getCurrentPosition() >= ticks || leftBackMotor.getCurrentPosition() >= ticks || rightBackMotor.getCurrentPosition() >= ticks);
     }
 
-    private void setMaxPower() {
-        this.leftFrontMotor.setPower(1.0);
-        this.rightFrontMotor.setPower(1.0);
-        this.leftBackMotor.setPower(1.0);
-        this.rightBackMotor.setPower(1.0);
+    private void setMaxPower(boolean isReverse) {
+
+        double[] power = {1.0, 1.0, 1.0, 1.0};
+        if(isReverse) {
+            for (int i = 0; i < power.length; i++) {
+                power[i] = -1.0;
+            }
+        }
+
+        this.leftFrontMotor.setPower(power[0]);
+        this.rightFrontMotor.setPower(power[1]);
+        this.leftBackMotor.setPower(power[2]);
+        this.rightBackMotor.setPower(power[3]);
+
     }
 
     private void stopPower() {
@@ -241,6 +290,10 @@ public class MaxVelocityTest extends LinearOpMode {
         this.rightFrontMotor.setPower(0);
         this.leftBackMotor.setPower(0);
         this.rightBackMotor.setPower(0);
+    }
+
+    private void stopPower(DcMotorEx motor) {
+        motor.setPower(0);
     }
 
     private void setVelocity(double[] velocity) {
@@ -256,8 +309,8 @@ public class MaxVelocityTest extends LinearOpMode {
         //  4 inch diameter;  2" radius;  circumference:  12.5714;
 
         int ticks = 1120;        //  1120 ticks equals 1 rotation;
-        double gearRatio = 45.0/35.0;  //  rotations;
-        double wheelCircumference = 4*Math.PI;  //  4" diameters;
+        double gearRatio = 45.0 / 35.0;  //  rotations;
+        double wheelCircumference = 4 * Math.PI;  //  4" diameters;
         double rotation = distanceInInches / wheelCircumference;
         return (int) ((rotation / gearRatio) * ticks);
     }
