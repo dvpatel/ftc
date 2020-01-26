@@ -365,8 +365,8 @@ public class SkystoneDetector {
     }
 
     public double[] getTargetCoordinatesInInches() {
-        //  double[] r = { robotX/mmPerInch, robotY/mmPerInch, robotX/mmPerInch, robotBearing, targetRange, targetBearing, relativeBearing};
-        double[] r = { robotX/mmPerInch, robotY/mmPerInch, robotX/mmPerInch, robotBearing, targetRange/mmPerInch, targetBearing, relativeBearing};
+        //  X, Y, Z, Yaw, Hypotenuse, Theta, relativeBearing
+        double[] r = { robotX/mmPerInch, robotY/mmPerInch, robotZ/mmPerInch, robotBearing, targetRange/mmPerInch, targetBearing, relativeBearing};
         return r;
     }
 
