@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.Constants;
 import org.blueprint.ftc.core.Driver;
 import org.blueprint.ftc.core.FoundationSystem;
 import org.blueprint.ftc.core.GamepadDriver;
@@ -66,6 +68,10 @@ public class SkystoneTele extends AbstractLinearOpMode {
 
         this.gpd = this.rosie.getGamepadDriver();
 
+
+        //  Control joystick sensitivity;
+        gamepad1.setJoystickDeadzone(Constants.DEADZONE);
+        gamepad2.setJoystickDeadzone(Constants.DEADZONE);
     }
 
     //  Post start init logic;  robot can only expand after start of game or after press start
@@ -77,12 +83,33 @@ public class SkystoneTele extends AbstractLinearOpMode {
 
     @Override
     public void stopOpMode() {
+
+        this.stop();
+
         this.stopDriving();
         this.intakeSystem.stop();
-        this.foundationSystem.triggerUp();
+        this.foundationSystem.triggerUp(true);
         this.liftSystem.moveBackSlide();
     }
 
+    private void addGamepadTelemetry() {
+        telemetry.addData("Gamepad1.LeftStickY", gamepad1.left_stick_y);
+        telemetry.addData("Gamepad1.LeftStickX", gamepad1.left_stick_x);
+        telemetry.addData("Gamepad1.RightStickX", gamepad1.right_stick_x);
+        telemetry.addData("Gamepad1.B", gamepad1.b);
+        telemetry.addData("Gamepad1.X", gamepad1.x);
+        telemetry.addData("Gamepad1.LeftTrigger", gamepad1.left_trigger);
+        telemetry.addData("Gamepad1.RightTrigger", gamepad1.right_trigger);
+        telemetry.addData("Gamepad1.LeftBumper", gamepad1.left_bumper);
+        telemetry.addData("Gamepad1.RightBumper", gamepad1.right_bumper);
+        telemetry.addData("Gamepad1.A", gamepad1.a);
+        telemetry.addData("Gamepad2.LeftStickY", gamepad2.left_stick_y);
+        telemetry.addData("Gamepad2.RightStickY", gamepad2.right_stick_y);
+        telemetry.addData("Gamepad2.Y", gamepad2.y);
+        telemetry.addData("Gamepad2.A", gamepad2.a);
+        telemetry.addData("Gamepad2.DpadLeft", gamepad2.dpad_left);
+        telemetry.addData("Gamepad2.DpadRight", gamepad2.dpad_right);
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -94,50 +121,32 @@ public class SkystoneTele extends AbstractLinearOpMode {
 
         while (opModeIsActive()) {
 
+            //  this.addGamepadTelemetry();
+            telemetry.addData("Gamepad1", gamepad1);
+            telemetry.addData("Gamepad2", gamepad1);
+
             telemetry.addData("Driving Reverse", gpd.getDrivingDirection());
-            if (gamepad1.b) {
 
-                //  Change driving direction
-                this.gpd.putInReverse();
+            //  Change driving direction
+            this.gpd.putInReverse(gamepad1.b);
+            this.gpd.putInDrive(gamepad1.x);
 
-            } else if (gamepad1.x) {
+            this.foundationSystem.triggerUp(gamepad1.left_trigger > 0.25);
+            this.foundationSystem.triggerDown(gamepad1.right_trigger > 0.25);
 
-                this.gpd.putInDrive();
+            this.intakeSystem.autoMode(gamepad1.left_bumper, gamepad1.right_bumper, gamepad1.a);
 
-            } else if (gamepad1.left_trigger > 0.25) {
+            //  Automode to pickup block from storage
+            this.liftSystem.pickup(gamepad2.y);
 
-                this.foundationSystem.triggerUp();
+            //  put liftsystem back to base
+            this.liftSystem.backToBase(gamepad2.a);
 
-            } else if (gamepad1.right_trigger > 0.25) {
-
-                this.foundationSystem.triggerDown();
-
-            } else if (gamepad1.left_bumper || gamepad1.right_bumper || gamepad1.a) {
-
-                this.intakeSystem.autoMode(gamepad1.left_bumper, gamepad1.right_bumper, gamepad1.a);
-
-            } else if (gamepad2.y) {  //  gamepad2
-
-                this.liftSystem.pickup();  //  Automode to pickup block from storage
-
-            } else if (gamepad2.a) {
-
-                this.liftSystem.backToBase(); //  put liftsystem back to base
-
-            } else if (gamepad2.dpad_left) {
-
-                this.liftSystem.getLinearArmServo().openGripper();
-
-            } else if (gamepad2.dpad_right) {
-
-                this.liftSystem.getLinearArmServo().closeGripper();
-
-            }
-
-            telemetry.update();
+            this.liftSystem.getLinearArmServo().openGripper(gamepad2.dpad_left);
+            this.liftSystem.getLinearArmServo().closeGripper(gamepad2.dpad_right);
 
             //  forward, sideways, turn;
-            this.gpd.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            this.gpd.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
             //  Up / Down Linear
             this.liftSystem.drive(-gamepad2.left_stick_y);
@@ -145,10 +154,9 @@ public class SkystoneTele extends AbstractLinearOpMode {
             //  Up / Down slide
             this.liftSystem.positionSlideServo(-gamepad2.right_stick_y);
 
-            idle();
+            telemetry.update();
         }
 
         this.stopOpMode();
     }
-
 }
