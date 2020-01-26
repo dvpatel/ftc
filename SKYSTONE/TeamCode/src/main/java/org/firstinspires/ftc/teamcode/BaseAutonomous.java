@@ -6,7 +6,6 @@ public abstract class BaseAutonomous extends AbstractLinearOpMode {
 
     private boolean quadrantSelected;
 
-
     protected boolean isQuadrantSelected() {
         return this.quadrantSelected;
     }
