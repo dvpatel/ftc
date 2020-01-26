@@ -59,11 +59,11 @@ public class LiftSystemTele extends AbstractLinearOpMode {
         //  make sure power is between -1 and 1 ;
         telemetry.addData("LiftSystem:  ", "Pickup");
         telemetry.update();
-        this.liftSystem.pickup();
+        this.liftSystem.pickup(true);
         sleep(5000);
 
         telemetry.addData("LifeSystem:  ", "Back to base");
-        this.liftSystem.backToBase();
+        this.liftSystem.backToBase(true);
         telemetry.update();
         sleep(SLEEP_TIME);
 
