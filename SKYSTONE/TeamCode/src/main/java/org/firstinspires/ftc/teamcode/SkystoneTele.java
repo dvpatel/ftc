@@ -67,11 +67,6 @@ public class SkystoneTele extends AbstractLinearOpMode {
         this.liftSystem.setLinearOpMode(this);
 
         this.gpd = this.rosie.getGamepadDriver();
-
-
-        //  Control joystick sensitivity;
-        gamepad1.setJoystickDeadzone(Constants.DEADZONE);
-        gamepad2.setJoystickDeadzone(Constants.DEADZONE);
     }
 
     //  Post start init logic;  robot can only expand after start of game or after press start
@@ -122,8 +117,6 @@ public class SkystoneTele extends AbstractLinearOpMode {
         while (opModeIsActive()) {
 
             //  this.addGamepadTelemetry();
-            telemetry.addData("Gamepad1", gamepad1);
-            telemetry.addData("Gamepad2", gamepad1);
 
             telemetry.addData("Driving Reverse", gpd.getDrivingDirection());
 
