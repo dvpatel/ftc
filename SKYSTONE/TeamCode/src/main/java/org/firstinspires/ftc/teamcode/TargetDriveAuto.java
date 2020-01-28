@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
@@ -15,7 +17,7 @@ import static org.blueprint.ftc.core.Constants.STRAFE_SPEED;
 
 @Config
 @Autonomous()
-//  @Disabled
+@Disabled
 public class TargetDriveAuto extends AbstractLinearOpMode {
 
     private MotorControllerEx motor;
@@ -62,6 +64,8 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
         //  Put common init logic here
         this.initOpMode();
 
