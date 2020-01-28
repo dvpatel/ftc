@@ -8,10 +8,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.configuration.ConfigurationType;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.blueprint.ftc.core.Constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 //  NOTE:  TEST WITH ROBOT LOAD!!!  DON'T PUT ON SKYSTONE BLOCK
@@ -41,7 +44,6 @@ public class MaxVelocityTest extends LinearOpMode {
     private static double[] D = {d, d, d, d};
     private static double[] F = {f, f, f, f};
 
-    //  public static PIDCoefficients MOTOR_VELO_PID = new PIDCoefficients(1.0, 0.152, 0.0375);
     public double[] maxVelocity = {2820, 2820, 2820, 2820};
     int[] currentPosition = {0, 0, 0, 0};
     double[] currentVelocity = {0, 0, 0, 0};
@@ -54,11 +56,9 @@ public class MaxVelocityTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         this.setupMotors();
-
         waitForStart();
 
         if (opModeIsActive()) {
@@ -68,12 +68,44 @@ public class MaxVelocityTest extends LinearOpMode {
         this.stop();
     }
 
+    private void printMotorDetails() {
+        MotorConfigurationType mcType = leftFrontMotor.getMotorType();
+        String motorName = mcType.getDisplayName(ConfigurationType.DisplayNameFlavor.Normal);
+        double tpr = mcType.getTicksPerRev();
+        double achMaxRPMFrac = mcType.getAchieveableMaxRPMFraction();
+        double achMaxTPS = mcType.getAchieveableMaxTicksPerSecond();
+
+        double pPos = mcType.getHubPositionParams().getPidfCoefficients().p;
+        double iPos = mcType.getHubPositionParams().getPidfCoefficients().i;
+        double dPos = mcType.getHubPositionParams().getPidfCoefficients().d;
+        double fPos = mcType.getHubPositionParams().getPidfCoefficients().f;
+
+        double pVel = mcType.getHubVelocityParams().getPidfCoefficients().p;
+        double iVel = mcType.getHubVelocityParams().getPidfCoefficients().i;
+        double dVel = mcType.getHubVelocityParams().getPidfCoefficients().d;
+        double fVel = mcType.getHubVelocityParams().getPidfCoefficients().f;
+
+        telemetry.addData("MotorName", motorName);
+        telemetry.addData("TicksPerRev", tpr);
+        telemetry.addData("achMaxRPMFrac", achMaxRPMFrac);
+        telemetry.addData("achMaxTPS", achMaxTPS);
+        telemetry.addData("pPos", pPos);
+        telemetry.addData("iPos", iPos);
+        telemetry.addData("dPos", dPos);
+        telemetry.addData("fPos", fPos);
+        telemetry.addData("pVel", pVel);
+        telemetry.addData("iVel", iVel);
+        telemetry.addData("dVel", dVel);
+        telemetry.addData("fVel", fVel);
+
+        telemetry.addData("Default Velocity Coeffs:  ", Arrays.toString(this.getVelocityPIDFCoefficients()));
+        telemetry.addData("Default Position Coeffs:  ", Arrays.toString(this.getPositionPIDFCoefficients()));
+        telemetry.update();
+    }
+
     private void drivingTest() {
 
         telemetry.addData("Test Type:", "Driving");
-        // telemetry.addData("Default Velocity Coeffs:  ", this.getVelocityPIDFCoefficients());
-        // telemetry.addData("Default Position Coeffs:  ", this.getPositionPIDFCoefficients());
-        // telemetry.update();
 
         //  Run this method to determine PIDF values;  Make sure robot is running with load!
         //  Will set maximum velocity and PIDF for each wheel!
@@ -92,7 +124,7 @@ public class MaxVelocityTest extends LinearOpMode {
 
         double[] velocity = {0, 0, 0, 0};
         for (int i = 0; i < 4; i++) {
-            velocity[i] = 1 * maxVelocity[i];  //  Don't change.
+            velocity[i] = maxVelocity[i];
         }
 
         //  Verify PID values;
@@ -100,7 +132,6 @@ public class MaxVelocityTest extends LinearOpMode {
         this.setTicksToTargets(distanceInTicks);
         this.setRunToPositionMode();
 
-        //  Set at 50% max velocity;
         this.setVelocity(velocity);
 
         //  NOTE:  TEST THIS with both distanceReached methods;
