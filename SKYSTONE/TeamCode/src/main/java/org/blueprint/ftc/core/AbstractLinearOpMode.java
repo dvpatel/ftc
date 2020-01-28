@@ -63,7 +63,11 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     protected void drive(double distanceInInches, double velocity) {
         Driver driver = this.rosie.getDriver();
         driver.setTargetPosition(distanceInInches);
-        driver.drive(velocity);
+
+        //  When using Run-to-position, set max velocity;
+        //  driver.drive(velocity);
+        driver.drive(Constants.MOTOR_MAX_VELOCITY);
+
         while (opModeIsActive() && driver.motorsBusy()) {
             //  leftFront, rightFront, leftBack, rightBack;
             //  int[] cp = driver.getCurrentPosition();
