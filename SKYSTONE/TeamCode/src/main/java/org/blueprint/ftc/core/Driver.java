@@ -5,8 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-import org.blueprint.ftc.core.Constants;
-
 /**
  * Robot driver;  Always uses encoder mode.  PIDF must be reset if weight changes;  See MaxVelocityTest
  * RUN_USING_ENCODER:  Velocity in ticks per second of motor;  use setVelocity;  Need to determine with Load;
@@ -84,9 +82,7 @@ public class Driver {
         this.setStopAndResetMode();
         this.setRunWithEncoderMode();
         this.setDriveVelocityPID();
-        this.setPositionalPID();
         this.setTicksToTargets(distanceInInches);
-        this.setRunToPositionMode();
 
         //  Apply velocity, somewhere ;  MAKE sure to turn off encoder when done.
     }
@@ -140,12 +136,19 @@ public class Driver {
     }
 
     public void setTicksToTargets(double distanceInInches) {
+
+        //  Keep this order;
+
+        this.setPositionalPID();
+
         int ticks = this.calculateTicks(distanceInInches);
 
         this.leftFrontMotor.setTargetPosition(ticks);
         this.rightFrontMotor.setTargetPosition(ticks);
         this.leftBackMotor.setTargetPosition(ticks);
         this.rightBackMotor.setTargetPosition(ticks);
+
+        this.setRunToPositionMode();
     }
 
     public void setTicksToTargetsForStrafe(double distanceInInches) {
