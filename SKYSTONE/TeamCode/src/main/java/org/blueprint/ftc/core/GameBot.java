@@ -16,13 +16,10 @@ public class GameBot {
     private Driver driver;
 
     private GamepadDriver gamepadDriver;
-
     private SkystoneDetector skystonDetector;
-
     private IntakeSystem intakeSystem;
     private LiftSystem liftSystem;
     private FoundationSystem foundationSystem;
-
 
     private ElapsedTime period = new ElapsedTime();
 
@@ -39,36 +36,22 @@ public class GameBot {
         //  IMU ;  DON'T SET MODE.
         this.imu = new IMUController(hardwareMap);
 
-
         //  Build driver ;
         this.driver = new Driver(hardwareMap);
-
 
         //  Drive using gamepad ;
         this.gamepadDriver = new GamepadDriver(this.driver, this.imu);
 
-    }
+        this.colorSensor = new ColorSensorController(hardwareMap);
+        this.colorSensor.ledOn();
 
-    private void waitForCalibration() throws InterruptedException {
-    }
+        this.skystonDetector = new SkystoneDetector(hardwareMap);
 
-    public ElapsedTime getTimer() {
-        return this.period;
-    }
+        this.foundationSystem = new FoundationSystem(this.hardwareMap);
 
-    public ColorSensorController getColorSensorController() {
+        this.liftSystem = new LiftSystem(hardwareMap);
 
-        // get a reference to the color sensor.
-        if (this.colorSensor == null) {
-            this.colorSensor = new ColorSensorController(hardwareMap);
-            this.colorSensor.ledOn();
-        }
-
-        return this.colorSensor;
-    }
-
-    public IMUController getIMUController() {
-        return this.imu;
+        this.intakeSystem = new IntakeSystem(this.hardwareMap);
     }
 
     public MotorControllerEx getMotorPID() {
@@ -78,17 +61,20 @@ public class GameBot {
         return motorPID;
     }
 
+    public ColorSensorController getColorSensorController() {
+        return this.colorSensor;
+    }
+
+    public IMUController getIMUController() {
+        return this.imu;
+    }
+
     public Driver getDriver() {
         return this.driver;
     }
 
     public SkystoneDetector getSkystoneDetector() {
-
         //  Skystone detector, activate when ready ;
-        if (this.skystonDetector == null) {
-            this.skystonDetector = new SkystoneDetector(hardwareMap);
-        }
-
         return this.skystonDetector;
     }
 
@@ -97,41 +83,14 @@ public class GameBot {
     }
 
     public FoundationSystem getFoundationSystem() {
-        //  Setup short arm servo;
-        if (this.foundationSystem == null) {
-            this.foundationSystem = new FoundationSystem(this.hardwareMap);
-        }
-
         return this.foundationSystem;
     }
 
     public LiftSystem getLiftSystem() {
-        //  LiftSystem
-        if (this.liftSystem == null) {
-            this.liftSystem = new LiftSystem(hardwareMap);
-        }
-
         return this.liftSystem;
     }
 
-    public SimpleMotor getLinearSlideMotor() {
-        return this.getLiftSystem().getLinearSlideMotor();
-    }
-
-    public ServoController getLinearSlideServo() {
-        return this.getLiftSystem().getLinearSlideServo();
-    }
-
-    public ServoController getLinearArmServo() {
-        return this.getLiftSystem().getLinearArmServo();
-    }
-
     public IntakeSystem getIntakeSystem() {
-        //  IntakeSystem ;
-        if (this.intakeSystem == null) {
-            this.intakeSystem = new IntakeSystem(this.hardwareMap);
-        }
-
         return this.intakeSystem;
     }
 }
