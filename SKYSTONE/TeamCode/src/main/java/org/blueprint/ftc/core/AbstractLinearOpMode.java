@@ -25,42 +25,91 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         this.rosie.getDriver().stop();
     }
 
+    /**
+     * Driving using RUN_USING_ENCODER
+     * @param velocity
+     */
     protected void drive(double velocity) {
         Driver driver = this.rosie.getDriver();
         driver.setStopAndResetMode();
+        driver.setRunWithEncoderMode();
+        driver.setDriveVelocityPID();
         driver.driveDifferential(velocity, velocity);
     }
 
-    protected void driveForward(double distance, double velocity) {
-        this.drive(distance, velocity);
+    /**
+     * Strafing
+     * @param velocity
+     */
+    protected void strafe(double velocity) {
+        //  positive velocity strafe left; negative strafe right
+        Driver driver = this.rosie.getDriver();
+        driver.setStopAndResetMode();
+        driver.setRunWithEncoderMode();
+        driver.setDriveVelocityPID();
+        driver.strafeDifferential(velocity, velocity);
     }
 
-    protected void driveReverse(double distance, double velocity) {
+    /**
+     * Helper for drive forward using RUN_TO_POSITION MODE;
+     * @param distance
+     */
+    protected void driveForward(double distance) {
+        this.driveToTarget(distance);
+    }
+
+    /**
+     * Helper for reverse driving using RUN_TO_POSITION MODE;
+     * @param distance
+     */
+    protected void driveReverse(double distance) {
         //  Both velocity and distance needs to be negative to go reverse
-        this.drive(-distance, -velocity);
+        this.driveToTarget(-distance);
     }
 
+    /**
+     * Helper for strafe left using RUN_WITHOUT_ENCODER MODE;
+     * @param distance
+     * @param velocity
+     */
     protected void strafeLeft(double distance, double velocity) {
-        this.strafe(-distance, -velocity);
+        this.strafeToTarget(-distance, -velocity);
     }
 
+    /**
+     * Helper for strafe right using RUN_WITHOUT_ENCODER MODE;
+     * @param distance
+     * @param velocity
+     */
     protected void strafeRight(double distance, double velocity) {
         //  Note:  both values must be negative ;
-        this.strafe(distance, velocity);
+        this.strafeToTarget(distance, velocity);
     }
 
+    /**
+     * Helper for turning right
+     * @param degrees
+     * @param velocity
+     */
     protected void turnRight(int degrees, double velocity) {
         this.turn(degrees, velocity);
     }
 
+    /**
+     * Helper for turning left
+     * @param degrees
+     * @param velocity
+     */
     protected void turnLeft(int degrees, double velocity) {
         //  note degrees direction and velocity
         this.turn(-degrees, velocity);
     }
 
-    //  PIDF optimized for driving, NOT strafing.  Strafing stalls.
-    //  Reverse:  this.drive(-distance, -velocity);
-    protected void drive(double distanceInInches, double velocity) {
+    /**
+     * Driving using RUN_TO_POSITION mode
+     * @param distanceInInches
+     */
+    protected void driveToTarget(double distanceInInches) {
         Driver driver = this.rosie.getDriver();
         driver.setTargetPosition(distanceInInches);
 
@@ -70,23 +119,27 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
 
         while (opModeIsActive() && driver.motorsBusy()) {
             //  leftFront, rightFront, leftBack, rightBack;
-            //  int[] cp = driver.getCurrentPosition();
-            //  telemetry.addData("ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] + ", isBusy=" + driver.motorsBusy());
+            int[] cp = driver.getCurrentPosition();
             telemetry.addData("Drive:  ", "Running");
+            telemetry.addData("ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] + ", isBusy=" + driver.motorsBusy());
             telemetry.update();
         }
         driver.stop();
     }
 
-    //  PIDF optimized for driving, NOT strafing.  Strafing stalls.
-    protected void strafe(double distanceInInches, double velocity) {
+    /**
+     * Strafe using RUN_WITHOUT_ENCODER
+     * @param distanceInInches
+     * @param velocity
+     */
+    protected void strafeToTarget(double distanceInInches, double velocity) {
         Driver driver = this.rosie.getDriver();
 
         int ticks = (int)(driver.calculateTicks(distanceInInches) * Constants.STRAFE_DISTANCE_FACTOR);
 
         driver.setStopAndResetMode();
         driver.strafeDifferential(velocity, velocity);
-        while (!driver.distanceReached(ticks)) {
+        while (opModeIsActive() && !driver.distanceReached(ticks)) {
             telemetry.addData("Strafe: ", "Running");
             telemetry.addData("Target Ticks", ticks );
 
@@ -99,23 +152,20 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.stop();
     }
 
-
-    protected void spin(double velocity) {
-        Driver driver = this.rosie.getDriver();
-        driver.spin(velocity);
-    }
-
-    protected void strafe(double velocity) {
-        //  positive velocity strafe left; negative strafe right
-        Driver driver = this.rosie.getDriver();
-        driver.setStopAndResetMode();
-        driver.strafeDifferential(velocity, velocity);
-    }
-
+    /**
+     * Utility to convert velocity to power;
+     * @param velocity
+     * @return
+     */
     private double velocityToPower(double velocity) {
         return velocity/Constants.MOTOR_MAX_VELOCITY;
     }
 
+    /**
+     * Turning using own PID, RUN_WITHOUT_ENCODER
+     * @param degrees
+     * @param velocity
+     */
     protected void turn(double degrees, double velocity) {
 
         double power = velocityToPower(velocity);
@@ -128,7 +178,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.setStopAndResetMode();
         driver.setRunWithEncoderOffMode();
 
-        while (!motor.angleOnTarget()) {
+        while (opModeIsActive() && !motor.angleOnTarget()) {
             //  NOTE:  Rotation on Z-Axis, therefore
             //  imu.getAngle returns positive on left turn, negative on right turn
             //  Negative degrees means left turn
@@ -145,9 +195,6 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         }
 
         driver.stop();
-
-        driver.setStopAndResetMode();
-        driver.setRunWithEncoderMode();
     }
 
 }
