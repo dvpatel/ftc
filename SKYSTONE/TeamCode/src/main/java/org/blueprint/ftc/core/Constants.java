@@ -37,10 +37,8 @@ public final class Constants {
     public static final String FOUNDATION_LEFT_SERVO = "foundation_left_servo";
     public static final String FOUNDATION_RIGHT_SERVO = "foundation_right_servo";
 
-    //  For AndyMark motor;  1 rev = 1120 ticks ;
+    //  For AndyMark Neverest 40 motor;  1 rev = 1120 ticks ;  Orbital 20:  537.6 ticks / revolution
     public static final int WHEEL_DIAMETER = 4; // inches ;
-    public static final int WHEEL_WIDTH = 2; // inches ;
-
     public static final double MOTOR_TICK_COUNT = 537.6;   //  ticks per revoluion for Andymark Orbital 20;
     public static final double MOTOR_GEAR_RATIO = 19.2;  //  NeverRest 40; 40:1 gearbox
     public static final double MOTOR_PPR = 134.4;  //  Orbital 20; 19.2:1 gearbox;  19.2*7
@@ -49,8 +47,8 @@ public final class Constants {
     public static final double DRIVETRAIN_GEAR_RATIO = 45.0/35.0;  //  Ratio with modified gears;
     public static final double TICK_GEAR_RATIO = Constants.TICK_DIAMETER_RATIO / Constants.DRIVETRAIN_GEAR_RATIO ;
 
-    public static int MOTOR_MAX_VELOCITY = 2740;  //  ticks per second;  Set from MaxVelocityTest;  was 2900
-    public static int DEFAULT_VELOCITY = (int) (0.90*MOTOR_MAX_VELOCITY);  //  ticks per second;
+    public static int MOTOR_MAX_VELOCITY = 2820;  //  ticks per second;  Set from MaxVelocityTest;  was 2900
+    public static int DEFAULT_VELOCITY = (int) (0.60*MOTOR_MAX_VELOCITY);  //  ticks per second;
 
     //  strafe != forward distance.  Need this factor to match.
     public static double STRAFE_DISTANCE_FACTOR = 1.1424;
@@ -85,11 +83,14 @@ public final class Constants {
     public static double SCALE_FACTOR = 255;
 
     //  Will need to tune these for driving straight;  See MaxVelocityTest.java
-    //  frontleft, frontright, backleft, backright
-    public static double PID_DRIVE_KP = 1.0;
-    public static double PID_DRIVE_KI = 0.152;
-    public static double PID_DRIVE_KD = 0.0375;
-    public static double PID_DRIVE_KF = 11.0;     //  was never set;  multiply P by 10?  Not neede if using I
+    //  Set for velocity PID, same val for all motors;
+    public static double PID_DRIVE_KP = 1.1538;
+    public static double PID_DRIVE_KI = PID_DRIVE_KP/10;
+    public static double PID_DRIVE_KD = 0;
+    public static double PID_DRIVE_KF = PID_DRIVE_KP*10;
+
+    //  set for Positional PID
+    public static double POSITIONAL_DRIVE_KP = 1.7;
 
     //  Will need to tune these for turning;
     // Speed of wheels while slowing down
@@ -149,7 +150,7 @@ public final class Constants {
     public static final float DRIVETRAIN_SECOND_QUADRANT_CENTER = Constants.TILE_SIZE + ((Constants.TILE_SIZE - Constants.DRIVETRAIN_LENGTH) / 2);
 
     //  Tune this for gamepad.
-    public static float DEADZONE = 0.10f;
+    public static float DEADZONE = 0.30f;
 
     // Robot & Tile Dimensions
     public static final float TILE_LENGTH = 24.0f;
