@@ -40,19 +40,17 @@ public final class Constants {
     //  For AndyMark Neverest 40 motor;  1 rev = 1120 ticks ;  Orbital 20:  537.6 ticks / revolution
     public static final int WHEEL_DIAMETER = 4; // inches ;
     public static final double MOTOR_TICK_COUNT = 537.6;   //  ticks per revoluion for Andymark Orbital 20;
-    public static final double MOTOR_GEAR_RATIO = 19.2;  //  NeverRest 40; 40:1 gearbox
-    public static final double MOTOR_PPR = 134.4;  //  Orbital 20; 19.2:1 gearbox;  19.2*7
-    public static final int MOTOR_NO_LOAD_RPM = 340;
     public static final double TICK_DIAMETER_RATIO = (Constants.MOTOR_TICK_COUNT / (Math.PI * Constants.WHEEL_DIAMETER));
     public static final double DRIVETRAIN_GEAR_RATIO = 45.0/35.0;  //  Ratio with modified gears;
     public static final double TICK_GEAR_RATIO = Constants.TICK_DIAMETER_RATIO / Constants.DRIVETRAIN_GEAR_RATIO ;
 
     public static int MOTOR_MAX_VELOCITY = 2820;  //  ticks per second;  Set from MaxVelocityTest;  was 2900
     public static int DEFAULT_VELOCITY = (int) (0.60*MOTOR_MAX_VELOCITY);  //  ticks per second;
+    public static double TURN_SPEED = 0.35*Constants.MOTOR_MAX_VELOCITY;   //  Turning speed 987
+    public static double STRAFE_SPEED = 0.25*Constants.MOTOR_MAX_VELOCITY;   //  Turning speed 987
 
     //  strafe != forward distance.  Need this factor to match.
     public static double STRAFE_DISTANCE_FACTOR = 1.1424;
-
 
     //  For AndyMark Neverest 40 motor connected to linear slide system
     public static final int SIMPLE_MOTOR_TICK_COUNT = 1120;  //  For neverest classic 40
@@ -122,12 +120,6 @@ public final class Constants {
     public static final float CAMERA_DX_MM = 6.375f * MM_PER_INCHES;   //  width
     public static final float CAMERA_DY_MM = 8.875f * MM_PER_INCHES;   //  front, includes intake system
     public static final float CAMERA_DZ_MM = 4.75f * MM_PER_INCHES;    //  height;
-
-
-    // These constants define the desired driving/control characteristics
-    // The can/should be tweaked to suite the specific robot drive train.
-    public static final double DRIVE_SPEED = 0.7;     // Nominal speed for better accuracy.
-    public static final double TURN_SPEED = 0.5;     // Nominal half speed for better accuracy.
 
     public static final double HEADING_THRESHOLD = 1 ;      // As tight as we can make it with an integer gyro
     public static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
