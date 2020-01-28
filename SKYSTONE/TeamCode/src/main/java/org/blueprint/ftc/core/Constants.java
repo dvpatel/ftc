@@ -44,11 +44,6 @@ public final class Constants {
     public static final double DRIVETRAIN_GEAR_RATIO = 45.0/35.0;  //  Ratio with modified gears;
     public static final double TICK_GEAR_RATIO = Constants.TICK_DIAMETER_RATIO / Constants.DRIVETRAIN_GEAR_RATIO ;
 
-    public static int MOTOR_MAX_VELOCITY = 2820;  //  ticks per second;  Set from MaxVelocityTest;  was 2900
-    public static int DEFAULT_VELOCITY = (int) (0.60*MOTOR_MAX_VELOCITY);  //  ticks per second;
-    public static double TURN_SPEED = 0.35*Constants.MOTOR_MAX_VELOCITY;   //  Turning speed 987
-    public static double STRAFE_SPEED = 0.25*Constants.MOTOR_MAX_VELOCITY;   //  Turning speed 987
-
     //  strafe != forward distance.  Need this factor to match.
     public static double STRAFE_DISTANCE_FACTOR = 1.1424;
 
@@ -80,12 +75,34 @@ public final class Constants {
     // to amplify/attentuate the measured values.
     public static double SCALE_FACTOR = 255;
 
+    //======================================================================================
+    /*  From MaxVelocityTest
+    MotorName: NeveRest 20 Orbital Gearmotor
+    TicksPerRev: 537.6
+    achMaxRPMFrac: 0.85
+    achMaxTPS: 2589.44
+
+    Default Position Coeffs for Orbital 20:
+      [PIDFCoefficients(p=10.000000 i=0.049988 d=0.000000 f=0.000000 alg=LegacyPID)]
+    Default Velocity Coeffs for Orbital 20:
+      [PIDFCoefficients(p=10.000000 i=3.000000 d=0.000000 f=0.000000 alg=LegacyPID)]
+
+     */
+
     //  Will need to tune these for driving straight;  See MaxVelocityTest.java
     //  Set for velocity PID, same val for all motors;
+
     public static double PID_DRIVE_KP = 1.1538;
     public static double PID_DRIVE_KI = PID_DRIVE_KP/10;
     public static double PID_DRIVE_KD = 0;
     public static double PID_DRIVE_KF = PID_DRIVE_KP*10;
+
+    public static int MOTOR_MAX_VELOCITY = 2820;  //  ticks per second;  Set from MaxVelocityTest;  was 2900
+    public static int DEFAULT_VELOCITY = (int) (0.60*MOTOR_MAX_VELOCITY);  //  ticks per second;
+    public static double TURN_SPEED = 0.35*Constants.MOTOR_MAX_VELOCITY;   //  Turning speed 987
+    public static double STRAFE_SPEED = 0.25*Constants.MOTOR_MAX_VELOCITY;   //  Turning speed 987
+
+    //======================================================================================
 
     //  set for Positional PID
     public static double POSITIONAL_DRIVE_KP = 1.7;
