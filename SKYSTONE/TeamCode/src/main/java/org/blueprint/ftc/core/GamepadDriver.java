@@ -1,6 +1,7 @@
 package org.blueprint.ftc.core;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.Range;
 
 import static org.blueprint.ftc.core.Constants.DEADZONE;
 
@@ -63,7 +64,15 @@ public class GamepadDriver {
 
     }
 
-    public void drive(float driveForward, float sideways, float turn) {
+    private double sensitive(double inp) {
+        return Range.clip(Math.pow(inp, 3), -1.0, 1.0);
+    }
+
+    public void drive(double driveForward, double sideways, double turn) {
+
+        driveForward = this.sensitive(driveForward);
+        sideways = this.sensitive(sideways);
+        turn = this.sensitive(turn);
 
         double forward = this.getDrivingDirection() ? driveForward : -driveForward;
 
