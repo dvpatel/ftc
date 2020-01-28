@@ -52,20 +52,28 @@ public class Driver {
     //  Must set properly for driving;  From MaxVelocityTest
     private void setDriveVelocityPID() {
         //  Get values from MaxVelocityTest;
+
         this.leftFrontMotor.setVelocityPIDFCoefficients(Constants.PID_DRIVE_KP, Constants.PID_DRIVE_KI, Constants.PID_DRIVE_KD, Constants.PID_DRIVE_KF);
         this.rightFrontMotor.setVelocityPIDFCoefficients(Constants.PID_DRIVE_KP, Constants.PID_DRIVE_KI, Constants.PID_DRIVE_KD, Constants.PID_DRIVE_KF);
         this.leftBackMotor.setVelocityPIDFCoefficients(Constants.PID_DRIVE_KP, Constants.PID_DRIVE_KI, Constants.PID_DRIVE_KD, Constants.PID_DRIVE_KF);
         this.rightBackMotor.setVelocityPIDFCoefficients(Constants.PID_DRIVE_KP, Constants.PID_DRIVE_KI, Constants.PID_DRIVE_KD, Constants.PID_DRIVE_KF);
+    }
 
-        this.leftFrontMotor.setPositionPIDFCoefficients(5.0);
-        this.rightFrontMotor.setPositionPIDFCoefficients(5.0);
-        this.leftBackMotor.setPositionPIDFCoefficients(5.0);
-        this.rightBackMotor.setPositionPIDFCoefficients(5.0);
+    private void setPositionalPID() {
+        //  Get values from MaxVelocityTest;
+        this.leftFrontMotor.setPositionPIDFCoefficients(Constants.POSITIONAL_DRIVE_KP);
+        this.rightFrontMotor.setPositionPIDFCoefficients(Constants.POSITIONAL_DRIVE_KP);
+        this.leftBackMotor.setPositionPIDFCoefficients(Constants.POSITIONAL_DRIVE_KP);
+        this.rightBackMotor.setPositionPIDFCoefficients(Constants.POSITIONAL_DRIVE_KP);
     }
 
     //  Calculate ticks for given inches ;
     public int calculateTicks(double distanceInInches) {
         return (int) (distanceInInches * Constants.TICK_GEAR_RATIO) ;
+    }
+
+    public double toInches(double ticks) {
+        return (ticks/Constants.TICK_GEAR_RATIO);
     }
 
     //  For driving forward and reverse;
@@ -76,6 +84,7 @@ public class Driver {
         this.setStopAndResetMode();
         this.setRunWithEncoderMode();
         this.setDriveVelocityPID();
+        this.setPositionalPID();
         this.setTicksToTargets(distanceInInches);
         this.setRunToPositionMode();
 
