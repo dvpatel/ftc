@@ -64,15 +64,16 @@ public class GamepadDriver {
 
     }
 
-    private double sensitive(double inp) {
-        return Range.clip(Math.pow(inp, 3), -1.0, 1.0);
+    //  Method to control joystick sensitivity;
+    private double sensitiveRange(double inp) {
+        return Range.clip(Math.pow(inp, Constants.SENSITIVITY_LEVEL), -1.0, 1.0);
     }
 
     public void drive(double driveForward, double sideways, double turn) {
 
-        driveForward = this.sensitive(driveForward);
-        sideways = this.sensitive(sideways);
-        turn = this.sensitive(turn);
+        driveForward = this.sensitiveRange(driveForward);
+        sideways = this.sensitiveRange(sideways);
+        turn = this.sensitiveRange(turn);
 
         double forward = this.getDrivingDirection() ? driveForward : -driveForward;
 

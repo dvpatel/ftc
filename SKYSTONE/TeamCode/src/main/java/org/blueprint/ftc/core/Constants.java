@@ -154,4 +154,7 @@ public final class Constants {
 
     // Robot & Tile Dimensions
     public static final float TILE_LENGTH = 24.0f;
+
+    //  For joystick sensitivity;
+    public static final int SENSITIVITY_LEVEL = 3;
 }
