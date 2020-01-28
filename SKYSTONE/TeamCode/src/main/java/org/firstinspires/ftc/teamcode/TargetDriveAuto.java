@@ -10,6 +10,9 @@ import org.blueprint.ftc.core.Driver;
 import org.blueprint.ftc.core.IMUController;
 import org.blueprint.ftc.core.MotorControllerEx;
 
+import static org.blueprint.ftc.core.Constants.TURN_SPEED;
+import static org.blueprint.ftc.core.Constants.STRAFE_SPEED;
+
 @Config
 @Autonomous()
 //  @Disabled
@@ -21,7 +24,6 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
 
     public static int DISTANCE_IN_INCHES = 36;
     public static int TURN_ANGLE = 90;
-    public static int VELOCITY = Constants.DEFAULT_VELOCITY;
     public static int SLEEP_TIME = 5000;
 
     @Override
@@ -64,8 +66,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
         this.initOpMode();
 
         telemetry.addData("Calibration Status:", this.imu.getCalibrationStatus());
-        this.addTelemetry();
-
+        //  this.addTelemetry();
         telemetry.update();
 
         //  Activate opmode
@@ -73,30 +74,38 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
 
         if(opModeIsActive()) {
 
-            telemetry.addData("Forward:  ", "forward");
-            this.driveForward(DISTANCE_IN_INCHES, VELOCITY);
-
-            telemetry.addData("Strafe:  ", "strafe left");
+            telemetry.addData("Forward:  ", "forward " + DISTANCE_IN_INCHES + " inches");
             telemetry.update();
-            this.strafeLeft(DISTANCE_IN_INCHES, 0.50 * Constants.DEFAULT_VELOCITY);
+            this.driveForward(DISTANCE_IN_INCHES);
+            this.addTelemetry();
+            telemetry.update();
             sleep(SLEEP_TIME);
 
-            //  drive backward 12 inches ;
-            telemetry.addData("Reverse:  ", "back 6 inches");
+            telemetry.addData("Strafe:  ", "strafe left " + DISTANCE_IN_INCHES + " inches");
             telemetry.update();
-            this.driveReverse(DISTANCE_IN_INCHES, Constants.DEFAULT_VELOCITY);
+            this.strafeLeft(DISTANCE_IN_INCHES, STRAFE_SPEED);
+            this.addTelemetry();
+            telemetry.update();
             sleep(SLEEP_TIME);
 
-            //  Strafe 12 inches right ; both values must be negative ;
-            telemetry.addData("Strafe:  ", "strafe 6 inches right");
+            telemetry.addData("Reverse:  ", "reverse " + DISTANCE_IN_INCHES + " inches");
             telemetry.update();
-            this.strafeRight(DISTANCE_IN_INCHES, 0.50 * Constants.DEFAULT_VELOCITY);
+            this.driveReverse(DISTANCE_IN_INCHES);
+            this.addTelemetry();
+            telemetry.update();
+            sleep(SLEEP_TIME);
+
+            telemetry.addData("Strafe:  ", "strafe right " + DISTANCE_IN_INCHES + " inches");
+            telemetry.update();
+            this.strafeRight(DISTANCE_IN_INCHES, STRAFE_SPEED);
+            this.addTelemetry();
+            telemetry.update();
             sleep(SLEEP_TIME);
 
             //  Turn 90 degrees to the right
             telemetry.addData("GyroTurn:  right ", "90 degrees");
             telemetry.update();
-            this.turnRight(TURN_ANGLE, Constants.MOTOR_MAX_VELOCITY);
+            this.turnRight(TURN_ANGLE, TURN_SPEED);
             telemetry.addData("GyroTurn:  Done, ", imu.getAngle());
             telemetry.update();
             sleep(SLEEP_TIME);
@@ -104,14 +113,14 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
             //  Turn 90 degrees left;  note degrees direction and velocity
             telemetry.addData("GyroTurn: left  ", "90 degrees??");
             telemetry.update();
-            this.turnLeft(TURN_ANGLE, Constants.MOTOR_MAX_VELOCITY);
+            this.turnLeft(TURN_ANGLE, TURN_SPEED);
             telemetry.addData("GyroTurn:  Done, ", imu.getAngle());
             telemetry.update();
             sleep(SLEEP_TIME);
 
             telemetry.addData("GyroTurn:  right ", "90X2 degrees");
             telemetry.update();
-            this.turnRight(2 * TURN_ANGLE, Constants.MOTOR_MAX_VELOCITY);
+            this.turnRight(2 * TURN_ANGLE, TURN_SPEED);
             telemetry.addData("GyroTurn:  Done, ", imu.getAngle());
             telemetry.update();
             sleep(SLEEP_TIME);
@@ -119,7 +128,7 @@ public class TargetDriveAuto extends AbstractLinearOpMode {
             //  Turn 90 degrees left;  note degrees direction and velocity
             telemetry.addData("GyroTurn: left  ", "90X2 degrees??");
             telemetry.update();
-            this.turnLeft(2 * TURN_ANGLE, Constants.MOTOR_MAX_VELOCITY);
+            this.turnLeft(2 * TURN_ANGLE, TURN_SPEED);
             telemetry.addData("GyroTurn:  Done, ", imu.getAngle());
             telemetry.update();
             sleep(SLEEP_TIME);
