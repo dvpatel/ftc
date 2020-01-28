@@ -1,5 +1,7 @@
 package org.blueprint.ftc.core;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.Range;
 
@@ -51,11 +53,37 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
     }
 
     /**
+     * Helper for drive forward with optional RUN_TO_POSITION MODE;
+     * @param distance
+     * @param usePositionEncoder
+     */
+    protected void driveForward(double distance, boolean usePositionEncoder) {
+        if (usePositionEncoder) {
+            this.driveToTarget(distance);
+        } else {
+            this.driveToTargetWithoutEncoder(distance);
+        }
+    }
+
+    /**
      * Helper for drive forward using RUN_TO_POSITION MODE;
      * @param distance
      */
     protected void driveForward(double distance) {
         this.driveToTarget(distance);
+    }
+
+    /**
+     * Helper for reverse driving with optional RUN_TO_POSITION MODE;
+     * @param distance
+     * @param usePositionEncoder
+     */
+    protected void driveReverse(double distance, boolean usePositionEncoder) {
+        if (usePositionEncoder) {
+            this.driveToTarget(-distance);
+        } else {
+            this.driveToTargetWithoutEncoder(-distance);
+        }
     }
 
     /**
@@ -116,12 +144,20 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         //  When using Run-to-position, set max velocity;
         //  driver.drive(velocity);
         driver.drive(Constants.MOTOR_MAX_VELOCITY);
-
         while (opModeIsActive() && driver.motorsBusy()) {
-            //  leftFront, rightFront, leftBack, rightBack;
-            int[] cp = driver.getCurrentPosition();
             telemetry.addData("Drive:  ", "Running");
-            telemetry.addData("ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] + ", isBusy=" + driver.motorsBusy());
+            telemetry.update();
+        }
+        driver.stop();
+    }
+
+    protected void driveToTargetWithoutEncoder(double distanceInInches) {
+        Driver driver = this.rosie.getDriver();
+        int ticks = (int)(driver.calculateTicks(distanceInInches));
+
+        this.drive(0.75*Constants.MOTOR_MAX_VELOCITY);
+        while (opModeIsActive() && !driver.distanceReached(ticks)) {
+            telemetry.addData("Driving: ", "Running");
             telemetry.update();
         }
         driver.stop();
@@ -141,14 +177,8 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.strafeDifferential(velocity, velocity);
         while (opModeIsActive() && !driver.distanceReached(ticks)) {
             telemetry.addData("Strafe: ", "Running");
-            telemetry.addData("Target Ticks", ticks );
-
-            int[] cp = driver.getCurrentPosition();
-            telemetry.addData("Actual Ticks", cp[0] + ", " + cp[1] + ", " + cp[2] + ", " + cp[3] );
-
             telemetry.update();
         }
-
         driver.stop();
     }
 
