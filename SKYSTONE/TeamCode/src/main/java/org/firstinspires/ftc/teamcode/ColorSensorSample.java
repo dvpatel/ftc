@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -26,7 +27,8 @@ import org.blueprint.ftc.core.Constants;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name = "ColorSensorDrive", group = "Linear Opmode")
+@Config
+@TeleOp()
 @Disabled
 public class ColorSensorSample extends AbstractLinearOpMode {
 
@@ -35,7 +37,8 @@ public class ColorSensorSample extends AbstractLinearOpMode {
 
     private View relativeLayout;
 
-    private static final double VELOCITY = 0.5*Constants.MOTOR_MAX_VELOCITY;  // ticks per second
+    //  Doesn't work above 650
+    public static double VELOCITY = 650;
 
     @Override
     public void initOpMode() throws InterruptedException {
