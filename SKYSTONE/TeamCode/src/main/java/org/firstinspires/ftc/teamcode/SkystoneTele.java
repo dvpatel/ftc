@@ -106,8 +106,79 @@ public class SkystoneTele extends AbstractLinearOpMode {
         telemetry.addData("Gamepad2.DpadRight", gamepad2.dpad_right);
     }
 
+    class Gamepad1Thread implements Runnable {
+        @Override
+        public void run() {
+            while(opModeIsActive()) {
+                telemetry.addData("Gamepad Action:  ", "1");
+
+                //  Change driving direction
+                gpd.putInReverse(gamepad1.b);
+                gpd.putInDrive(gamepad1.x);
+                //  telemetry.addData("Driving Reverse", gpd.getDrivingDirection());
+
+                foundationSystem.triggerUp(gamepad1.left_trigger > 0.25);
+                foundationSystem.triggerDown(gamepad1.right_trigger > 0.25);
+
+                intakeSystem.autoMode(gamepad1.left_bumper, gamepad1.right_bumper, gamepad1.a);
+
+                //  forward, sideways, turn;
+                gpd.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+
+                idle();
+            }
+        }
+    }
+
+    class Gamepad2Thread implements Runnable {
+        @Override
+        public void run() {
+            while(opModeIsActive()) {
+                telemetry.addData("Gamepad Action:  ", "2");
+
+                //  Automode to pickup block from storage
+                liftSystem.pickup(gamepad2.y);
+
+                //  put liftsystem back to base
+                liftSystem.backToBase(gamepad2.a);
+
+                liftSystem.getLinearArmServo().openGripper(gamepad2.dpad_left);
+                liftSystem.getLinearArmServo().closeGripper(gamepad2.dpad_right);
+
+                //  Up / Down Linear
+                liftSystem.drive(-gamepad2.left_stick_y);
+
+                //  Up / Down slide
+                liftSystem.positionSlideServo(-gamepad2.right_stick_y);
+
+                idle();
+            }
+        }
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
+
+        this.initOpMode();
+
+        Thread t1 = new Thread(new Gamepad1Thread());
+        Thread t2 = new Thread(new Gamepad2Thread());
+        t1.start();
+        t2.start();
+
+        this.waitToPressStart();
+
+        this.postStartSetup();
+
+        while (opModeIsActive()) {
+            //  this.addGamepadTelemetry();
+            telemetry.update();
+        }
+
+        this.stopOpMode();
+    }
+
+    public void runOpModeGood() throws InterruptedException {
 
         this.initOpMode();
         this.waitToPressStart();
@@ -117,7 +188,6 @@ public class SkystoneTele extends AbstractLinearOpMode {
         while (opModeIsActive()) {
 
             //  this.addGamepadTelemetry();
-
             telemetry.addData("Driving Reverse", gpd.getDrivingDirection());
 
             //  Change driving direction
