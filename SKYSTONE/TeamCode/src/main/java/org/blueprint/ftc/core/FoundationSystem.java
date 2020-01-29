@@ -16,7 +16,7 @@ public class FoundationSystem {
         this.foundationLeftServo = new ServoController(hardwareMap, Constants.FOUNDATION_LEFT_SERVO);
         this.foundationRightServo = new ServoController(hardwareMap, Constants.FOUNDATION_RIGHT_SERVO);
 
-        this.setPositionByDegrees(0);
+        this.triggerUp(true);
     }
 
     private double calculatePosition(double degrees) {
@@ -31,18 +31,18 @@ public class FoundationSystem {
         this.foundationRightServo.setPosition(this.calculatePosition(degrees));
     }
 
-    public void triggerDown(boolean input) {
+    public void triggerUp(boolean input) {
 
         if (input) {
-            this.setPositionByDegrees(90);
+            this.setPositionByDegrees(180);
         }
 
     }
 
-    public void triggerUp(boolean input) {
+    public void triggerDown(boolean input) {
 
         if (input) {
-            this.setPositionByDegrees(MIN_POS_DEGREE);
+            this.setPositionByDegrees(0);
         }
 
     }
