@@ -57,11 +57,11 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
      * @param distance
      * @param usePositionEncoder
      */
-    protected void driveForward(double distance, boolean usePositionEncoder) {
+    protected void driveForward(double distance, int speed, boolean usePositionEncoder) {
         if (usePositionEncoder) {
             this.driveToTarget(distance);
         } else {
-            this.driveToTargetWithoutEncoder(distance);
+            this.driveToTargetWithoutEncoder(distance, speed);
         }
     }
 
@@ -78,11 +78,11 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
      * @param distance
      * @param usePositionEncoder
      */
-    protected void driveReverse(double distance, boolean usePositionEncoder) {
+    protected void driveReverse(double distance, int speed, boolean usePositionEncoder) {
         if (usePositionEncoder) {
             this.driveToTarget(-distance);
         } else {
-            this.driveToTargetWithoutEncoder(-distance);
+            this.driveToTargetWithoutEncoder(-distance, speed);
         }
     }
 
@@ -151,11 +151,11 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.stop();
     }
 
-    protected void driveToTargetWithoutEncoder(double distanceInInches) {
+    protected void driveToTargetWithoutEncoder(double distanceInInches, int speed) {
         Driver driver = this.rosie.getDriver();
         int ticks = (int)(driver.calculateTicks(distanceInInches));
 
-        this.drive(0.75*Constants.MOTOR_MAX_VELOCITY);
+        this.drive(speed);
         while (opModeIsActive() && !driver.distanceReached(ticks)) {
             telemetry.addData("Driving: ", "Running");
             telemetry.update();
