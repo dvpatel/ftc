@@ -38,6 +38,8 @@ import org.blueprint.ftc.core.MotorControllerEx;
  *  dpad_left:   Open lift system gripper
  *  dpad_right:  Close lift system gripper
  *
+ *  Multi-threading based on this example:
+ *  https://stemrobotics.cs.pdx.edu/node/5184
  */
 
 @TeleOp(name = "GamepadTele")
@@ -91,67 +93,83 @@ public class SkystoneTele extends AbstractLinearOpMode {
         telemetry.addData("Gamepad1.LeftStickY", gamepad1.left_stick_y);
         telemetry.addData("Gamepad1.LeftStickX", gamepad1.left_stick_x);
         telemetry.addData("Gamepad1.RightStickX", gamepad1.right_stick_x);
-        telemetry.addData("Gamepad1.B", gamepad1.b);
-        telemetry.addData("Gamepad1.X", gamepad1.x);
-        telemetry.addData("Gamepad1.LeftTrigger", gamepad1.left_trigger);
-        telemetry.addData("Gamepad1.RightTrigger", gamepad1.right_trigger);
-        telemetry.addData("Gamepad1.LeftBumper", gamepad1.left_bumper);
-        telemetry.addData("Gamepad1.RightBumper", gamepad1.right_bumper);
-        telemetry.addData("Gamepad1.A", gamepad1.a);
+        //  telemetry.addData("Gamepad1.B", gamepad1.b);
+        //  telemetry.addData("Gamepad1.X", gamepad1.x);
+        //  telemetry.addData("Gamepad1.LeftTrigger", gamepad1.left_trigger);
+        //  telemetry.addData("Gamepad1.RightTrigger", gamepad1.right_trigger);
+        //  telemetry.addData("Gamepad1.LeftBumper", gamepad1.left_bumper);
+        //  telemetry.addData("Gamepad1.RightBumper", gamepad1.right_bumper);
+        //  telemetry.addData("Gamepad1.A", gamepad1.a);
         telemetry.addData("Gamepad2.LeftStickY", gamepad2.left_stick_y);
         telemetry.addData("Gamepad2.RightStickY", gamepad2.right_stick_y);
-        telemetry.addData("Gamepad2.Y", gamepad2.y);
-        telemetry.addData("Gamepad2.A", gamepad2.a);
-        telemetry.addData("Gamepad2.DpadLeft", gamepad2.dpad_left);
-        telemetry.addData("Gamepad2.DpadRight", gamepad2.dpad_right);
+        //  telemetry.addData("Gamepad2.Y", gamepad2.y);
+        //  telemetry.addData("Gamepad2.A", gamepad2.a);
+        //  telemetry.addData("Gamepad2.DpadLeft", gamepad2.dpad_left);
+        //  telemetry.addData("Gamepad2.DpadRight", gamepad2.dpad_right);
     }
 
-    class Gamepad1Thread implements Runnable {
+    class Gamepad1Thread extends Thread {
+
+        public Gamepad1Thread()
+        {
+            this.setName("Gamepad1Thread");
+        }
+
         @Override
         public void run() {
-            while(opModeIsActive()) {
-                telemetry.addData("Gamepad Action:  ", "1");
+            try {
+                while (opModeIsActive() && !isInterrupted()) {
+                    //  Change driving direction
+                    gpd.putInReverse(gamepad1.b);
+                    gpd.putInDrive(gamepad1.x);
+                    //  telemetry.addData("Driving Reverse", gpd.getDrivingDirection());
 
-                //  Change driving direction
-                gpd.putInReverse(gamepad1.b);
-                gpd.putInDrive(gamepad1.x);
-                //  telemetry.addData("Driving Reverse", gpd.getDrivingDirection());
+                    foundationSystem.triggerUp(gamepad1.left_trigger > 0.25);
+                    foundationSystem.triggerDown(gamepad1.right_trigger > 0.25);
 
-                foundationSystem.triggerUp(gamepad1.left_trigger > 0.25);
-                foundationSystem.triggerDown(gamepad1.right_trigger > 0.25);
+                    intakeSystem.autoMode(gamepad1.left_bumper, gamepad1.right_bumper, gamepad1.a);
 
-                intakeSystem.autoMode(gamepad1.left_bumper, gamepad1.right_bumper, gamepad1.a);
+                    //  forward, sideways, turn;
+                    gpd.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
-                //  forward, sideways, turn;
-                gpd.drive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-
-                idle();
+                    idle();
+                }
+            } catch(Exception e) {
+                    telemetry.addData("%s interrupted", this.getName());
             }
         }
     }
 
-    class Gamepad2Thread implements Runnable {
+    class Gamepad2Thread extends Thread {
+
+        public Gamepad2Thread()
+        {
+            this.setName("Gamepad2Thread");
+        }
+
         @Override
         public void run() {
-            while(opModeIsActive()) {
-                telemetry.addData("Gamepad Action:  ", "2");
+            try {
+                while (opModeIsActive() && !isInterrupted()) {
+                    //  Automode to pickup block from storage
+                    liftSystem.pickup(gamepad2.y);
 
-                //  Automode to pickup block from storage
-                liftSystem.pickup(gamepad2.y);
+                    //  put liftsystem back to base
+                    liftSystem.backToBase(gamepad2.a);
 
-                //  put liftsystem back to base
-                liftSystem.backToBase(gamepad2.a);
+                    liftSystem.getLinearArmServo().openGripper(gamepad2.dpad_left);
+                    liftSystem.getLinearArmServo().closeGripper(gamepad2.dpad_right);
 
-                liftSystem.getLinearArmServo().openGripper(gamepad2.dpad_left);
-                liftSystem.getLinearArmServo().closeGripper(gamepad2.dpad_right);
+                    //  Up / Down Linear
+                    liftSystem.drive(-gamepad2.left_stick_y);
 
-                //  Up / Down Linear
-                liftSystem.drive(-gamepad2.left_stick_y);
+                    //  Up / Down slide
+                    liftSystem.positionSlideServo(-gamepad2.right_stick_y);
 
-                //  Up / Down slide
-                liftSystem.positionSlideServo(-gamepad2.right_stick_y);
-
-                idle();
+                    idle();
+                }
+            } catch(Exception e) {
+                telemetry.addData("%s interrupted", this.getName());
             }
         }
     }
@@ -161,19 +179,24 @@ public class SkystoneTele extends AbstractLinearOpMode {
 
         this.initOpMode();
 
-        Thread t1 = new Thread(new Gamepad1Thread());
-        Thread t2 = new Thread(new Gamepad2Thread());
-        t1.start();
-        t2.start();
+        Thread g1 = new Gamepad1Thread();
+        Thread g2 = new Gamepad2Thread();
 
         this.waitToPressStart();
 
         this.postStartSetup();
 
+        g1.start();
+        g2.start();
+
         while (opModeIsActive()) {
-            //  this.addGamepadTelemetry();
+            this.addGamepadTelemetry();
             telemetry.update();
         }
+
+        //  Stop thread;
+        g1.interrupt();
+        g2.interrupt();
 
         this.stopOpMode();
     }
