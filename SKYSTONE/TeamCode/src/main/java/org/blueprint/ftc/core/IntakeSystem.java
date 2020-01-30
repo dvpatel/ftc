@@ -30,11 +30,11 @@ public class IntakeSystem {
     private void initDCMotors(HardwareMap hardwareMap) {
         this.leftMotor = hardwareMap.dcMotor.get(Constants.INTAKE_LEFT_MOTOR);
         this.leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        this.leftMotor.setDirection(DcMotor.Direction.REVERSE);
         this.leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         this.rightMotor = hardwareMap.dcMotor.get(Constants.INTAKE_RIGHT_MOTOR);
         this.rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.rightMotor.setDirection(DcMotor.Direction.REVERSE);
         this.rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
