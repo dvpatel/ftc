@@ -16,33 +16,33 @@ import org.blueprint.ftc.core.MotorControllerEx;
 
 /**
  * Gamepad1 Controls:
- *
- *  left_stick_y:   drive forward / reverse
- *  left_stick_x:   strafe left / right
- *  right_stick_x:  turn left / right
- *  X:  Put robot in forward, regular drive mode
- *  B:  Put robot in reverse drive mode
- *  left_trigger:  Foundation system up
- *  right_trigger:  Foundation system down
- *  left_bumper:  Intake system reverse
- *  right_bumper:  Intake system forward
- *  A:  Intake system off
- *
- *
+ * <p>
+ * left_stick_y:   drive forward / reverse
+ * left_stick_x:   strafe left / right
+ * right_stick_x:  turn left / right
+ * X:  Put robot in forward, regular drive mode
+ * B:  Put robot in reverse drive mode
+ * left_trigger:  Foundation system up
+ * right_trigger:  Foundation system down
+ * left_bumper:  Intake system reverse
+ * right_bumper:  Intake system forward
+ * A:  Intake system off
+ * <p>
+ * <p>
  * Gamepad2 Controls:
- *
- *  left_stick_y:   Drive lift system up and down
- *  right_stick_y:  Drive lift system arm up and down
- *  Y:  Lift system automode to pickup block from storage
- *  A:  Lift system automode to go back to base
- *  dpad_left:   Open lift system gripper
- *  dpad_right:  Close lift system gripper
- *
- *  Multi-threading based on this example:
- *  https://stemrobotics.cs.pdx.edu/node/5184
+ * <p>
+ * left_stick_y:   Drive lift system up and down
+ * right_stick_y:  Drive lift system arm up and down
+ * Y:  Lift system automode to pickup block from storage
+ * A:  Lift system automode to go back to base
+ * dpad_left:   Open lift system gripper
+ * dpad_right:  Close lift system gripper
+ * <p>
+ * Multi-threading based on this example:
+ * https://stemrobotics.cs.pdx.edu/node/5184
  */
 
-@TeleOp(name = "GamepadTele")
+@TeleOp(name = "SkystoneTele")
 //  @Disabled
 public class SkystoneTele extends AbstractLinearOpMode {
 
@@ -57,9 +57,14 @@ public class SkystoneTele extends AbstractLinearOpMode {
 
     @Override
     public void initOpMode() throws InterruptedException {
+
+        telemetry.addData("WAIT FOR INITIALIZATION,:  "," DON'T PRESS PLAY!");
+        telemetry.update();
+
         this.initRosie();
 
         this.foundationSystem = this.rosie.getFoundationSystem();
+
         this.imu = this.rosie.getIMUController();
         this.imu.resetAngle();
 
@@ -69,6 +74,9 @@ public class SkystoneTele extends AbstractLinearOpMode {
         this.liftSystem.setLinearOpMode(this);
 
         this.gpd = this.rosie.getGamepadDriver();
+
+        telemetry.addData("INITIALIZATION DONE.","  PRESS PLAY WHEN READY.");
+        telemetry.update();
     }
 
     //  Post start init logic;  robot can only expand after start of game or after press start
@@ -110,15 +118,23 @@ public class SkystoneTele extends AbstractLinearOpMode {
 
     class Gamepad1Thread extends Thread {
 
-        public Gamepad1Thread()
-        {
+        private boolean isRunning;
+
+        public Gamepad1Thread() {
             this.setName("Gamepad1Thread");
+        }
+
+        public boolean isRunning() {
+            return this.isRunning;
         }
 
         @Override
         public void run() {
             try {
                 while (opModeIsActive() && !isInterrupted()) {
+
+                    isRunning = true;
+
                     //  Change driving direction
                     gpd.putInReverse(gamepad1.b);
                     gpd.putInDrive(gamepad1.x);
@@ -134,23 +150,32 @@ public class SkystoneTele extends AbstractLinearOpMode {
 
                     idle();
                 }
-            } catch(Exception e) {
-                    telemetry.addData("%s interrupted", this.getName());
+            } catch (Exception e) {
+                isRunning = false;
+                telemetry.addData("%s interrupted", this.getName());
             }
         }
     }
 
     class Gamepad2Thread extends Thread {
 
-        public Gamepad2Thread()
-        {
+        private boolean isRunning;
+
+        public Gamepad2Thread() {
             this.setName("Gamepad2Thread");
+        }
+
+        public boolean isRunning() {
+            return this.isRunning;
         }
 
         @Override
         public void run() {
             try {
                 while (opModeIsActive() && !isInterrupted()) {
+
+                    isRunning = true;
+
                     //  Automode to pickup block from storage
                     liftSystem.pickup(gamepad2.y);
 
@@ -168,7 +193,8 @@ public class SkystoneTele extends AbstractLinearOpMode {
 
                     idle();
                 }
-            } catch(Exception e) {
+            } catch (Exception e) {
+                isRunning = false;
                 telemetry.addData("%s interrupted", this.getName());
             }
         }
@@ -179,17 +205,19 @@ public class SkystoneTele extends AbstractLinearOpMode {
 
         this.initOpMode();
 
-        Thread g1 = new Gamepad1Thread();
-        Thread g2 = new Gamepad2Thread();
+        Gamepad1Thread g1 = new Gamepad1Thread();
+        Gamepad2Thread g2 = new Gamepad2Thread();
 
         this.waitToPressStart();
-
-        this.postStartSetup();
 
         g1.start();
         g2.start();
 
+        this.postStartSetup();
+
         while (opModeIsActive()) {
+            telemetry.addData("GamepadThread 1 running:  ", g1.isRunning());
+            telemetry.addData("GamepadThread 2 running:  ", g2.isRunning());
             this.addGamepadTelemetry();
             telemetry.update();
         }
@@ -201,7 +229,7 @@ public class SkystoneTele extends AbstractLinearOpMode {
         this.stopOpMode();
     }
 
-    public void runOpModeGood() throws InterruptedException {
+    public void runOpModeOrig() throws InterruptedException {
 
         this.initOpMode();
         this.waitToPressStart();
