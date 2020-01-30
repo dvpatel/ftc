@@ -1,6 +1,5 @@
 package org.blueprint.ftc.core;
 
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
@@ -14,7 +13,7 @@ public class FoundationSystem {
 
     public FoundationSystem(HardwareMap hardwareMap) {
         this.foundationLeftServo = new ServoController(hardwareMap, Constants.FOUNDATION_LEFT_SERVO);
-        this.foundationRightServo = new ServoController(hardwareMap, Constants.FOUNDATION_RIGHT_SERVO);
+        this.foundationRightServo = new ServoController(hardwareMap, Constants.FOUNDATION_RIGHT_SERVO, true);
 
         this.triggerUp(true);
     }
