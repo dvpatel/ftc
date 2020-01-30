@@ -15,7 +15,15 @@ public class ServoController {
     private static final int MIN_POS_DEGREE = 0;
 
     public ServoController(HardwareMap hardwareMap, String deviceName) {
+        this(hardwareMap, deviceName, false);
+    }
+
+    public ServoController(HardwareMap hardwareMap, String deviceName, boolean isReverse) {
         this.servo = hardwareMap.get(Servo.class, deviceName);
+
+        if (isReverse) {
+            servo.setDirection(Servo.Direction.REVERSE);
+        }
     }
 
     private double calculatePosition(double degrees) {
