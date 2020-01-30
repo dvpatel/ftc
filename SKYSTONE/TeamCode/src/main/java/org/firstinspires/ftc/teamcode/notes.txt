@@ -11,3 +11,13 @@ https://github.com/OpenFTC/EasyOpenCV
 
 
 https://first.global/fgc/robot-kit/
+
+
+Foundation:
+18.5 inches (469.9 mm) wide x 34.5 inches (876.3 mm) long x 2 inches (50.8 mm) tall.
+
+Stone:
+8 inches x 4 x 4
+
+Tile:
+24 x 24
