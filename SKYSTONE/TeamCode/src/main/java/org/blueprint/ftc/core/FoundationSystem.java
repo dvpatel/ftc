@@ -23,10 +23,7 @@ public class FoundationSystem {
     }
 
     public void setPositionByDegrees(double degrees) {
-
-        //  Offset by 10 degrees;  or fix left servo so that properly positioned;
-
-        this.foundationLeftServo.setPosition(this.calculatePosition(degrees + 10));
+        this.foundationLeftServo.setPosition(this.calculatePosition(degrees));
         this.foundationRightServo.setPosition(this.calculatePosition(degrees));
     }
 
