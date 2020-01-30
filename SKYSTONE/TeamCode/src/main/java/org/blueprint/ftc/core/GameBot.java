@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class GameBot {
 
     /* local OpMode members. */
-    private HardwareMap hardwareMap;
+    //  private HardwareMap hardwareMap;
 
     private ColorSensorController colorSensor;
     private IMUController imu;
@@ -31,7 +31,7 @@ public class GameBot {
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap hardwareMap) throws InterruptedException {
         // Save reference to Hardware map
-        this.hardwareMap = hardwareMap;
+        // this.hardwareMap = hardwareMap;
 
         //  IMU ;  DON'T SET MODE.
         this.imu = new IMUController(hardwareMap);
@@ -47,11 +47,11 @@ public class GameBot {
 
         this.skystonDetector = new SkystoneDetector(hardwareMap);
 
-        this.foundationSystem = new FoundationSystem(this.hardwareMap);
+        this.foundationSystem = new FoundationSystem(hardwareMap);
 
         this.liftSystem = new LiftSystem(hardwareMap);
 
-        this.intakeSystem = new IntakeSystem(this.hardwareMap);
+        this.intakeSystem = new IntakeSystem(hardwareMap);
     }
 
     public MotorControllerEx getMotorPID() {
