@@ -51,7 +51,7 @@ public class DriveConstants {
     public static double WHEEL_RADIUS = 2;             //  4 inches diameter;
     public static double GEAR_RATIO = 45.0 / 35.0;     //  output (wheel) speed / input (motor) speed;  40:1 for Andymark
     public static double TRACK_WIDTH = 17.25;          //  Based TrackWidthTuner, 22.31;  17.25 from TurnTest
-    public static double LATERAL_MULTIPLIER = 1.33;       //  According to Ryan, should be 1.33
+    public static double LATERAL_MULTIPLIER = 1.9;     //  Tuned for 24"
     public static double WHEEL_BASE = 13.582;
     public static double STRAFE_FACTOR = 46.0/24.0;    //  FOR STRAFING; HACK
 
