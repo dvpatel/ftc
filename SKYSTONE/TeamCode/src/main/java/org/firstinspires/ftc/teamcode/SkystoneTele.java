@@ -229,7 +229,7 @@ public class SkystoneTele extends AbstractLinearOpMode {
         this.stopOpMode();
     }
 
-    public void runOpModeOrig() throws InterruptedException {
+    public void runOpModeGood() throws InterruptedException {
 
         this.initOpMode();
         this.waitToPressStart();
