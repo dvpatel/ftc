@@ -86,10 +86,10 @@ public class IntakeSystem {
     //  Game mode w/ Switch and right, left bumper
     public void autoMode(boolean leftBumper, boolean rightBumper, boolean isOff) {
         if (leftBumper) {
-            this.intakePower = -1.0;
+            this.intakePower = -0.70;
             this.isOn = true;
         } else if (rightBumper) {
-            this.intakePower = 1.0;
+            this.intakePower = 0.70;
             this.isOn = true;
         } else if (isOff) {
             this.intakePower = 0.0;
