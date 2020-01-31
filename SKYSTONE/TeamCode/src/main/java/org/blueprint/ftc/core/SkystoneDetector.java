@@ -30,7 +30,6 @@ public class SkystoneDetector {
     private HardwareMap hardwareMap;
     private LinearOpMode myOpMode;
 
-
     // IMPORTANT: If you are using a USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
     private static final boolean PHONE_IS_PORTRAIT = false;
@@ -415,4 +414,130 @@ public class SkystoneDetector {
             myOpMode.telemetry.addData("Visible", "- - - -");
         }
     }
+
+    public int detectSkystoneOnField(LinearOpMode myOpMode, boolean isBlue) {
+
+        this.initVuforia(myOpMode);
+        this.activateTracking();
+
+        int result = 0;
+        if (isBlue) {
+            result = this.blueDetectSkystoneOnField();
+        } else {
+            result = this.redDetectSkystoneOnField();
+        }
+
+        this.deactivateTracking();
+        return result;
+    }
+
+
+    private double[] detectSkystone() {
+
+        double[] targetCoordinates = null;
+        if (this.targetsAreVisible()) {
+            String targetName = this.getTargetName();
+            if (Constants.VISIBLE_TARGET_NAME.equals(targetName)) {
+                //  RobotX, RobotY, RobotZ, Yaw, Hypotenuse, Theta, relativeBearing
+                targetCoordinates = this.getTargetCoordinatesInInches();
+            }
+        }
+        return targetCoordinates;
+    }
+
+    private int blueDetectSkystoneOnField() {
+
+        int detectedStoneNumber = 3;
+        while (!myOpMode.isStarted()) {
+
+            double[] targetCoordinates = this.detectSkystone();
+            if (targetCoordinates != null) {
+
+                this.addNavTelemetry();
+
+                double dY = targetCoordinates[1];
+
+                //  Blue loading zone;
+                double s1 = -5.3;
+                double s2 = 1.2;
+                double s3 = 9.3;
+
+                double buffer = 1.5;
+
+                if (dY < (s1+buffer)) {
+                    myOpMode.telemetry.addData("Found stone 1 at ", dY);
+                    detectedStoneNumber = 1;
+                } else if ((s2-buffer) < dY && dY <= (s2+buffer)) {
+                    myOpMode.telemetry.addData("Found stone 2 at ", dY);
+                    detectedStoneNumber = 2;
+                } else if ((s3-buffer) <= dY ) {
+                    myOpMode.telemetry.addData("Found stone 3 at ", dY);
+                    detectedStoneNumber = 3;
+                } else {
+                    myOpMode.telemetry.addData("Fix buffer!  Found unknown stone at ", dY);
+                    detectedStoneNumber = 3;
+                }
+
+            } else {
+
+                myOpMode.telemetry.addData("Skystone", " Searching.");
+
+                //  Default is 3rd stone;
+                detectedStoneNumber = 3;
+            }
+
+            myOpMode.telemetry.update();
+            myOpMode.idle();
+        }
+
+        return detectedStoneNumber;
+    }
+
+
+    private int redDetectSkystoneOnField() {
+
+        int detectedStoneNumber = 3;
+        while (!myOpMode.isStarted()) {
+            double[] targetCoordinates = this.detectSkystone();
+            if (targetCoordinates != null) {
+
+                this.addNavTelemetry();
+
+                double dY = targetCoordinates[1];
+
+                //  Blue loading zone;
+                double s1 = 5.7;
+                double s2 = -1.3;
+                double s3 = -7.4;
+                double buffer = 1.5;
+
+                if ((s1-buffer) < dY) {
+                    myOpMode.telemetry.addData("Found stone 1 at ", dY);
+                    detectedStoneNumber = 1;
+                } else if ((s2-buffer) < dY && dY <= (s2+buffer)) {
+                    myOpMode.telemetry.addData("Found stone 2 at ", dY);
+                    detectedStoneNumber = 2;
+                } else if (dY <= (s3+buffer)) {
+                    myOpMode.telemetry.addData("Found stone 3 at ", dY);
+                    detectedStoneNumber = 3;
+                } else {
+                    myOpMode.telemetry.addData("Fix buffer!  Found unknown stone at ", dY);
+                    detectedStoneNumber = 3;
+                }
+
+            } else {
+
+                myOpMode.telemetry.addData("Skystone", " Searching.");
+
+                //  Default is 3rd stone;
+                detectedStoneNumber = 3;
+            }
+
+            myOpMode.telemetry.update();
+            myOpMode.idle();
+        }
+
+        return detectedStoneNumber;
+    }
+
 }
