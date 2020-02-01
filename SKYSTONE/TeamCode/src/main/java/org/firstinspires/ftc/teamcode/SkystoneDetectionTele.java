@@ -305,9 +305,13 @@ public class SkystoneDetectionTele extends BaseAutonomous {
             telemetry.addData("ColorNotFound", "True");
             telemetry.update();
 
-            //  Required to give other component chance to execute.
+            //  Required
+            //  to give other component chance to execute.
             idle();
         }
+        this.driver.stop();
+
+        this.driveReverse(6, (int) (0.30 * Constants.MOTOR_MAX_VELOCITY), false);
 
         this.stopOpMode();
 
