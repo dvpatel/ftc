@@ -3,9 +3,12 @@ package org.blueprint.ftc.core;
 import android.graphics.Color;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 public abstract class AbstractLinearOpMode extends LinearOpMode {
+
+    private ElapsedTime runtime = new ElapsedTime();
 
     protected GameBot rosie;
 
@@ -82,7 +85,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         if (usePositionEncoder) {
             this.driveToTarget(-distance);
         } else {
-            this.driveToTargetWithoutEncoder(-distance, speed);
+            this.driveToTargetWithoutEncoder(-distance, -speed);
         }
     }
 
@@ -208,7 +211,9 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
         driver.setStopAndResetMode();
         driver.setRunWithEncoderOffMode();
 
-        while (opModeIsActive() && !motor.angleOnTarget()) {
+        runtime.reset();
+        while (opModeIsActive() && (!motor.angleOnTarget()) && runtime.seconds() < 5) {
+
             //  NOTE:  Rotation on Z-Axis, therefore
             //  imu.getAngle returns positive on left turn, negative on right turn
             //  Negative degrees means left turn
@@ -223,6 +228,7 @@ public abstract class AbstractLinearOpMode extends LinearOpMode {
             driver.powerDifferential(-p, p, -p, p);
             telemetry.update();
         }
+
 
         driver.stop();
     }

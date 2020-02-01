@@ -20,6 +20,7 @@ public class GameBot {
     private IntakeSystem intakeSystem;
     private LiftSystem liftSystem;
     private FoundationSystem foundationSystem;
+    private StoneSystem stoneSystem;
 
     private ElapsedTime period = new ElapsedTime();
 
@@ -52,6 +53,8 @@ public class GameBot {
         this.liftSystem = new LiftSystem(hardwareMap);
 
         this.intakeSystem = new IntakeSystem(hardwareMap);
+
+        this.stoneSystem = new StoneSystem(hardwareMap);
     }
 
     public MotorControllerEx getMotorPID() {
@@ -93,5 +96,10 @@ public class GameBot {
     public IntakeSystem getIntakeSystem() {
         return this.intakeSystem;
     }
+
+    public StoneSystem getStoneSystem() {
+        return this.stoneSystem;
+    }
+
 }
 

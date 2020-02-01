@@ -2,26 +2,18 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.path.Path;
-import com.acmerobotics.roadrunner.path.PathBuilder;
-import com.acmerobotics.roadrunner.path.heading.LinearInterpolator;
-import com.acmerobotics.roadrunner.trajectory.BaseTrajectoryBuilder;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.acmerobotics.roadrunner.trajectory.TrajectoryGenerator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.blueprint.ftc.core.AbstractLinearOpMode;
+import org.blueprint.ftc.core.ColorSensorController;
 import org.blueprint.ftc.core.Constants;
+import org.blueprint.ftc.core.Driver;
+import org.blueprint.ftc.core.FoundationSystem;
+import org.blueprint.ftc.core.IMUController;
 import org.blueprint.ftc.core.IntakeSystem;
 import org.blueprint.ftc.core.SkystoneDetector;
-import org.blueprint.ftc.core.TrajectoryFactory;
-import org.roadrunner.DriveConstants;
-import org.roadrunner.mecanum.SampleMecanumDriveREV;
+import org.blueprint.ftc.core.StoneSystem;
 
-import java.io.IOException;
-
+import static org.blueprint.ftc.core.Constants.TURN_SPEED;
 
 //  See
 //  https://github.com/gearsincorg/FTCVuforiaDemo/blob/master/TeleopOpmode.java
@@ -32,6 +24,11 @@ public class SkystoneDetectionTele extends BaseAutonomous {
 
     private SkystoneDetector skystoneDetector;
     private IntakeSystem intakeSystem;
+    private StoneSystem stoneSystem;
+    private FoundationSystem foundationSystem;
+    private ColorSensorController colorSensor;
+    private Driver driver;
+
 
     private boolean isBlue;
 
@@ -43,22 +40,31 @@ public class SkystoneDetectionTele extends BaseAutonomous {
 
     private boolean quadrantSelected;
 
+    private int foundationOffset;
 
     @Override
     public void initOpMode() throws InterruptedException {
         this.initRosie();
 
+        this.driver = this.rosie.getDriver();
+
+        this.foundationSystem = this.rosie.getFoundationSystem();
+
+        this.colorSensor = this.rosie.getColorSensorController();
+
+        this.stoneSystem = this.rosie.getStoneSystem();
+        this.stoneSystem.setLinearOpMode(this);
+
         this.intakeSystem = this.rosie.getIntakeSystem();
 
-        //  this.detectSkystoneOnField();
         this.skystoneDetector = this.rosie.getSkystoneDetector();
 
         this.setupZone();
-
         detectedStoneNumber = this.skystoneDetector.detectSkystoneOnField(this, isBlue);
+        targetCoordinates = this.skystoneDetector.getTargetCoordinatesInInches();
     }
 
-    private void setupZone() throws InterruptedException{
+    private void setupZone() throws InterruptedException {
         //  Select quadrant;
         this.quadrant = this.selectGameQuadrant();
         telemetry.addData("Selected Zone:  ", quadrant.toString());
@@ -66,7 +72,7 @@ public class SkystoneDetectionTele extends BaseAutonomous {
         telemetry.addData("Mode:  ", "init complete;  Running");
         telemetry.update();
 
-        switch(quadrant) {
+        switch (quadrant) {
             case LOADING_RED:
                 isBlue = false;
                 break;
@@ -75,7 +81,6 @@ public class SkystoneDetectionTele extends BaseAutonomous {
                 break;
             case BUILDING_BLUE:
             case BUILDING_RED:
-                throw new InterruptedException("Robot cannot be in building zone.  Start again.");
         }
     }
 
@@ -100,88 +105,211 @@ public class SkystoneDetectionTele extends BaseAutonomous {
         this.intakeSystem.setIntakeServosInitPosition();
 
         //  Force value
-        detectedStoneNumber = 1;
-
         if (opModeIsActive()) {
 
             if (isBlue) {
-                //  this.blueMission(detectedStoneNumber);
+                this.blueMission(detectedStoneNumber);
             } else {
-                //  this.redMission(detectedStoneNumber);
+                this.redMission(detectedStoneNumber);
             }
 
-
-            //  this.goToBlueStone(detectedStoneNumber);
-            //  this.pickupBlueStone();
-
-
-            //  over the stone
-            //  this.intakeSystem.start();
-            //  move down inch?
         }
 
         this.stopOpMode();
     }
 
     private void blueMission(int stoneNumber) {
-        String trajName = "BlueLoadingStone"+stoneNumber;
-        this.goToStone(trajName);
 
-        //  Next step;
+        this.stoneSystem.positionSystem();
+
+        goToStone("BlueLoadingStone" + stoneNumber);
+
+        pickupStone();
+
+        driveToFoundation();
+
+        dropStone();
+
+        positionFoundation();
+
+        driveToColorline();
     }
 
-    private void redMission(int stoneNumber){
-        String trajName = "RedLoadingStone"+stoneNumber;
-        this.goToStone(trajName);
+    private void redMission(int stoneNumber) {
 
-        //  Next step;
+        this.stoneSystem.positionSystem();
+
+        goToStone("RedLoadingStone" + stoneNumber);
+
+        pickupStone();
+
+        driveToFoundation();
+
+        dropStone();
+
+        positionFoundation();
+
+        driveToColorline();
+
     }
 
     private void goToStone(String trajName) {
-        try {
-            SampleMecanumDriveREV drive = new SampleMecanumDriveREV(hardwareMap);
-            Trajectory traj = TrajectoryFactory.getInstance().getTrajectory(trajName);
-            drive.followTrajectorySync(traj);
-        } catch (IOException e) {
-            e.printStackTrace();
+        double dX = Math.abs(targetCoordinates[0]);
+        //  double dY = targetCoordinates[1];
+
+        double dY = 0.0;
+        switch (detectedStoneNumber) {
+            case 1:
+                dY = -0.75;  //  center of stone 1
+                foundationOffset = 0;
+                break;
+            case 2:
+                dY = 3.25;   //  center of stone 2;
+                foundationOffset = 12;
+                break;
+            case 3:
+                dY = 10.30;  //  center of stone 3;
+                foundationOffset = 20;
         }
-    }
 
-    private void pickupBlueStone() {
-        this.intakeSystem.start();
-        this.driveReverse(2);  //  2 inches;
-        this.intakeSystem.stop();
-    }
 
-    //  Not dynamic trajectory;
-    private void blueLoadingStone() {
+        if (isBlue) {
+            if (dY > 0) {
+                this.driveForward(dY, (int) (0.45 * Constants.MOTOR_MAX_VELOCITY), false);
+            } else {
+                this.driveReverse(-dY, (int) (0.45 * Constants.MOTOR_MAX_VELOCITY), false);
+            }
 
-        double dX = Math.abs(targetCoordinates[0]) - 2.25;
-        double dY = targetCoordinates[1];
-
-        SampleMecanumDriveREV drive = new SampleMecanumDriveREV(hardwareMap);
-
-        BaseTrajectoryBuilder baseTraj = drive.trajectoryBuilder()
-                .forward(dX);
-
-        if (dY > 0) {
-            baseTraj = baseTraj.strafeRight(Math.abs(dY) + Constants.DRIVETRAIN_WIDTH);
+            sleep(250);
         } else {
-            baseTraj = baseTraj.strafeLeft(Math.abs(dY) + Constants.DRIVETRAIN_WIDTH);
+
+            if (dY > 0) {
+                this.driveReverse(dY, (int) (0.45 * Constants.MOTOR_MAX_VELOCITY), false);
+            } else {
+                this.driveForward(-dY, (int) (0.45 * Constants.MOTOR_MAX_VELOCITY), false);
+            }
+
+            sleep(250);
         }
 
-        Trajectory traj = baseTraj.build();
-        drive.followTrajectorySync(traj);
+        this.strafeLeft(dX, 0.40 * Constants.MOTOR_MAX_VELOCITY);
+        sleep(50);
 
     }
 
-    private void blueLoadingStoneLast() {
-        SampleMecanumDriveREV drive = new SampleMecanumDriveREV(hardwareMap);
+    private void pickupStone() {
 
-        double dX = 24.0 + (24.0 - Constants.DRIVETRAIN_LENGTH);
-        double dY = 20.0 + (Constants.DRIVETRAIN_WIDTH / 2);
+        this.stoneSystem.pickupStone();
+        sleep(50);
 
-        Trajectory traj = drive.trajectoryBuilder().forward(dX).strafeRight(dY).build();
-        drive.followTrajectorySync(traj);
+        this.strafeRight(8.0, 0.25 * Constants.MOTOR_MAX_VELOCITY);
+
+        sleep(50);
+
+    }
+
+    private void driveToFoundation() {
+
+        if (isBlue) {
+            this.driveReverse((80 + foundationOffset));
+
+        } else {
+            this.driveForward((80 + foundationOffset));
+        }
+
+        sleep(50);
+        this.strafeLeft(9, 0.25 * Constants.MOTOR_MAX_VELOCITY);
+
+    }
+
+    private void dropStone() {
+
+        //  Deposit;
+        this.stoneSystem.putdownStone();
+        sleep(100);
+
+        //if foundation system touches stone, you may have to increase forward/reverse distance
+
+        if (isBlue) {
+            this.driveForward(5, (int) (0.45 * Constants.MOTOR_MAX_VELOCITY), false);
+        } else {
+            this.driveReverse(5, (int) (0.45 * Constants.MOTOR_MAX_VELOCITY), false);
+        }
+        sleep(50);
+
+        this.strafeRight(5, 0.25 * Constants.MOTOR_MAX_VELOCITY);
+        sleep(50);
+
+        this.turnRight(90, TURN_SPEED);
+        sleep(50);
+
+        this.driveReverse(5, (int) (0.30 * Constants.MOTOR_MAX_VELOCITY), false);
+        sleep(500);
+    }
+
+    private void positionFoundation() {
+
+        this.foundationSystem.triggerDown(true);
+        sleep(250);
+
+        if (isBlue) {
+
+            this.strafeLeft(8, 0.75 * Constants.MOTOR_MAX_VELOCITY);
+            sleep(50);
+
+            this.driveForward(12, (int) (0.45 * Constants.MOTOR_MAX_VELOCITY), false);
+            sleep(50);
+
+            this.turnLeft(90, Constants.MOTOR_MAX_VELOCITY);
+            sleep(90);
+
+        } else {
+
+            this.strafeRight(8, 0.75 * Constants.MOTOR_MAX_VELOCITY);
+            sleep(50);
+
+            this.driveForward(12, (int) (0.45 * Constants.MOTOR_MAX_VELOCITY), false);
+            sleep(50);
+
+            this.turnRight(90, Constants.MOTOR_MAX_VELOCITY);
+            sleep(50);
+
+        }
+
+        this.driveReverse(4, (int) (0.45 * Constants.MOTOR_MAX_VELOCITY), false);
+        sleep(50);
+
+        this.foundationSystem.triggerUp(true);
+        sleep(50);
+
+        this.stoneSystem.closeGripper();
+
+    }
+
+    private void driveToColorline() {
+
+        //  Direction will return +1 or -1 based on quadrant selection;
+        //  positive velocity strafe to right; negative strafe to the left;
+        //  NOTE:  Do NOT use max velocity; skips color sensor detection;
+
+        //  Try with both..
+        //  Default:  positive velocity strafe right
+
+        int ticks = driver.calculateTicks(36);
+
+        this.drive(650);
+        while (opModeIsActive()
+                && !(colorSensor.isTargetBlue() || colorSensor.isTargetRed())
+                && driver.getCurrentPosition()[0] <= ticks ) {
+
+            telemetry.addData("ColorNotFound", "True");
+            telemetry.update();
+
+            //  Required to give other component chance to execute.
+            idle();
+        }
+
+        this.stopOpMode();
+
     }
 }

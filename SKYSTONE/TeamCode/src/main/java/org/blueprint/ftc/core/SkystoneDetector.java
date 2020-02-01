@@ -458,11 +458,11 @@ public class SkystoneDetector {
                 double dY = targetCoordinates[1];
 
                 //  Blue loading zone;
-                double s1 = -5.3;
-                double s2 = 1.2;
-                double s3 = 9.3;
+                double s1 = -4.6;
+                double s2 = 1.3;
+                double s3 = 9.7;
 
-                double buffer = 1.5;
+                double buffer = 0.75;
 
                 if (dY < (s1+buffer)) {
                     myOpMode.telemetry.addData("Found stone 1 at ", dY);
@@ -509,7 +509,7 @@ public class SkystoneDetector {
                 double s1 = 5.7;
                 double s2 = -1.3;
                 double s3 = -7.4;
-                double buffer = 1.5;
+                double buffer = 0.75;
 
                 if ((s1-buffer) < dY) {
                     myOpMode.telemetry.addData("Found stone 1 at ", dY);

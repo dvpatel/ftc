@@ -13,6 +13,10 @@ public final class Constants {
     public static final String LEFT_BACK_MOTOR_NAME = "left_back_motor" ;
     public static final String RIGHT_BACK_MOTOR_NAME = "right_back_motor" ;
 
+    // Stone system
+    public static final String STONE_ARM = "stone_arm" ;
+    public static final String STONE_GRIPPER = "stone_gripper" ;
+
     // Left and right motors for intake system
     public static final String INTAKE_LEFT_MOTOR = "intake_left_motor";
     public static final String INTAKE_RIGHT_MOTOR = "intake_right_motor";
@@ -101,7 +105,7 @@ public final class Constants {
 
     public static int MOTOR_MAX_VELOCITY = 2820;  //  ticks per second;  Set from MaxVelocityTest;  was 2900
     public static int DEFAULT_VELOCITY = (int) (0.60*MOTOR_MAX_VELOCITY);  //  ticks per second;
-    public static double TURN_SPEED = 0.35*Constants.MOTOR_MAX_VELOCITY;   //  Turning speed 987
+    public static double TURN_SPEED = 0.45*Constants.MOTOR_MAX_VELOCITY;   //  Turning speed 987
     public static double STRAFE_SPEED = 0.25*Constants.MOTOR_MAX_VELOCITY;   //  Turning speed 987
 
     //======================================================================================
@@ -128,7 +132,7 @@ public final class Constants {
     // Since ImageTarget trackables use mm to specifiy their dimensions, we must use mm for all the physical dimension.
     public static final float MM_PER_INCHES = 25.4f;
     public static final String VISIBLE_TARGET_NAME = "Stone Target";
-    public static final boolean CAMERA_MONITOR_ON = true;
+    public static final boolean CAMERA_MONITOR_ON = false;
 
     //  front facing robot on the red aliance side;  cartesian coordinates; right hand rule
     public static final float CAMERA_X = -90.0f;   //
@@ -136,9 +140,9 @@ public final class Constants {
     public static final float CAMERA_Z = 0.0f;   //
 
     //  relative to robot origin;
-    public static final float CAMERA_DX_MM = 6.375f * MM_PER_INCHES;   //  width
-    public static final float CAMERA_DY_MM = 8.875f * MM_PER_INCHES;   //  front, includes intake system
-    public static final float CAMERA_DZ_MM = 4.75f * MM_PER_INCHES;    //  height;
+    public static final float CAMERA_DX_MM = -6.375f * MM_PER_INCHES;   //  width; was +6.375
+    public static final float CAMERA_DY_MM = 9.25f * MM_PER_INCHES;   //  front, includes intake system; was 8.875f
+    public static final float CAMERA_DZ_MM = 4.5f * MM_PER_INCHES;    //  height; was 4.75
 
     public static final double HEADING_THRESHOLD = 1 ;      // As tight as we can make it with an integer gyro
     public static final double P_TURN_COEFF = 0.1;     // Larger is more responsive, but also less stable
