@@ -8,6 +8,6 @@ constraints:
   maxAngJerk: 0.0
 distanceUnit: "INCH"
 driveType: "MECANUM"
-trackWidth: 17.25
-wheelBase: 13.58
-lateralMultiplier: 1.33
+trackWidth: 16.75
+wheelBase: 19.75
+lateralMultiplier: 1.9

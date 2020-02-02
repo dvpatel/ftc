@@ -1,13 +1,13 @@
 ---
 startPose:
-  x: -24.0
+  x: -32.88
   y: 63.13
   heading: -1.5707963267948966
-startHeading: 0.0
+startHeading: 3.141592653589793
 steps:
 - pose:
-    x: -24.0
-    y: 32.38
+    x: -13.76
+    y: 22.0
     heading: -1.5707963267948966
   interpolationType: "CONSTANT"
   heading: -3.141592653589793

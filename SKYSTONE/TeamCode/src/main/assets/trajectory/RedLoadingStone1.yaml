@@ -2,14 +2,14 @@
 startPose:
   x: -32.88
   y: -63.13
-  heading: -4.101523742186674
-startHeading: 1.5707963267948966
+  heading: 1.5707963267948966
+startHeading: 0.0
 steps:
 - pose:
-    x: -40.0
-    y: -8.0
+    x: -31.76
+    y: -22.0
     heading: 1.5707963267948966
   interpolationType: "LINEAR"
-  heading: -3.141592653589793
+  heading: 0.0
 resolution: 0.25
 version: 2
