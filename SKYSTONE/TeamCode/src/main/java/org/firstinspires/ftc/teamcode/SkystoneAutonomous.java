@@ -69,8 +69,8 @@ public class SkystoneAutonomous extends AbstractLinearOpMode {
         telemetry.update();
 
         //  go forward to position at center of 2nd quadrant;
-        this.driveForward(Constants.DRIVETRAIN_SECOND_QUADRANT_CENTER, Constants.DEFAULT_VELOCITY);
-        sleep(SLEEP_TIME);
+        //this.driveForward(Constants.DRIVETRAIN_SECOND_QUADRANT_CENTER, Constants.DEFAULT_VELOCITY);
+        //sleep(SLEEP_TIME);
 
         //  this.locateSkystone();
         //  sleep(SLEEP_TIME);
