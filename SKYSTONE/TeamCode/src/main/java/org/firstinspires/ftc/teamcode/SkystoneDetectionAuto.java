@@ -20,7 +20,7 @@ import static org.blueprint.ftc.core.Constants.TURN_SPEED;
 
 @Autonomous(name = "SkystoneDetection")
 //  @Disabled
-public class SkystoneDetectionTele extends BaseAutonomous {
+public class SkystoneDetectionAuto extends BaseAutonomous {
 
     private SkystoneDetector skystoneDetector;
     private IntakeSystem intakeSystem;
