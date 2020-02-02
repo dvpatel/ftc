@@ -17,7 +17,7 @@ import java.io.IOException;
 
 @Config
 @Autonomous()
-//@Disabled
+@Disabled
 public class TrajectoryTest extends LinearOpMode {
 
     /*
@@ -31,6 +31,14 @@ public class TrajectoryTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         SampleMecanumDriveREV drive = new SampleMecanumDriveREV(hardwareMap);
+
+
+        //  start pose, start heading;
+        //  Blue starting position
+        //drive.setPoseEstimate(new Pose2d(-32.88, 63.13, 0.0));
+
+        //  Red starting position;
+        //drive.setPoseEstimate(new Pose2d(-32.88, -63.13, (Math.PI/2)));
 
         waitForStart();
 
